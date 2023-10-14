@@ -1,0 +1,8 @@
+[WARNING ODB-0220] WARNING (LEFPARS-2036): SOURCE statement is obsolete in version 5.6 and later.
+To avoid this warning in the future, remove this statement from the LEF file with version 5.6 or later. See file /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/runs/23_10_14_22_26/tmp/merged.nom.lef at line 930.
+[WARNING ORD-1011] LEF master vccd1_connection has no liberty cell.
+[WARNING ORD-1011] LEF master vssd1_connection has no liberty cell.
+[WARNING STA-0354] set_input_delay relative to a clock defined on the same port/pin not allowed.
+[WARNING STA-0354] set_input_delay relative to a clock defined on the same port/pin not allowed.
+[WARNING STA-0354] set_input_delay relative to a clock defined on the same port/pin not allowed.
+[WARNING] Did not save OpenROAD database!

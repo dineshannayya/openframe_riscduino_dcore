@@ -1,0 +1,41 @@
+#!/bin/sh
+dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+cd $dir;
+export CARRY_SELECT_ADDER_MAP='pdk/sky130A/libs.tech/openlane/sky130_fd_sc_hd/csa_map.v';
+export CLOCK_PERIOD='25';
+export DESIGN_NAME='openframe_project_wrapper';
+export EXTRA_LIBS='home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../lib/picosoc.lib';
+export FULL_ADDER_MAP='pdk/sky130A/libs.tech/openlane/sky130_fd_sc_hd/fa_map.v';
+export LIB_SYNTH='./tmp/synthesis/trimmed.lib';
+export LIB_SYNTH_COMPLETE_NO_PG='./tmp/synthesis/1-sky130_fd_sc_hd__tt_025C_1v80.no_pg.lib';
+export LIB_SYNTH_NO_PG='./tmp/synthesis/1-trimmed.no_pg.lib';
+export PACKAGED_SCRIPT_0='openlane/scripts/yosys/synth.tcl';
+export PACKAGED_SCRIPT_1='./tmp/synthesis/synthesis.sdc';
+export QUIT_ON_SYNTH_CHECKS='0';
+export RIPPLE_CARRY_ADDER_MAP='pdk/sky130A/libs.tech/openlane/sky130_fd_sc_hd/rca_map.v';
+export SAVE_NETLIST='./results/synthesis/openframe_project_wrapper.v';
+export SYNTH_ADDER_TYPE='YOSYS';
+export SYNTH_BUFFERING='1';
+export SYNTH_CAP_LOAD='33.442';
+export SYNTH_DEFINES='PnR';
+export SYNTH_DRIVING_CELL='sky130_fd_sc_hd__inv_2';
+export SYNTH_EXTRA_MAPPING_FILE='';
+export SYNTH_LATCH_MAP='pdk/sky130A/libs.tech/openlane/sky130_fd_sc_hd/latch_map.v';
+export SYNTH_MAX_FANOUT='10';
+export SYNTH_MAX_TRAN='0.75';
+export SYNTH_MIN_BUF_PORT='sky130_fd_sc_hd__buf_2 A X';
+export SYNTH_NO_FLAT='0';
+export SYNTH_READ_BLACKBOX_LIB='1';
+export SYNTH_SHARE_RESOURCES='1';
+export SYNTH_SIZING='0';
+export SYNTH_STRATEGY='AREA 0';
+export SYNTH_TIEHI_PORT='sky130_fd_sc_hd__conb_1 HI';
+export SYNTH_TIELO_PORT='sky130_fd_sc_hd__conb_1 LO';
+export TRISTATE_BUFFER_MAP='pdk/sky130A/libs.tech/openlane/sky130_fd_sc_hd/tribuff_map.v';
+export VERILOG_FILES='home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/rtl/openframe_project_netlists.v home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/rtl/openframe_project_wrapper.v';
+export VERILOG_FILES_BLACKBOX='home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../picosoc/sky130_sram_2kbyte_1rw1r_32x512_8.v home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/gl/picosoc.v home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/gl/vccd1_connection.v home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/gl/vssd1_connection.v home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/gl/digital_locked_loop.v';
+export synth_report_prefix='./reports/synthesis/1-synthesis';
+export synthesis_results='./results/synthesis';
+export synthesis_tmpfiles='./tmp/synthesis';
+TOOL_BIN=${TOOL_BIN:-yosys}
+$TOOL_BIN -c $PACKAGED_SCRIPT_0

@@ -1,0 +1,93 @@
+{
+    "DESIGN_NAME": "openframe_project_wrapper",
+    "VERILOG_FILES": [
+        "dir::../../verilog/rtl/openframe_project_netlists.v",
+        "dir::../../verilog/rtl/openframe_project_wrapper.v"
+    ],
+    "SYNTH_DEFINES": "PnR",
+    "RUN_LINTER": 0,
+    "SYNTH_READ_BLACKBOX_LIB": 1,
+    "ROUTING_CORES": 10,
+    "CLOCK_PERIOD": 25,
+    "CLOCK_PORT": "gpio_in[38]",
+    "MACRO_PLACEMENT_CFG": "dir::macro.cfg",
+    "MAGIC_DEF_LABELS": 0,
+    "VERILOG_FILES_BLACKBOX": [
+        "dir::../picosoc/sky130_sram_2kbyte_1rw1r_32x512_8.v",
+        "dir::../../verilog/gl/picosoc.v",
+        "dir::../../verilog/gl/vccd1_connection.v",
+        "dir::../../verilog/gl/vssd1_connection.v",
+        "dir::../../verilog/gl/digital_locked_loop.v"
+    ],
+    "EXTRA_LEFS": [
+        "dir::../../lef/picosoc.lef",
+        "dir::../../lef/vccd1_connection.lef",
+        "dir::../../lef/vssd1_connection.lef"
+    ],
+    "EXTRA_GDS_FILES": [
+        "dir::../../gds/picosoc.gds",
+        "dir::../../gds/vccd1_connection.gds",
+        "dir::../../gds/vssd1_connection.gds"
+    ],
+    "EXTRA_LIBS": ["dir::../../lib/picosoc.lib"],
+    "EXTRA_SPEFS": [
+        "picosoc",
+        "dir::../../signoff/picosoc/openlane-signoff/spef/picosoc.min.spef",
+        "dir::../../signoff/picosoc/openlane-signoff/spef/picosoc.nom.spef",
+        "dir::../../signoff/picosoc/openlane-signoff/spef/picosoc.max.spef",
+        "digital_locked_loop",
+        "dir::../../signoff/digital_locked_loop/openlane-signoff/spef/digital_locked_loop.min.spef",
+        "dir::../../signoff/digital_locked_loop/openlane-signoff/spef/digital_locked_loop.nom.spef",
+        "dir::../../signoff/digital_locked_loop/openlane-signoff/spef/digital_locked_loop.max.spef"
+    ],
+    "BASE_SDC_FILE": "dir::base.sdc",
+    "RCX_SDC_FILE": "dir::signoff.sdc",
+    "MAX_TRANSITION_CONSTRAINT": 0.5,
+    "QUIT_ON_SYNTH_CHECKS": 0,
+    "FP_PDN_CHECK_NODES": 0,
+    "SYNTH_USE_PG_PINS_DEFINES": "USE_POWER_PINS",
+    "PL_RESIZER_DESIGN_OPTIMIZATIONS": 1,
+    "PL_RESIZER_TIMING_OPTIMIZATIONS": 1,
+    "GLB_RESIZER_TIMING_OPTIMIZATIONS": 1,
+    "GLB_RESIZER_DESIGN_OPTIMIZATIONS": 1,
+    "PL_RESIZER_MAX_WIRE_LENGTH": 500,
+    "GLB_RESIZER_MAX_WIRE_LENGTH": 500,
+    "CTS_CLK_MAX_WIRE_LENGTH": 500,
+    "RUN_CTS": 1,
+    "FP_PDN_ENABLE_RAILS": 1,
+    "GRT_REPAIR_ANTENNAS": 1,
+    "RUN_HEURISTIC_DIODE_INSERTION": 1,
+    "FP_PDN_VPITCH": 40,
+    "FP_PDN_HPITCH": 40,
+    "FP_PDN_VOFFSET": 18.43,
+    "FP_PDN_HOFFSET": 22.83,
+    "MAGIC_ZEROIZE_ORIGIN": 0,
+    "FP_SIZING": "absolute",
+    "RUN_CVC": 0,
+    "FP_PDN_CORE_RING": 1,
+    "FP_PDN_CORE_RING_VWIDTH": 20,
+    "FP_PDN_CORE_RING_HWIDTH": 20,
+    "FP_PDN_CORE_RING_VOFFSET": -4,
+    "FP_PDN_CORE_RING_HOFFSET": -4,
+    "FP_PDN_CORE_RING_VSPACING": 2.4,
+    "FP_PDN_CORE_RING_HSPACING": 2.4,
+    "FP_PDN_VWIDTH": 6.4,
+    "FP_PDN_HWIDTH": 6.4,
+    "FP_PDN_HSPACING": 3.2,
+    "FP_PDN_VSPACING": 3.2,
+    "VDD_NETS": [
+        "vccd1"
+    ],
+    "GND_NETS": [
+        "vssd1"
+    ],
+    "PL_TARGET_DENSITY": 0.1,
+    "DIE_AREA": "0 0 3166.63 4766.630",
+    "CORE_AREA": "40 40 3126.63 4726.630",
+    "RUN_IRDROP_REPORT": 0,
+    "FP_PDN_MACRO_HOOKS": "openframe_example vccd1 vssd1 VPWR VGND",
+    "FP_PDN_CFG": "dir::pdn_cfg.tcl",
+    "FP_DEF_TEMPLATE": "dir::fixed_dont_change/openframe_project_wrapper.def",
+    "RUN_MAGIC_DRC": 0,
+    "RUN_LVS": 0
+}

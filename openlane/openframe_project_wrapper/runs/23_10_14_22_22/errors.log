@@ -1,0 +1,10 @@
+[ERROR]: during executing: "/openlane/scripts/mergeLef.py -o /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/runs/23_10_14_22_22/tmp/merged.nom.lef -i /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/runs/23_10_14_22_22/tmp/merged.nom.lef /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../lef/picosoc.lef /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../lef/vccd1_connection.lef /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../lef/vssd1_connection.lef |& tee /dev/null"
+[ERROR]: Exit code: 1
+[ERROR]: Last 10 lines:
+mergeLef.py : Merging LEFs
+Traceback (most recent call last):
+  File "/openlane/scripts/mergeLef.py", line 79, in <module>
+    f = open(lefFile)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../lef/picosoc.lef'
+child process exited abnormally
+

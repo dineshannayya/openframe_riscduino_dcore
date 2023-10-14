@@ -1,0 +1,819 @@
+
+ /----------------------------------------------------------------------------\
+ |                                                                            |
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |                                                                            |
+ |  Copyright (C) 2012 - 2020  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |                                                                            |
+ |  Permission to use, copy, modify, and/or distribute this software for any  |
+ |  purpose with or without fee is hereby granted, provided that the above    |
+ |  copyright notice and this permission notice appear in all copies.         |
+ |                                                                            |
+ |  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES  |
+ |  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF          |
+ |  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR   |
+ |  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES    |
+ |  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN     |
+ |  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF   |
+ |  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.            |
+ |                                                                            |
+ \----------------------------------------------------------------------------/
+
+ Yosys 0.22 (git sha1 f109fa3d4c5, gcc 8.3.1 -fPIC -Os)
+
+[TCL: yosys -import] Command name collision: found pre-existing command `cd' -> skip.
+[TCL: yosys -import] Command name collision: found pre-existing command `eval' -> skip.
+[TCL: yosys -import] Command name collision: found pre-existing command `exec' -> skip.
+[TCL: yosys -import] Command name collision: found pre-existing command `read' -> skip.
+[TCL: yosys -import] Command name collision: found pre-existing command `trace' -> skip.
+Defining PnR
+Reading /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/runs/23_10_14_22_26/tmp/synthesis/1-sky130_fd_sc_hd__tt_025C_1v80.no_pg.lib as a blackbox
+
+1. Executing Liberty frontend.
+Imported 428 cell types from liberty file.
+
+2. Executing Liberty frontend.
+Imported 1 cell types from liberty file.
+
+3. Executing Verilog-2005 frontend: /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../picosoc/sky130_sram_2kbyte_1rw1r_32x512_8.v
+Parsing SystemVerilog input from `/home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../picosoc/sky130_sram_2kbyte_1rw1r_32x512_8.v' to AST representation.
+Generating RTLIL representation for module `\sky130_sram_2kbyte_1rw1r_32x512_8'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend: /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/gl/picosoc.v
+Parsing SystemVerilog input from `/home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/gl/picosoc.v' to AST representation.
+Replacing existing blackbox module `\picosoc' at /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/gl/picosoc.v:3.1-145527.10.
+Generating RTLIL representation for module `\picosoc'.
+Successfully finished Verilog frontend.
+
+5. Executing Verilog-2005 frontend: /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/gl/vccd1_connection.v
+Parsing SystemVerilog input from `/home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/gl/vccd1_connection.v' to AST representation.
+Generating RTLIL representation for module `\vccd1_connection'.
+Successfully finished Verilog frontend.
+
+6. Executing Verilog-2005 frontend: /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/gl/vssd1_connection.v
+Parsing SystemVerilog input from `/home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/gl/vssd1_connection.v' to AST representation.
+Generating RTLIL representation for module `\vssd1_connection'.
+Successfully finished Verilog frontend.
+
+7. Executing Verilog-2005 frontend: /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/gl/digital_locked_loop.v
+Parsing SystemVerilog input from `/home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/gl/digital_locked_loop.v' to AST representation.
+Generating RTLIL representation for module `\digital_locked_loop'.
+Successfully finished Verilog frontend.
+
+8. Executing Verilog-2005 frontend: /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/rtl/openframe_project_netlists.v
+Parsing SystemVerilog input from `/home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/rtl/openframe_project_netlists.v' to AST representation.
+Successfully finished Verilog frontend.
+
+9. Executing Verilog-2005 frontend: /home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/rtl/openframe_project_wrapper.v
+Parsing SystemVerilog input from `/home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/../../verilog/rtl/openframe_project_wrapper.v' to AST representation.
+Generating RTLIL representation for module `\openframe_project_wrapper'.
+Successfully finished Verilog frontend.
+
+10. Generating Graphviz representation of design.
+Writing dot description to `/home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/runs/23_10_14_22_26/tmp/synthesis/hierarchy.dot'.
+Dumping module openframe_project_wrapper to page 1.
+
+11. Executing HIERARCHY pass (managing design hierarchy).
+
+11.1. Analyzing design hierarchy..
+Top module:  \openframe_project_wrapper
+
+11.2. Analyzing design hierarchy..
+Top module:  \openframe_project_wrapper
+Removed 0 unused modules.
+
+12. Executing TRIBUF pass.
+
+13. Executing HIERARCHY pass (managing design hierarchy).
+
+13.1. Analyzing design hierarchy..
+Top module:  \openframe_project_wrapper
+
+13.2. Analyzing design hierarchy..
+Top module:  \openframe_project_wrapper
+Removed 0 unused modules.
+
+14. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+15. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Removed a total of 0 dead cases.
+
+16. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 0 assignments to connections.
+
+17. Executing PROC_INIT pass (extract init attributes).
+
+18. Executing PROC_ARST pass (detect async resets in processes).
+
+19. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+
+20. Executing PROC_MUX pass (convert decision trees to multiplexers).
+
+21. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+22. Executing PROC_DFF pass (convert process syncs to FFs).
+
+23. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+24. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+25. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+26. Executing FLATTEN pass (flatten design).
+
+27. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+28. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+29. Executing CHECK pass (checking for obvious problems).
+Checking module openframe_project_wrapper...
+Found and reported 0 problems.
+
+30. Executing OPT pass (performing simple optimizations).
+
+30.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+30.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\openframe_project_wrapper'.
+Removed a total of 0 cells.
+
+30.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \openframe_project_wrapper..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+30.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \openframe_project_wrapper.
+Performed a total of 0 changes.
+
+30.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\openframe_project_wrapper'.
+Removed a total of 0 cells.
+
+30.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+30.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+30.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+30.9. Finished OPT passes. (There is nothing left to do.)
+
+31. Executing FSM pass (extract and optimize FSM).
+
+31.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+31.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+31.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+31.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+31.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+31.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+31.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+31.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+32. Executing OPT pass (performing simple optimizations).
+
+32.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+32.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\openframe_project_wrapper'.
+Removed a total of 0 cells.
+
+32.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \openframe_project_wrapper..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+32.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \openframe_project_wrapper.
+Performed a total of 0 changes.
+
+32.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\openframe_project_wrapper'.
+Removed a total of 0 cells.
+
+32.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+32.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+32.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+32.9. Finished OPT passes. (There is nothing left to do.)
+
+33. Executing WREDUCE pass (reducing word size of cells).
+
+34. Executing PEEPOPT pass (run peephole optimizers).
+
+35. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+36. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module openframe_project_wrapper:
+  created 0 $alu and 0 $macc cells.
+
+37. Executing SHARE pass (SAT-based resource sharing).
+
+38. Executing OPT pass (performing simple optimizations).
+
+38.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+38.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\openframe_project_wrapper'.
+Removed a total of 0 cells.
+
+38.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \openframe_project_wrapper..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+38.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \openframe_project_wrapper.
+Performed a total of 0 changes.
+
+38.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\openframe_project_wrapper'.
+Removed a total of 0 cells.
+
+38.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+38.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+38.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+38.9. Finished OPT passes. (There is nothing left to do.)
+
+39. Executing MEMORY pass.
+
+39.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+39.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+39.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+39.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+39.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+39.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+39.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+39.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+39.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+39.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+40. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+41. Executing OPT pass (performing simple optimizations).
+
+41.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+41.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\openframe_project_wrapper'.
+Removed a total of 0 cells.
+
+41.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+41.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+41.5. Finished fast OPT passes.
+
+42. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+43. Executing OPT pass (performing simple optimizations).
+
+43.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+43.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\openframe_project_wrapper'.
+Removed a total of 0 cells.
+
+43.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \openframe_project_wrapper..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+43.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \openframe_project_wrapper.
+Performed a total of 0 changes.
+
+43.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\openframe_project_wrapper'.
+Removed a total of 0 cells.
+
+43.6. Executing OPT_SHARE pass.
+
+43.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+43.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+43.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+43.10. Finished OPT passes. (There is nothing left to do.)
+
+44. Executing TECHMAP pass (map to technology primitives).
+
+44.1. Executing Verilog-2005 frontend: /build/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/build/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `\$__div_mod_u'.
+Generating RTLIL representation for module `\$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `\$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_pmux'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Successfully finished Verilog frontend.
+
+44.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~71 debug messages>
+
+45. Executing OPT pass (performing simple optimizations).
+
+45.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+45.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\openframe_project_wrapper'.
+Removed a total of 0 cells.
+
+45.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+45.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+45.5. Finished fast OPT passes.
+
+46. Executing ABC pass (technology mapping using ABC).
+
+46.1. Extracting gate netlist of module `\openframe_project_wrapper' to `<abc-temp-dir>/input.blif'..
+Extracted 0 gates and 0 wires to a netlist network with 0 inputs and 0 outputs.
+Don't call ABC as there is nothing to map.
+Removing temp directory.
+
+47. Executing OPT pass (performing simple optimizations).
+
+47.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+47.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\openframe_project_wrapper'.
+Removed a total of 0 cells.
+
+47.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+47.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+47.5. Finished fast OPT passes.
+
+48. Executing HIERARCHY pass (managing design hierarchy).
+
+48.1. Analyzing design hierarchy..
+Top module:  \openframe_project_wrapper
+
+48.2. Analyzing design hierarchy..
+Top module:  \openframe_project_wrapper
+Removed 0 unused modules.
+
+49. Printing statistics.
+
+=== openframe_project_wrapper ===
+
+   Number of wires:                 25
+   Number of wire bits:            873
+   Number of public wires:          25
+   Number of public wire bits:     873
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  3
+     picosoc                         1
+     vccd1_connection                1
+     vssd1_connection                1
+
+50. Executing CHECK pass (checking for obvious problems).
+Checking module openframe_project_wrapper...
+Found and reported 0 problems.
+
+51. Generating Graphviz representation of design.
+Writing dot description to `/home/dinesha/workarea/efabless/MPW-10/caravel_openframe_project/openlane/openframe_project_wrapper/runs/23_10_14_22_26/tmp/synthesis/post_techmap.dot'.
+Dumping module openframe_project_wrapper to page 1.
+
+52. Executing SHARE pass (SAT-based resource sharing).
+
+53. Executing OPT pass (performing simple optimizations).
+
+53.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+53.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\openframe_project_wrapper'.
+Removed a total of 0 cells.
+
+53.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \openframe_project_wrapper..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+53.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \openframe_project_wrapper.
+Performed a total of 0 changes.
+
+53.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\openframe_project_wrapper'.
+Removed a total of 0 cells.
+
+53.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+53.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+53.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module openframe_project_wrapper.
+
+53.9. Finished OPT passes. (There is nothing left to do.)
+
+54. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+55. Printing statistics.
+
+=== openframe_project_wrapper ===
+
+   Number of wires:                 25
+   Number of wire bits:            873
+   Number of public wires:          25
+   Number of public wire bits:     873
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  3
+     picosoc                         1
+     vccd1_connection                1
+     vssd1_connection                1
+
+mapping tbuf
+
+56. Executing TECHMAP pass (map to technology primitives).
+
+56.1. Executing Verilog-2005 frontend: /pdk/sky130A/libs.tech/openlane/sky130_fd_sc_hd/tribuff_map.v
+Parsing Verilog input from `/pdk/sky130A/libs.tech/openlane/sky130_fd_sc_hd/tribuff_map.v' to AST representation.
+Generating RTLIL representation for module `\$_TBUF_'.
+Successfully finished Verilog frontend.
+
+56.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~3 debug messages>
+
+57. Executing SIMPLEMAP pass (map simple cells to gate primitives).
+
+58. Executing TECHMAP pass (map to technology primitives).
+
+58.1. Executing Verilog-2005 frontend: /pdk/sky130A/libs.tech/openlane/sky130_fd_sc_hd/latch_map.v
+Parsing Verilog input from `/pdk/sky130A/libs.tech/openlane/sky130_fd_sc_hd/latch_map.v' to AST representation.
+Generating RTLIL representation for module `\$_DLATCH_P_'.
+Generating RTLIL representation for module `\$_DLATCH_N_'.
+Successfully finished Verilog frontend.
+
+58.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~4 debug messages>
+
+59. Executing SIMPLEMAP pass (map simple cells to gate primitives).
+
+60. Executing DFFLIBMAP pass (mapping DFF cells to sequential cells from liberty file).
+  cell sky130_fd_sc_hd__dfxtp_2 (noninv, pins=3, area=21.27) is a direct match for cell type $_DFF_P_.
+  cell sky130_fd_sc_hd__dfrtp_2 (noninv, pins=4, area=26.28) is a direct match for cell type $_DFF_PN0_.
+  cell sky130_fd_sc_hd__dfstp_2 (noninv, pins=4, area=26.28) is a direct match for cell type $_DFF_PN1_.
+  cell sky130_fd_sc_hd__dfbbn_2 (noninv, pins=6, area=35.03) is a direct match for cell type $_DFFSR_NNN_.
+  final dff cell mappings:
+    unmapped dff cell: $_DFF_N_
+    \sky130_fd_sc_hd__dfxtp_2 _DFF_P_ (.CLK( C), .D( D), .Q( Q));
+    unmapped dff cell: $_DFF_NN0_
+    unmapped dff cell: $_DFF_NN1_
+    unmapped dff cell: $_DFF_NP0_
+    unmapped dff cell: $_DFF_NP1_
+    \sky130_fd_sc_hd__dfrtp_2 _DFF_PN0_ (.CLK( C), .D( D), .Q( Q), .RESET_B( R));
+    \sky130_fd_sc_hd__dfstp_2 _DFF_PN1_ (.CLK( C), .D( D), .Q( Q), .SET_B( R));
+    unmapped dff cell: $_DFF_PP0_
+    unmapped dff cell: $_DFF_PP1_
+    \sky130_fd_sc_hd__dfbbn_2 _DFFSR_NNN_ (.CLK_N( C), .D( D), .Q( Q), .Q_N(~Q), .RESET_B( R), .SET_B( S));
+    unmapped dff cell: $_DFFSR_NNP_
+    unmapped dff cell: $_DFFSR_NPN_
+    unmapped dff cell: $_DFFSR_NPP_
+    unmapped dff cell: $_DFFSR_PNN_
+    unmapped dff cell: $_DFFSR_PNP_
+    unmapped dff cell: $_DFFSR_PPN_
+    unmapped dff cell: $_DFFSR_PPP_
+
+60.1. Executing DFFLEGALIZE pass (convert FFs to types supported by the target).
+Mapping DFF cells in module `\openframe_project_wrapper':
+
+61. Printing statistics.
+
+=== openframe_project_wrapper ===
+
+   Number of wires:                 25
+   Number of wire bits:            873
+   Number of public wires:          25
+   Number of public wire bits:     873
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  3
+     picosoc                         1
+     vccd1_connection                1
+     vssd1_connection                1
+
+[INFO]: USING STRATEGY AREA 0
+
+62. Executing ABC pass (technology mapping using ABC).
+
+62.1. Extracting gate netlist of module `\openframe_project_wrapper' to `/tmp/yosys-abc-G31Zhc/input.blif'..
+Extracted 0 gates and 0 wires to a netlist network with 0 inputs and 0 outputs.
+Don't call ABC as there is nothing to map.
+Removing temp directory.
+
+63. Executing SETUNDEF pass (replace undef values with defined constants).
+
+64. Executing HILOMAP pass (mapping to constant drivers).
+
+65. Executing SPLITNETS pass (splitting up multi-bit signals).
+
+66. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \openframe_project_wrapper..
+
+67. Executing INSBUF pass (insert buffer cells for connected wires).
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$81: \gpio_loopback_zero [0] -> \gpio_analog_en [0]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$82: \gpio_loopback_zero [1] -> \gpio_analog_en [1]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$83: \gpio_loopback_zero [2] -> \gpio_analog_en [2]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$84: \gpio_loopback_zero [3] -> \gpio_analog_en [3]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$85: \gpio_loopback_zero [4] -> \gpio_analog_en [4]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$86: \gpio_loopback_zero [5] -> \gpio_analog_en [5]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$87: \gpio_loopback_zero [6] -> \gpio_analog_en [6]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$88: \gpio_loopback_zero [7] -> \gpio_analog_en [7]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$89: \gpio_loopback_zero [8] -> \gpio_analog_en [8]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$90: \gpio_loopback_zero [9] -> \gpio_analog_en [9]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$91: \gpio_loopback_zero [10] -> \gpio_analog_en [10]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$92: \gpio_loopback_zero [11] -> \gpio_analog_en [11]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$93: \gpio_loopback_zero [12] -> \gpio_analog_en [12]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$94: \gpio_loopback_zero [13] -> \gpio_analog_en [13]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$95: \gpio_loopback_zero [14] -> \gpio_analog_en [14]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$96: \gpio_loopback_zero [15] -> \gpio_analog_en [15]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$97: \gpio_loopback_zero [16] -> \gpio_analog_en [16]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$98: \gpio_loopback_zero [17] -> \gpio_analog_en [17]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$99: \gpio_loopback_zero [18] -> \gpio_analog_en [18]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$100: \gpio_loopback_zero [19] -> \gpio_analog_en [19]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$101: \gpio_loopback_zero [20] -> \gpio_analog_en [20]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$102: \gpio_loopback_zero [21] -> \gpio_analog_en [21]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$103: \gpio_loopback_zero [22] -> \gpio_analog_en [22]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$104: \gpio_loopback_zero [23] -> \gpio_analog_en [23]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$105: \gpio_loopback_zero [24] -> \gpio_analog_en [24]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$106: \gpio_loopback_zero [25] -> \gpio_analog_en [25]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$107: \gpio_loopback_zero [26] -> \gpio_analog_en [26]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$108: \gpio_loopback_zero [27] -> \gpio_analog_en [27]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$109: \gpio_loopback_zero [28] -> \gpio_analog_en [28]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$110: \gpio_loopback_zero [29] -> \gpio_analog_en [29]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$111: \gpio_loopback_zero [30] -> \gpio_analog_en [30]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$112: \gpio_loopback_zero [31] -> \gpio_analog_en [31]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$113: \gpio_loopback_zero [32] -> \gpio_analog_en [32]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$114: \gpio_loopback_zero [33] -> \gpio_analog_en [33]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$115: \gpio_loopback_zero [34] -> \gpio_analog_en [34]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$116: \gpio_loopback_zero [35] -> \gpio_analog_en [35]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$117: \gpio_loopback_zero [36] -> \gpio_analog_en [36]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$118: \gpio_loopback_zero [37] -> \gpio_analog_en [37]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$119: \gpio_loopback_zero [38] -> \gpio_analog_en [38]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$120: \gpio_loopback_zero [39] -> \gpio_analog_en [39]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$121: \gpio_loopback_zero [40] -> \gpio_analog_en [40]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$122: \gpio_loopback_zero [41] -> \gpio_analog_en [41]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$123: \gpio_loopback_zero [42] -> \gpio_analog_en [42]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$124: \gpio_loopback_zero [43] -> \gpio_analog_en [43]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$125: \gpio_loopback_zero [0] -> \gpio_analog_pol [0]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$126: \gpio_loopback_zero [1] -> \gpio_analog_pol [1]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$127: \gpio_loopback_zero [2] -> \gpio_analog_pol [2]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$128: \gpio_loopback_zero [3] -> \gpio_analog_pol [3]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$129: \gpio_loopback_zero [4] -> \gpio_analog_pol [4]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$130: \gpio_loopback_zero [5] -> \gpio_analog_pol [5]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$131: \gpio_loopback_zero [6] -> \gpio_analog_pol [6]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$132: \gpio_loopback_zero [7] -> \gpio_analog_pol [7]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$133: \gpio_loopback_zero [8] -> \gpio_analog_pol [8]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$134: \gpio_loopback_zero [9] -> \gpio_analog_pol [9]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$135: \gpio_loopback_zero [10] -> \gpio_analog_pol [10]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$136: \gpio_loopback_zero [11] -> \gpio_analog_pol [11]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$137: \gpio_loopback_zero [12] -> \gpio_analog_pol [12]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$138: \gpio_loopback_zero [13] -> \gpio_analog_pol [13]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$139: \gpio_loopback_zero [14] -> \gpio_analog_pol [14]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$140: \gpio_loopback_zero [15] -> \gpio_analog_pol [15]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$141: \gpio_loopback_zero [16] -> \gpio_analog_pol [16]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$142: \gpio_loopback_zero [17] -> \gpio_analog_pol [17]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$143: \gpio_loopback_zero [18] -> \gpio_analog_pol [18]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$144: \gpio_loopback_zero [19] -> \gpio_analog_pol [19]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$145: \gpio_loopback_zero [20] -> \gpio_analog_pol [20]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$146: \gpio_loopback_zero [21] -> \gpio_analog_pol [21]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$147: \gpio_loopback_zero [22] -> \gpio_analog_pol [22]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$148: \gpio_loopback_zero [23] -> \gpio_analog_pol [23]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$149: \gpio_loopback_zero [24] -> \gpio_analog_pol [24]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$150: \gpio_loopback_zero [25] -> \gpio_analog_pol [25]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$151: \gpio_loopback_zero [26] -> \gpio_analog_pol [26]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$152: \gpio_loopback_zero [27] -> \gpio_analog_pol [27]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$153: \gpio_loopback_zero [28] -> \gpio_analog_pol [28]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$154: \gpio_loopback_zero [29] -> \gpio_analog_pol [29]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$155: \gpio_loopback_zero [30] -> \gpio_analog_pol [30]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$156: \gpio_loopback_zero [31] -> \gpio_analog_pol [31]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$157: \gpio_loopback_zero [32] -> \gpio_analog_pol [32]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$158: \gpio_loopback_zero [33] -> \gpio_analog_pol [33]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$159: \gpio_loopback_zero [34] -> \gpio_analog_pol [34]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$160: \gpio_loopback_zero [35] -> \gpio_analog_pol [35]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$161: \gpio_loopback_zero [36] -> \gpio_analog_pol [36]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$162: \gpio_loopback_zero [37] -> \gpio_analog_pol [37]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$163: \gpio_loopback_zero [38] -> \gpio_analog_pol [38]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$164: \gpio_loopback_zero [39] -> \gpio_analog_pol [39]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$165: \gpio_loopback_zero [40] -> \gpio_analog_pol [40]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$166: \gpio_loopback_zero [41] -> \gpio_analog_pol [41]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$167: \gpio_loopback_zero [42] -> \gpio_analog_pol [42]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$168: \gpio_loopback_zero [43] -> \gpio_analog_pol [43]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$169: \gpio_loopback_zero [0] -> \gpio_analog_sel [0]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$170: \gpio_loopback_zero [1] -> \gpio_analog_sel [1]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$171: \gpio_loopback_zero [2] -> \gpio_analog_sel [2]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$172: \gpio_loopback_zero [3] -> \gpio_analog_sel [3]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$173: \gpio_loopback_zero [4] -> \gpio_analog_sel [4]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$174: \gpio_loopback_zero [5] -> \gpio_analog_sel [5]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$175: \gpio_loopback_zero [6] -> \gpio_analog_sel [6]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$176: \gpio_loopback_zero [7] -> \gpio_analog_sel [7]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$177: \gpio_loopback_zero [8] -> \gpio_analog_sel [8]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$178: \gpio_loopback_zero [9] -> \gpio_analog_sel [9]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$179: \gpio_loopback_zero [10] -> \gpio_analog_sel [10]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$180: \gpio_loopback_zero [11] -> \gpio_analog_sel [11]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$181: \gpio_loopback_zero [12] -> \gpio_analog_sel [12]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$182: \gpio_loopback_zero [13] -> \gpio_analog_sel [13]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$183: \gpio_loopback_zero [14] -> \gpio_analog_sel [14]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$184: \gpio_loopback_zero [15] -> \gpio_analog_sel [15]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$185: \gpio_loopback_zero [16] -> \gpio_analog_sel [16]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$186: \gpio_loopback_zero [17] -> \gpio_analog_sel [17]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$187: \gpio_loopback_zero [18] -> \gpio_analog_sel [18]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$188: \gpio_loopback_zero [19] -> \gpio_analog_sel [19]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$189: \gpio_loopback_zero [20] -> \gpio_analog_sel [20]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$190: \gpio_loopback_zero [21] -> \gpio_analog_sel [21]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$191: \gpio_loopback_zero [22] -> \gpio_analog_sel [22]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$192: \gpio_loopback_zero [23] -> \gpio_analog_sel [23]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$193: \gpio_loopback_zero [24] -> \gpio_analog_sel [24]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$194: \gpio_loopback_zero [25] -> \gpio_analog_sel [25]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$195: \gpio_loopback_zero [26] -> \gpio_analog_sel [26]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$196: \gpio_loopback_zero [27] -> \gpio_analog_sel [27]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$197: \gpio_loopback_zero [28] -> \gpio_analog_sel [28]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$198: \gpio_loopback_zero [29] -> \gpio_analog_sel [29]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$199: \gpio_loopback_zero [30] -> \gpio_analog_sel [30]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$200: \gpio_loopback_zero [31] -> \gpio_analog_sel [31]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$201: \gpio_loopback_zero [32] -> \gpio_analog_sel [32]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$202: \gpio_loopback_zero [33] -> \gpio_analog_sel [33]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$203: \gpio_loopback_zero [34] -> \gpio_analog_sel [34]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$204: \gpio_loopback_zero [35] -> \gpio_analog_sel [35]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$205: \gpio_loopback_zero [36] -> \gpio_analog_sel [36]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$206: \gpio_loopback_zero [37] -> \gpio_analog_sel [37]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$207: \gpio_loopback_zero [38] -> \gpio_analog_sel [38]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$208: \gpio_loopback_zero [39] -> \gpio_analog_sel [39]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$209: \gpio_loopback_zero [40] -> \gpio_analog_sel [40]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$210: \gpio_loopback_zero [41] -> \gpio_analog_sel [41]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$211: \gpio_loopback_zero [42] -> \gpio_analog_sel [42]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$212: \gpio_loopback_zero [43] -> \gpio_analog_sel [43]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$213: \gpio_loopback_zero [0] -> \gpio_holdover [0]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$214: \gpio_loopback_zero [1] -> \gpio_holdover [1]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$215: \gpio_loopback_zero [2] -> \gpio_holdover [2]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$216: \gpio_loopback_zero [3] -> \gpio_holdover [3]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$217: \gpio_loopback_zero [4] -> \gpio_holdover [4]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$218: \gpio_loopback_zero [5] -> \gpio_holdover [5]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$219: \gpio_loopback_zero [6] -> \gpio_holdover [6]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$220: \gpio_loopback_zero [7] -> \gpio_holdover [7]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$221: \gpio_loopback_zero [8] -> \gpio_holdover [8]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$222: \gpio_loopback_zero [9] -> \gpio_holdover [9]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$223: \gpio_loopback_zero [10] -> \gpio_holdover [10]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$224: \gpio_loopback_zero [11] -> \gpio_holdover [11]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$225: \gpio_loopback_zero [12] -> \gpio_holdover [12]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$226: \gpio_loopback_zero [13] -> \gpio_holdover [13]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$227: \gpio_loopback_zero [14] -> \gpio_holdover [14]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$228: \gpio_loopback_zero [15] -> \gpio_holdover [15]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$229: \gpio_loopback_zero [16] -> \gpio_holdover [16]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$230: \gpio_loopback_zero [17] -> \gpio_holdover [17]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$231: \gpio_loopback_zero [18] -> \gpio_holdover [18]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$232: \gpio_loopback_zero [19] -> \gpio_holdover [19]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$233: \gpio_loopback_zero [20] -> \gpio_holdover [20]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$234: \gpio_loopback_zero [21] -> \gpio_holdover [21]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$235: \gpio_loopback_zero [22] -> \gpio_holdover [22]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$236: \gpio_loopback_zero [23] -> \gpio_holdover [23]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$237: \gpio_loopback_zero [24] -> \gpio_holdover [24]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$238: \gpio_loopback_zero [25] -> \gpio_holdover [25]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$239: \gpio_loopback_zero [26] -> \gpio_holdover [26]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$240: \gpio_loopback_zero [27] -> \gpio_holdover [27]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$241: \gpio_loopback_zero [28] -> \gpio_holdover [28]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$242: \gpio_loopback_zero [29] -> \gpio_holdover [29]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$243: \gpio_loopback_zero [30] -> \gpio_holdover [30]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$244: \gpio_loopback_zero [31] -> \gpio_holdover [31]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$245: \gpio_loopback_zero [32] -> \gpio_holdover [32]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$246: \gpio_loopback_zero [33] -> \gpio_holdover [33]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$247: \gpio_loopback_zero [34] -> \gpio_holdover [34]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$248: \gpio_loopback_zero [35] -> \gpio_holdover [35]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$249: \gpio_loopback_zero [36] -> \gpio_holdover [36]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$250: \gpio_loopback_zero [37] -> \gpio_holdover [37]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$251: \gpio_loopback_zero [38] -> \gpio_holdover [38]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$252: \gpio_loopback_zero [39] -> \gpio_holdover [39]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$253: \gpio_loopback_zero [40] -> \gpio_holdover [40]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$254: \gpio_loopback_zero [41] -> \gpio_holdover [41]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$255: \gpio_loopback_zero [42] -> \gpio_holdover [42]
+Added openframe_project_wrapper.$auto$insbuf.cc:79:execute$256: \gpio_loopback_zero [43] -> \gpio_holdover [43]
+
+68. Executing CHECK pass (checking for obvious problems).
+Checking module openframe_project_wrapper...
+Found and reported 0 problems.
+
+69. Printing statistics.
+
+=== openframe_project_wrapper ===
+
+   Number of wires:                 25
+   Number of wire bits:            873
+   Number of public wires:          25
+   Number of public wire bits:     873
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                179
+     picosoc                         1
+     sky130_fd_sc_hd__buf_2        176
+     vccd1_connection                1
+     vssd1_connection                1
+
+   Area for cell type \picosoc is unknown!
+   Area for cell type \vccd1_connection is unknown!
+   Area for cell type \vssd1_connection is unknown!
+
+   Chip area for module '\openframe_project_wrapper': 880.844800
+
+70. Executing Verilog backend.
+
+70.1. Executing BMUXMAP pass.
+
+70.2. Executing DEMUXMAP pass.
+Dumping module `\openframe_project_wrapper'.
+
+End of script. Logfile hash: 0444b0843f, CPU: user 2.77s system 0.06s, MEM: 178.13 MB peak
+Yosys 0.22 (git sha1 f109fa3d4c5, gcc 8.3.1 -fPIC -Os)
+Time spent: 65% 17x read_verilog (1 sec), 9% 4x read_liberty (0 sec), ...

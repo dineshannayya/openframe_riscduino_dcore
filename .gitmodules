@@ -1,0 +1,18 @@
+[submodule "verilog/rtl/yifive/ycr2c"]
+	path = verilog/rtl/yifive/ycr2c
+	url = https://github.com/dineshannayya/ycr2c.git
+[submodule "verilog/rtl/qspim"]
+	path = verilog/rtl/qspim
+	url = https://github.com/dineshannayya/qspim.git
+[submodule "verilog/rtl/security_core"]
+	path = verilog/rtl/security_core
+	url = https://github.com/dineshannayya/security_core
+[submodule "verilog/rtl/fpu"]
+	path = verilog/rtl/fpu
+	url = https://github.com/dineshannayya/fpu
+[submodule "verilog/rtl/rtc"]
+	path = verilog/rtl/rtc
+	url = https://github.com/dineshannayya/rtc
+[submodule "verilog/rtl/riscduino_firmware"]
+	path = verilog/rtl/riscduino_firmware
+	url = https://github.com/dineshannayya/riscduino_firmware

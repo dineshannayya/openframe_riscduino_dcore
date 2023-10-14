@@ -1,0 +1,17 @@
+
+61. Printing statistics.
+
+=== openframe_project_wrapper ===
+
+   Number of wires:                 25
+   Number of wire bits:            873
+   Number of public wires:          25
+   Number of public wire bits:     873
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  3
+     picosoc                         1
+     vccd1_connection                1
+     vssd1_connection                1
+
