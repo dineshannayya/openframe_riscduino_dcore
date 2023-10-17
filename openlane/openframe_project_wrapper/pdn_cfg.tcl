@@ -1,21 +1,54 @@
-# Copyright 2020-2022 Efabless Corporation
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Power nets
+if { [info exists ::env(FP_PDN_ENABLE_GLOBAL_CONNECTIONS)] } {
+    if { $::env(FP_PDN_ENABLE_GLOBAL_CONNECTIONS) == 1 } {
+        foreach power_pin $::env(STD_CELL_POWER_PINS) {
+            add_global_connection \
+                -net $::env(VDD_NET) \
+                -inst_pattern .* \
+                -pin_pattern $power_pin \
+                -power
+        }
+        foreach ground_pin $::env(STD_CELL_GROUND_PINS) {
+            add_global_connection \
+                -net $::env(GND_NET) \
+                -inst_pattern .* \
+                -pin_pattern $ground_pin \
+                -ground
+        }
+    }
+}
 
-source $::env(SCRIPTS_DIR)/openroad/common/set_global_connections.tcl
-set_global_connections
+if { $::env(FP_PDN_ENABLE_MACROS_GRID) == 1 &&
+    [info exists ::env(FP_PDN_MACRO_HOOKS)]} {
+    set pdn_hooks [split $::env(FP_PDN_MACRO_HOOKS) ","]
+    foreach pdn_hook $pdn_hooks {
+        set instance_name [lindex $pdn_hook 0]
+        set power_net [lindex $pdn_hook 1]
+        set ground_net [lindex $pdn_hook 2]
+        set power_pin [lindex $pdn_hook 3]
+        set ground_pin [lindex $pdn_hook 4]
+
+        if { $power_pin == "" || $ground_pin == "" } {
+            puts "FP_PDN_MACRO_HOOKS missing power and ground pin names"
+            exit -1
+        }
+
+        add_global_connection \
+            -net $power_net \
+            -inst_pattern $instance_name \
+            -pin_pattern $power_pin \
+            -power
+
+        add_global_connection \
+            -net $ground_net \
+            -inst_pattern $instance_name \
+            -pin_pattern $ground_pin \
+            -ground
+    }
+}
 
 set secondary []
+
 foreach vdd $::env(VDD_NETS) gnd $::env(GND_NETS) {
     if { $vdd != $::env(VDD_NET)} {
         lappend secondary $vdd
@@ -51,40 +84,42 @@ if { $::env(DESIGN_IS_CORE) == 1 } {
         -name stdcell_grid \
         -starts_with POWER \
         -voltage_domain CORE \
-        -pins "$::env(FP_PDN_VERTICAL_LAYER) $::env(FP_PDN_HORIZONTAL_LAYER)"
+        -pins "$::env(FP_PDN_LOWER_LAYER) $::env(FP_PDN_UPPER_LAYER)"
 
     add_pdn_stripe \
         -grid stdcell_grid \
-        -layer $::env(FP_PDN_VERTICAL_LAYER) \
+        -layer $::env(FP_PDN_LOWER_LAYER) \
         -width $::env(FP_PDN_VWIDTH) \
         -pitch $::env(FP_PDN_VPITCH) \
         -offset $::env(FP_PDN_VOFFSET) \
         -spacing $::env(FP_PDN_VSPACING) \
+	    -nets "$::env(PDN_STRIPE)" \
         -starts_with POWER -extend_to_core_ring
 
     add_pdn_stripe \
         -grid stdcell_grid \
-        -layer $::env(FP_PDN_HORIZONTAL_LAYER) \
+        -layer $::env(FP_PDN_UPPER_LAYER) \
         -width $::env(FP_PDN_HWIDTH) \
         -pitch $::env(FP_PDN_HPITCH) \
         -offset $::env(FP_PDN_HOFFSET) \
         -spacing $::env(FP_PDN_HSPACING) \
+	-nets "$::env(PDN_STRIPE)" \
         -starts_with POWER -extend_to_core_ring
 
     add_pdn_connect \
         -grid stdcell_grid \
-        -layers "$::env(FP_PDN_VERTICAL_LAYER) $::env(FP_PDN_HORIZONTAL_LAYER)"
+        -layers "$::env(FP_PDN_LOWER_LAYER) $::env(FP_PDN_UPPER_LAYER)"
 } else {
     # Used if the design is a macro in the core
     define_pdn_grid \
         -name stdcell_grid \
         -starts_with POWER \
         -voltage_domain CORE \
-        -pins $::env(FP_PDN_VERTICAL_LAYER)
+        -pins $::env(FP_PDN_LOWER_LAYER)
 
     add_pdn_stripe \
         -grid stdcell_grid \
-        -layer $::env(FP_PDN_VERTICAL_LAYER) \
+        -layer $::env(FP_PDN_LOWER_LAYER) \
         -width $::env(FP_PDN_VWIDTH) \
         -pitch $::env(FP_PDN_VPITCH) \
         -offset $::env(FP_PDN_VOFFSET) \
@@ -95,14 +130,14 @@ if { $::env(DESIGN_IS_CORE) == 1 } {
 if { $::env(FP_PDN_ENABLE_RAILS) == 1 } {
     add_pdn_stripe \
         -grid stdcell_grid \
-        -layer $::env(FP_PDN_RAIL_LAYER) \
+        -layer $::env(FP_PDN_RAILS_LAYER) \
         -width $::env(FP_PDN_RAIL_WIDTH) \
         -followpins \
         -starts_with POWER
 
     add_pdn_connect \
         -grid stdcell_grid \
-        -layers "$::env(FP_PDN_RAIL_LAYER) $::env(FP_PDN_VERTICAL_LAYER)"
+        -layers "$::env(FP_PDN_RAILS_LAYER) $::env(FP_PDN_LOWER_LAYER)"
 }
 
 
@@ -110,19 +145,51 @@ if { $::env(FP_PDN_ENABLE_RAILS) == 1 } {
 if { $::env(FP_PDN_CORE_RING) == 1 } {
     add_pdn_ring \
         -grid stdcell_grid \
-        -layers "$::env(FP_PDN_VERTICAL_LAYER) $::env(FP_PDN_HORIZONTAL_LAYER)" \
+        -layers "$::env(FP_PDN_LOWER_LAYER) $::env(FP_PDN_UPPER_LAYER)" \
         -widths "$::env(FP_PDN_CORE_RING_VWIDTH) $::env(FP_PDN_CORE_RING_HWIDTH)" \
         -spacings "$::env(FP_PDN_CORE_RING_VSPACING) $::env(FP_PDN_CORE_RING_HSPACING)" \
         -core_offset "$::env(FP_PDN_CORE_RING_VOFFSET) $::env(FP_PDN_CORE_RING_HOFFSET)"
 }
+##################################
+# Common Macro Power Hook Up
+#   Power Connect met-4 to met-5
+##################################
 
 define_pdn_grid \
     -macro \
-    -default \
-    -name macro \
+    -name macro_1 \
+    -instances "u_pll u_intercon u_pinmux u_qspi_master u_tsram0_2kb u_icache_2kb u_dcache_2kb u_uart_i2c_usb_spi u_wb_host u_riscv_top.i_core_top_0 u_riscv_top.i_core_top_1 u_riscv_top.u_connect u_riscv_top.u_intf u_aes u_fpu u_peri" \
     -starts_with POWER \
     -halo "$::env(FP_PDN_HORIZONTAL_HALO) $::env(FP_PDN_VERTICAL_HALO)"
 
 add_pdn_connect \
-    -grid macro \
-    -layers "$::env(FP_PDN_VERTICAL_LAYER) $::env(FP_PDN_HORIZONTAL_LAYER)"
+    -grid macro_1 \
+    -layers "$::env(FP_PDN_LOWER_LAYER) $::env(FP_PDN_UPPER_LAYER)"
+
+##################################
+# u_rp_North & u_rp_south Power Hook Up
+#  Power connect met-3 to met-4
+##################################
+
+define_pdn_grid \
+    -macro \
+    -name macro_2 \
+    -instances "u_rp_south u_rp_north u_4x8bit_dac" \
+    -starts_with POWER \
+    -halo "$::env(FP_PDN_HORIZONTAL_HALO) $::env(FP_PDN_VERTICAL_HALO)"
+
+add_pdn_connect -grid macro_2 -layers "met3 met4"
+
+##################################
+# u_rp_east Power Hook Up
+#  Power connect met-3 to met-5
+##################################
+
+define_pdn_grid \
+    -macro \
+    -name macro_3 \
+    -instances "u_rp_east u_rp_west " \
+    -starts_with POWER \
+    -halo "$::env(FP_PDN_HORIZONTAL_HALO) $::env(FP_PDN_VERTICAL_HALO)"
+
+add_pdn_connect -grid macro_3 -layers "met3 met5"

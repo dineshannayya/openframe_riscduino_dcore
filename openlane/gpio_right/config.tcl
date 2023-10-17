@@ -19,7 +19,7 @@
 
 set script_dir [file dirname [file normalize [info script]]]
 # Name
-set ::env(DESIGN_NAME) bus_rep_west
+set ::env(DESIGN_NAME) gpio_right
 
 
 set ::env(DESIGN_IS_CORE) "1"
@@ -27,8 +27,7 @@ set ::env(FP_PDN_CORE_RING) {1}
 
 # Timing configuration
 set ::env(CLOCK_PERIOD) "10"
-set ::env(CLOCK_PORT) ""
-set ::env(CLOCK_NET) ""
+set ::env(CLOCK_PORT) "serial_clock_in"
 
 set ::env(SYNTH_MAX_FANOUT) 4
 set ::env(SYNTH_BUFFERING) {0}
@@ -45,31 +44,32 @@ set ::env(CLOCK_BUFFER_FANOUT) "8"
 
 # Local sources + no2usb sources
 set ::env(VERILOG_FILES) "\
-        $::env(DESIGN_DIR)/../../verilog/rtl/bus_rep/bus_rep_west.sv \
+        $::env(DESIGN_DIR)/../../verilog/rtl/gpio/src/gpio_right.sv \
+        $::env(DESIGN_DIR)/../../verilog/rtl/gpio/src/gpio_control_block.v \
 	"
 
 set ::env(SYNTH_DEFINES) [list SYNTHESIS ]
 
-set ::env(SYNTH_PARAMETERS) "BUS_REP_WD=42 "
+set ::env(SYNTH_PARAMETERS) "OPENFRAME_IO_PADS=15  "
 
 set ::env(SYNTH_READ_BLACKBOX_LIB) 1
-#set ::env(SDC_FILE) $::env(DESIGN_DIR)/base.sdc
-#set ::env(BASE_SDC_FILE) $::env(DESIGN_DIR)/base.sdc
+set ::env(SDC_FILE) $::env(DESIGN_DIR)/base.sdc
+set ::env(BASE_SDC_FILE) $::env(DESIGN_DIR)/base.sdc
 
 set ::env(LEC_ENABLE) 0
 
-set ::env(VDD_PIN) [list {vccd1}]
-set ::env(GND_PIN) [list {vssd1}]
+set ::env(VDD_PIN) [list {vccd}]
+set ::env(GND_PIN) [list {vssd}]
 
 
 # Floorplanning
 # -------------
 
 set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
-set ::env(MACRO_PLACEMENT_CFG) $::env(DESIGN_DIR)/macro.cfg
+#set ::env(MACRO_PLACEMENT_CFG) $::env(DESIGN_DIR)/macro.cfg
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 3250 50"
+set ::env(DIE_AREA) "2700 100 2900 4600"
 
 #set ::env(GRT_OBS) "met4  0 0 300 1725"
 
@@ -79,11 +79,10 @@ set ::env(RUN_CVC) 0
 #set ::env(PDN_CFG) $::env(DESIGN_DIR)/pdn.tcl
 
 
-
-set ::env(PL_TIME_DRIVEN) 1
+set ::env(GRT_ALLOW_CONGESTION) {0}
+set ::env(PL_TIME_DRIVEN) 0
 set ::env(PL_TARGET_DENSITY) "0.20"
 set ::env(CELL_PAD) "8"
-set ::env(GRT_ADJUSTMENT) 0.2
 
 # helps in anteena fix
 set ::env(USE_ARC_ANTENNA_CHECK) "0"
@@ -93,27 +92,23 @@ set ::env(USE_ARC_ANTENNA_CHECK) "0"
 set ::env(DIODE_INSERTION_STRATEGY) 4
 
 ## CTS
-set ::env(CLOCK_TREE_SYNTH) {0}
+set ::env(CLOCK_TREE_SYNTH) {1}
 
 ## Placement
-set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 0
-set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 0
-set ::env(PL_RESIZER_BUFFER_INPUT_PORTS) "0"
-set ::env(PL_RESIZER_BUFFER_OUTPUT_PORTS) "0"
+set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 1
+set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 1
+set ::env(PL_RESIZER_BUFFER_INPUT_PORTS) 1
+set ::env(PL_RESIZER_BUFFER_OUTPUT_PORTS) 1
 
 ## Routing
-set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) "0"
+set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) 1
 
 #LVS Issue - DEF Base looks to having issue
 set ::env(MAGIC_EXT_USE_GDS) {1}
 
 #set ::env(GLB_RT_MAXLAYER) 3
-set ::env(RT_MAX_LAYER) {met3}
-set ::env(FP_PDN_LOWER_LAYER) {met2}
-set ::env(FP_PDN_UPPER_LAYER) {met3}
+set ::env(RT_MAX_LAYER) {met4}
 
-set ::env(FP_IO_HLAYER) {met2}
-set ::env(FP_IO_VLAYER) {met1}
 
 #Lef 
 set ::env(MAGIC_GENERATE_LEF) {1}
