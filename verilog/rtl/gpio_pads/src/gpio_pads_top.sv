@@ -1,6 +1,6 @@
 
 
-module gpio_top #(
+module gpio_pads_top #(
 	parameter OPENFRAME_IO_PADS =9 
         ) (
 `ifdef USE_POWER_PINS

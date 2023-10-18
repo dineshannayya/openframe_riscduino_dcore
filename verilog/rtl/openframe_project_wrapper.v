@@ -532,9 +532,9 @@ wire        strap_qspi_sram        = system_strap[`STRAP_QSPI_SRAM];
 wire        strap_qspi_pre_sram    = system_strap[`STRAP_QSPI_PRE_SRAM];
 wire        strap_qspi_init_bypass = system_strap[`STRAP_QSPI_INIT_BYPASS];
 
-wire [37:0]                     io_out_int                   ;
-wire [37:0]                     io_oeb_int                   ;
-wire [37:0]                     io_in                        ;
+wire [43:0]                     user_gpio_out                        ;
+wire [43:0]                     user_gpio_oeb                        ;
+wire [43:0]                     user_gpio_in                         ;
 
 //--------------------------------------------------------------------------
 // Pinmux Risc core config
@@ -603,42 +603,81 @@ wire       riscv_wbclk;
 	(* keep *) vccd1_connection vccd1_connection ();
 	(* keep *) vssd1_connection vssd1_connection ();
 
+
+//-----------------------------------------------
+// GPIO daisy chain Serial control 
+//-----------------------------------------------
+
+wire   gpio_serial_clock             ;
+wire   gpio_serial_clock_left        ;
+wire   gpio_serial_clock_right       ;
+wire   gpio_serial_clock_top         ;
+wire   gpio_serial_clock_bottom      ;
+
+wire   gpio_serial_load              ;
+wire   gpio_serial_load_left         ;
+wire   gpio_serial_load_right        ;
+wire   gpio_serial_load_top          ;
+wire   gpio_serial_load_bottom       ;
+
+wire   gpio_serial_data              ;
+wire   gpio_serial_data_left         ;
+wire   gpio_serial_data_right        ;
+wire   gpio_serial_data_top          ;
+wire   gpio_serial_data_bottom       ;
+
+
 //-------------------------
 // 15 Right GPIO Pads
 //-------------------------
-gpio_right  #(
+gpio_pads_right  #(
 `ifndef SYNTHESIS
 	 .OPENFRAME_IO_PADS(15) 
 `endif
         ) u_gpio_right (
 `ifdef USE_POWER_PINS
-         .vccd         (vccd),    // User area 1 1.8V supply
-         .vssd         (vssd),    // User area 1 digital ground
+    .vccd                  (vccd                    ), // User area 1 1.8V supply
+    .vssd                  (vssd                    ), // User area 1 digital ground
 `endif
+    // Soc-facing signals
+    .resetn               (e_reset_n                ),// Global reset, locally propagated
+    .serial_clock_in      (gpio_serial_clock        ),// Global clock, locally propatated
+    .serial_clock_out     (gpio_serial_clock_right  ),
+    .serial_load_in       (gpio_serial_load         ),// Register load strobe
+    .serial_load_out      (gpio_serial_load_right   ),
+
+    // Serial data chain for pad configuration
+    .serial_data_in       (gpio_serial_data         ),
+    .serial_data_out      (gpio_serial_data_right   ),
+
+    // User-facing signals
+    .user_gpio_out        (user_gpio_out    [OPENFRAME_IO_RIGHT_PADS-1:0] ),// User space to pad
+    .user_gpio_oeb        (user_gpio_oeb    [OPENFRAME_IO_RIGHT_PADS-1:0] ),// Output enable (user)
+    .user_gpio_in         (user_gpio_in     [OPENFRAME_IO_RIGHT_PADS-1:0] ),// Pad to user space
 
     /* Basic bidirectional I/O.  Input gpio_in_h is in the 3.3V domain;  all
      * others are in the 1.8v domain.  OEB is output enable, sense inverted.
      */
-    .gpio_in              (gpio_in        [OPENFRAME_IO_RIGHT_PADS-1:0] ),
-    .gpio_in_h            (gpio_in_h      [OPENFRAME_IO_RIGHT_PADS-1:0] ),
-    .gpio_out             (gpio_out       [OPENFRAME_IO_RIGHT_PADS-1:0] ),
-    .gpio_oeb             (gpio_oeb       [OPENFRAME_IO_RIGHT_PADS-1:0] ),
-    .gpio_inp_dis         (gpio_inp_dis   [OPENFRAME_IO_RIGHT_PADS-1:0] ),	// a.k.a. ieb
+    .gpio_in              (gpio_in          [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_in_h            (gpio_in_h        [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_out             (gpio_out         [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_oeb             (gpio_oeb         [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_inp_dis         (gpio_inp_dis     [OPENFRAME_IO_RIGHT_PADS-1:0] ),	// a.k.a. ieb
 
     /* Pad configuration.  These signals are usually static values.
      * See the documentation for the sky130_fd_io__gpiov2 cell signals
      * and their use.
      */
-    .gpio_ib_mode_sel    (gpio_ib_mode_sel[OPENFRAME_IO_RIGHT_PADS-1:0]),
-    .gpio_vtrip_sel      (gpio_vtrip_sel  [OPENFRAME_IO_RIGHT_PADS-1:0]),
-    .gpio_slow_sel       (gpio_slow_sel   [OPENFRAME_IO_RIGHT_PADS-1:0]),
-    .gpio_holdover       (gpio_holdover   [OPENFRAME_IO_RIGHT_PADS-1:0]),
-    .gpio_analog_en      (gpio_analog_en  [OPENFRAME_IO_RIGHT_PADS-1:0]),
-    .gpio_analog_sel     (gpio_analog_sel [OPENFRAME_IO_RIGHT_PADS-1:0]),
-    .gpio_analog_pol     (gpio_analog_pol [OPENFRAME_IO_RIGHT_PADS-1:0]),
-    .gpio_dm2            (gpio_dm2        [OPENFRAME_IO_RIGHT_PADS-1:0]),
-    .gpio_dm1            (gpio_dm1        [OPENFRAME_IO_RIGHT_PADS-1:0]),
-    .gpio_dm0            (gpio_dm0        [OPENFRAME_IO_RIGHT_PADS-1:0]),
+    .gpio_ib_mode_sel     (gpio_ib_mode_sel [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_vtrip_sel       (gpio_vtrip_sel   [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_slow_sel        (gpio_slow_sel    [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_holdover        (gpio_holdover    [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_analog_en       (gpio_analog_en   [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_analog_sel      (gpio_analog_sel  [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_analog_pol      (gpio_analog_pol  [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_dm2             (gpio_dm2         [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_dm1             (gpio_dm1         [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_dm0             (gpio_dm0         [OPENFRAME_IO_RIGHT_PADS-1:0] ),
 
     /* These signals correct directly to the pad.  Pads using analog I/O
      * connections should keep the digital input and output buffers turned
@@ -648,30 +687,45 @@ gpio_right  #(
      * have basic over- and under-voltage protection at the pad.  These
      * signals may be expected to attenuate heavily above 50MHz.
      */
-    .analog_io          (analog_io        [OPENFRAME_IO_RIGHT_PADS-1:0]),
-    .analog_noesd_io    (analog_noesd_io  [OPENFRAME_IO_RIGHT_PADS-1:0]),
+    .analog_io            (analog_io        [OPENFRAME_IO_RIGHT_PADS-1:0]),
+    .analog_noesd_io      (analog_noesd_io  [OPENFRAME_IO_RIGHT_PADS-1:0]),
 
     /* These signals are constant one and zero in the 1.8V domain, one for
      * each GPIO pad, and can be looped back to the control signals on the
      * same GPIO pad to set a static configuration at power-up.
      */
-    .gpio_loopback_one  (gpio_loopback_one [OPENFRAME_IO_RIGHT_PADS-1:0]),
-    .gpio_loopback_zero (gpio_loopback_zero[OPENFRAME_IO_RIGHT_PADS-1:0])
+    .gpio_loopback_one    (gpio_loopback_one [OPENFRAME_IO_RIGHT_PADS-1:0]),
+    .gpio_loopback_zero   (gpio_loopback_zero[OPENFRAME_IO_RIGHT_PADS-1:0])
 
 
 );
 //-------------------------
 // 9 Right GPIO Pads
 //-------------------------
-gpio_top  #(
+gpio_pads_top  #(
 `ifndef SYNTHESIS
 	 .OPENFRAME_IO_PADS(9) 
 `endif
-        ) u_gpio_left (
+        ) u_gpio_top (
 `ifdef USE_POWER_PINS
-         .vccd         (vccd),    // User area 1 1.8V supply
-         .vssd         (vssd),    // User area 1 digital ground
+         .vccd            (vccd                     ),// User area 1 1.8V supply
+         .vssd            (vssd                     ),// User area 1 digital ground
 `endif
+    // Soc-facing signals
+    .resetn               (e_reset_n                ),// Global reset, locally propagated
+    .serial_clock_in      (gpio_serial_clock_right  ),// Global clock, locally propatated
+    .serial_clock_out     (gpio_serial_clock_top    ),
+    .serial_load_in       (gpio_serial_load_right   ),// Register load strobe
+    .serial_load_out      (gpio_serial_load_top     ),
+
+    // Serial data chain for pad configuration
+    .serial_data_in       (gpio_serial_data_right   ),
+    .serial_data_out      (gpio_serial_data_top     ),
+
+    // User-facing signals
+    .user_gpio_out        (user_gpio_out    [OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS] ),// User space to pad
+    .user_gpio_oeb        (user_gpio_oeb    [OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS] ),// Output enable (user)
+    .user_gpio_in         (user_gpio_in     [OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS] ),// Pad to user space
 
     /* Basic bidirectional I/O.  Input gpio_in_h is in the 3.3V domain;  all
      * others are in the 1.8v domain.  OEB is output enable, sense inverted.
@@ -712,8 +766,8 @@ gpio_top  #(
      * each GPIO pad, and can be looped back to the control signals on the
      * same GPIO pad to set a static configuration at power-up.
      */
-    .gpio_loopback_one  (gpio_loopback_one[OPENFRAME_IO_TOP_PADS-1:0]),
-    .gpio_loopback_zero (gpio_loopback_zero[OPENFRAME_IO_TOP_PADS-1:0])
+    .gpio_loopback_one  (gpio_loopback_one[OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS]),
+    .gpio_loopback_zero (gpio_loopback_zero[OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS])
 
 
 );
@@ -721,15 +775,30 @@ gpio_top  #(
 //-------------------------
 // 14 Right GPIO Pads
 //-------------------------
-gpio_left  #(
+gpio_pads_left  #(
 `ifndef SYNTHESIS
 	 .OPENFRAME_IO_PADS(14) 
 `endif
         ) u_gpio_left (
 `ifdef USE_POWER_PINS
-         .vccd         (vccd),    // User area 1 1.8V supply
-         .vssd         (vssd),    // User area 1 digital ground
+    .vccd                  (vccd                  ),// User area 1 1.8V supply
+    .vssd                  (vssd                  ),// User area 1 digital ground
 `endif
+    // Soc-facing signals
+    .resetn               (e_reset_n                 ),// Global reset, locally propagated
+    .serial_clock_in      (gpio_serial_clock_top  ),// Global clock, locally propatated
+    .serial_clock_out     (gpio_serial_clock_left ),
+    .serial_load_in       (gpio_serial_load_top   ),// Register load strobe
+    .serial_load_out      (gpio_serial_load_left  ),
+
+    // Serial data chain for pad configuration
+    .serial_data_in       (gpio_serial_data_top   ),
+    .serial_data_out      (gpio_serial_data_left  ),
+
+    // User-facing signals
+    .user_gpio_out        (user_gpio_out    [OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS] ),// User space to pad
+    .user_gpio_oeb        (user_gpio_oeb    [OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS] ),// Output enable (user)
+    .user_gpio_in         (user_gpio_in     [OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS] ),// Pad to user space
 
     /* Basic bidirectional I/O.  Input gpio_in_h is in the 3.3V domain;  all
      * others are in the 1.8v domain.  OEB is output enable, sense inverted.
@@ -770,8 +839,8 @@ gpio_left  #(
      * each GPIO pad, and can be looped back to the control signals on the
      * same GPIO pad to set a static configuration at power-up.
      */
-    .gpio_loopback_one  (gpio_loopback_one[OPENFRAME_IO_LEFT_PADS-1:0]),
-    .gpio_loopback_zero (gpio_loopback_zero[OPENFRAME_IO_LEFT_PADS-1:0])
+    .gpio_loopback_one  (gpio_loopback_one[OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS]),
+    .gpio_loopback_zero (gpio_loopback_zero[OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS])
 
 
 );
@@ -779,7 +848,7 @@ gpio_left  #(
 //-------------------------
 // 6 Bottom GPIO Pads
 //-------------------------
-gpio_bottom  #(
+gpio_pads_bottom  #(
 `ifndef SYNTHESIS
 	 .OPENFRAME_IO_PADS(6) 
 `endif
@@ -788,6 +857,22 @@ gpio_bottom  #(
          .vccd         (vccd),    // User area 1 1.8V supply
          .vssd         (vssd),    // User area 1 digital ground
 `endif
+
+    // Soc-facing signals
+    .resetn               (e_reset_n                   ),// Global reset, locally propagated
+    .serial_clock_in      (gpio_serial_clock_left      ),// Global clock, locally propatated
+    .serial_clock_out     (gpio_serial_clock_bottom    ),
+    .serial_load_in       (gpio_serial_load_left       ),// Register load strobe
+    .serial_load_out      (gpio_serial_load_bottom     ),
+
+    // Serial data chain for pad configuration
+    .serial_data_in       (gpio_serial_data_left       ),
+    .serial_data_out      (gpio_serial_data_bottom     ),
+
+    // User-facing signals
+    .user_gpio_out        (user_gpio_out    [OPENFRAME_IO_BOTTOM_PADS-1:OPENFRAME_IO_LEFT_PADS] ),// User space to pad
+    .user_gpio_oeb        (user_gpio_oeb    [OPENFRAME_IO_BOTTOM_PADS-1:OPENFRAME_IO_LEFT_PADS] ),// Output enable (user)
+    .user_gpio_in         (user_gpio_in     [OPENFRAME_IO_BOTTOM_PADS-1:OPENFRAME_IO_LEFT_PADS] ),// Pad to user space
 
     /* Basic bidirectional I/O.  Input gpio_in_h is in the 3.3V domain;  all
      * others are in the 1.8v domain.  OEB is output enable, sense inverted.
@@ -836,9 +921,8 @@ gpio_bottom  #(
 
 wire cfg_fast_sim;
 
-wire wb_clk_i = gpio_in[38];
-wire user_clock2 = gpio_in[38];
-wire wb_rst_i = ~resetb_l;
+wire wb_clk_i    = gpio_in[38];
+wire user_clock2 = gpio_in[39];
 
 /***********************************************
  Wishbone HOST
@@ -870,7 +954,7 @@ wb_host u_wb_host(
           .wbd_pll_rst_n           (wbd_pll_rst_n           ),
 
     // Master Port
-          .wbm_rst_i               (wb_rst_i                ),  
+          .ext_resetn              (porb_l                  ),  
           .wbm_clk_i               (wb_clk_i                ),  
 
     // Clock Skeq Adjust
@@ -1337,8 +1421,8 @@ wb_interconnect  #(
 	  .ch_clk_in              ({
                                      cpu_clk,
                                      cpu_clk,
-                                     cpu_clk }                  ),
-	  .ch_clk_out             ( cpu_clk_rp                         ),
+                                     cpu_clk }              ),
+	  .ch_clk_out             ( cpu_clk_rp                  ),
 	  .ch_data_in             ({
 			                      cfg_wcska_peri[3:0],
                                   cfg_ccska_fpu[3:0],
@@ -1633,9 +1717,9 @@ pinmux_top u_pinmux(
           .i2cm_intr          (i2cm_intr_o                  ),
 
        // Digital IO
-          .digital_io_out     (io_out_int                   ),
-          .digital_io_oen     (io_oeb_int                   ),
-          .digital_io_in      (io_in                        ),
+          .digital_io_out     (user_gpio_out                ),
+          .digital_io_oen     (user_gpio_oeb                ),
+          .digital_io_in      (user_gpio_in                 ),
 
        // SFLASH I/F
           .sflash_sck         (sflash_sck                   ),

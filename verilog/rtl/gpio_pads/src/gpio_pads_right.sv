@@ -1,6 +1,6 @@
 
 
-module gpio_right #(
+module gpio_pads_right #(
 	parameter OPENFRAME_IO_PADS =15 
         ) (
 `ifdef USE_POWER_PINS

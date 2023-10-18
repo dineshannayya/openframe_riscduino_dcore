@@ -17,9 +17,11 @@ $(USER_PROJECT_VERILOG)/rtl/user_reg_map.v
 -v $(USER_PROJECT_VERILOG)/rtl/pinmux/src/strap_ctrl.sv
 -v $(USER_PROJECT_VERILOG)/rtl/pinmux/src/glbl_rst_reg.sv
 -v $(USER_PROJECT_VERILOG)/rtl/pinmux/src/pseudorandom.sv
--v $(USER_PROJECT_VERILOG)/rtl/gpio/src/gpio_left.sv
--v $(USER_PROJECT_VERILOG)/rtl/gpio/src/gpio_right.sv
--v $(USER_PROJECT_VERILOG)/rtl/gpio/src/gpio_bottom.sv
+-v $(USER_PROJECT_VERILOG)/rtl/gpio_pads/src/gpio_pads_left.sv
+-v $(USER_PROJECT_VERILOG)/rtl/gpio_pads/src/gpio_pads_right.sv
+-v $(USER_PROJECT_VERILOG)/rtl/gpio_pads/src/gpio_pads_bottom.sv
+-v $(USER_PROJECT_VERILOG)/rtl/gpio_pads/src/gpio_pads_top.sv
+-v $(USER_PROJECT_VERILOG)/rtl/gpio_pads/src/gpio_control_block.v
 -v $(USER_PROJECT_VERILOG)/rtl/gpio/src/gpio_top.sv
 -v $(USER_PROJECT_VERILOG)/rtl/gpio/src/gpio_dglicth.sv
 -v $(USER_PROJECT_VERILOG)/rtl/gpio/src/gpio_intr.sv

@@ -73,9 +73,10 @@ set ::env(VERILOG_FILES_BLACKBOX) "\
 	    $::env(DESIGN_DIR)/../../verilog/gl/dac_top.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/aes_top.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/fpu_wrapper.v \
-	    $::env(DESIGN_DIR)/../../verilog/gl/gpio_left.v \
-	    $::env(DESIGN_DIR)/../../verilog/gl/gpio_right.v \
-	    $::env(DESIGN_DIR)/../../verilog/gl/gpio_bottom.v \
+	    $::env(DESIGN_DIR)/../../verilog/gl/gpio_pads_left.v \
+	    $::env(DESIGN_DIR)/../../verilog/gl/gpio_pads_right.v \
+	    $::env(DESIGN_DIR)/../../verilog/gl/gpio_pads_bottom.v \
+	    $::env(DESIGN_DIR)/../../verilog/gl/gpio_pads_top.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/peri_top.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/vccd1_connection.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/vssd1_connection.v \
@@ -95,9 +96,10 @@ set ::env(EXTRA_LEFS) "\
 	$lef_root/dac_top.lef \
 	$lef_root/aes_top.lef \
 	$lef_root/fpu_wrapper.lef \
-	$lef_root/gpio_left.lef \
-	$lef_root/gpio_right.lef \
-	$lef_root/gpio_bottom.lef \
+	$lef_root/gpio_pads_left.lef \
+	$lef_root/gpio_pads_right.lef \
+	$lef_root/gpio_pads_bottom.lef \
+	$lef_root/gpio_pads_top.lef \
 	$lef_root/peri_top.lef \
 	$lef_root/vccd1_connection.lef \
 	$lef_root/vssd1_connection.lef \
@@ -117,9 +119,10 @@ set ::env(EXTRA_GDS_FILES) "\
 	$::env(PDK_ROOT)/$::env(PDK)/libs.ref/sky130_sram_macros/gds/sky130_sram_2kbyte_1rw1r_32x512_8.gds \
 	$gds_root/aes_top.gds \
 	$gds_root/fpu_wrapper.gds \
-	$gds_root/gpio_left.gds \
-	$gds_root/gpio_right.gds \
-	$gds_root/gpio_bottom.gds \
+	$gds_root/gpio_pads_left.gds \
+	$gds_root/gpio_pads_right.gds \
+	$gds_root/gpio_pads_bottom.gds \
+	$gds_root/gpio_pads_top.gds \
 	$gds_root/peri_top.gds \
 	$gds_root/vccd1_connection.gds \
 	$gds_root/vssd1_connection.gds \
@@ -147,23 +150,8 @@ set ::env(FP_PDN_VPITCH) 80
 set ::env(FP_PDN_HPITCH) 80
 set ::env(FP_PDN_VOFFSET) 18.43
 set ::env(FP_PDN_HOFFSET) 22.83
-set ::env(FP_PDN_CORE_RING) 1
-set ::env(FP_PDN_CORE_RING_VWIDTH) 20
-set ::env(FP_PDN_CORE_RING_HWIDTH) 20
-set ::env(FP_PDN_CORE_RING_VOFFSET) -4
-set ::env(FP_PDN_CORE_RING_HOFFSET) -4
-set ::env(FP_PDN_CORE_RING_VSPACING) 2.4
-set ::env(FP_PDN_CORE_RING_HSPACING) 2.4
-set ::env(FP_PDN_VWIDTH) 6.4
-set ::env(FP_PDN_HWIDTH) 6.4
-set ::env(FP_PDN_HSPACING) 3.2
-set ::env(FP_PDN_VSPACING) 3.2
-set ::env(FP_SIZING) "absolute"
-set ::env(MAGIC_ZEROIZE_ORIGIN) 0
 
 
-set ::env(VDD_NETS) {vccd1 vccd2 vdda1 vdda2}
-set ::env(GND_NETS) {vssd1 vssd2 vssa1 vssa2}
 set ::env(VDD_NET) {vccd1}
 set ::env(GND_NET) {vssd1}
 set ::env(VDD_PIN) {vccd1}
@@ -172,7 +160,6 @@ set ::env(GND_PIN) {vssd1}
 set ::env(PDN_STRIPE) {vccd1 vdda1 vssd1 vssa1}
 set ::env(DRT_OPT_ITERS) {32}
 
-set ::env(DIE_AREA)  "0 0 3166.63 4766.630"
 set ::env(CORE_AREA) "40 40 3126.63 4726.630"
 
 set ::env(FP_PDN_MACRO_HOOKS) " \
@@ -193,10 +180,10 @@ set ::env(FP_PDN_MACRO_HOOKS) " \
 	u_4x8bit_dac                vccd1 vssd1 VCCD  VSSD,\
 	u_aes                       vccd1 vssd1 vccd1 vssd1,\
 	u_fpu                       vccd1 vssd1 vccd1 vssd1,\
-	u_rp_south                  vccd1 vssd1 vccd1 vssd1,\
-	u_rp_north                  vccd1 vssd1 vccd1 vssd1,\
-	u_rp_east                   vccd1 vssd1 vccd1 vssd1,\
-	u_rp_west                   vccd1 vssd1 vccd1 vssd1,\
+	u_gpio_right                vccd1 vssd1 vccd vssd,\
+	u_gpio_top                  vccd1 vssd1 vccd vssd,\
+	u_gpio_left                 vccd1 vssd1 vccd vssd,\
+	u_gpio_bottom               vccd1 vssd1 vccd vssd,\
 	u_peri                      vccd1 vssd1 vccd1 vssd1
       	"
 
