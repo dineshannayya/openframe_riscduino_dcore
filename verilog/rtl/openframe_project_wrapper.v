@@ -1028,15 +1028,6 @@ wire       cpu_clk_rp_pinmux = cpu_clk_rp[2];
 
 wire       riscv_wbclk;
 
-	/* All analog enable/select/polarity and holdover bits	*/
-	/* will not be handled in the picosoc module.  Tie	*/
-	/* each one of them off to the local loopback zero bit.	*/
-
-	assign gpio_analog_en = gpio_loopback_zero;
-	assign gpio_analog_pol = gpio_loopback_zero;
-	assign gpio_analog_sel = gpio_loopback_zero;
-	assign gpio_holdover = gpio_loopback_zero;
-
 	(* keep *) vccd1_connection vccd1_connection ();
 	(* keep *) vssd1_connection vssd1_connection ();
 
@@ -1073,8 +1064,8 @@ gpio_pads_right  #(
 `endif
         ) u_gpio_right (
 `ifdef USE_POWER_PINS
-    .vccd                  (vccd                    ), // User area 1 1.8V supply
-    .vssd                  (vssd                    ), // User area 1 digital ground
+    .vccd                  (vccd1                    ), // User area 1 1.8V supply
+    .vssd                  (vssd1                    ), // User area 1 digital ground
 `endif
     // Soc-facing signals
     .resetn               (e_reset_n                ),// Global reset, locally propagated
@@ -1145,8 +1136,8 @@ gpio_pads_top  #(
 `endif
         ) u_gpio_top (
 `ifdef USE_POWER_PINS
-         .vccd            (vccd                     ),// User area 1 1.8V supply
-         .vssd            (vssd                     ),// User area 1 digital ground
+         .vccd            (vccd1                     ),// User area 1 1.8V supply
+         .vssd            (vssd1                     ),// User area 1 digital ground
 `endif
     // Soc-facing signals
     .resetn               (e_reset_n                ),// Global reset, locally propagated
@@ -1218,8 +1209,8 @@ gpio_pads_left  #(
 `endif
         ) u_gpio_left (
 `ifdef USE_POWER_PINS
-    .vccd                  (vccd                  ),// User area 1 1.8V supply
-    .vssd                  (vssd                  ),// User area 1 digital ground
+    .vccd                  (vccd1                  ),// User area 1 1.8V supply
+    .vssd                  (vssd1                  ),// User area 1 digital ground
 `endif
     // Soc-facing signals
     .resetn               (e_reset_n                 ),// Global reset, locally propagated
@@ -1291,8 +1282,8 @@ gpio_pads_bottom  #(
 `endif
         ) u_gpio_bottom (
 `ifdef USE_POWER_PINS
-         .vccd         (vccd),    // User area 1 1.8V supply
-         .vssd         (vssd),    // User area 1 digital ground
+         .vccd         (vccd1),    // User area 1 1.8V supply
+         .vssd         (vssd1),    // User area 1 digital ground
 `endif
 
     // Soc-facing signals
@@ -2228,7 +2219,11 @@ pinmux_top u_pinmux(
 
           .ir_rx              (ir_rx                        ),
           .ir_tx              (ir_tx                        ),
-          .ir_intr            (ir_intr                      )
+          .ir_intr            (ir_intr                      ),
+
+          .gpio_serial_clock  (gpio_serial_clock            ),
+          .gpio_serial_load   (gpio_serial_load             ),
+          .gpio_serial_data   (gpio_serial_data             ),
 
    ); 
 

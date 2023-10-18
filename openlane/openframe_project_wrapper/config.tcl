@@ -128,7 +128,7 @@ set ::env(EXTRA_GDS_FILES) "\
 	$gds_root/vssd1_connection.gds \
 	"
 
-set ::env(SYNTH_DEFINES) [list PnR SYNTHESIS YCR_DBG_EN ]
+set ::env(SYNTH_DEFINES) [list PnR SYNTHESIS USE_POWER_PINS YCR_DBG_EN ]
 
 set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/includes ]
 
@@ -142,16 +142,30 @@ set ::env(SYNTH_USE_PG_PINS_DEFINES) "USE_POWER_PINS"
 ### Macro PDN Connections
 set ::env(RUN_IRDROP_REPORT) "1"
 ####################
-
-set ::env(FP_PDN_CHECK_NODES) 0
-set ::env(FP_PDN_ENABLE_RAILS) 1
+set ::env(FP_PDN_ENABLE_MACROS_GRID) {1}
+set ::env(FP_PDN_ENABLE_GLOBAL_CONNECTIONS) "0"
+set ::env(FP_PDN_CHECK_NODES) 1
+set ::env(FP_PDN_ENABLE_RAILS) 0
 
 set ::env(FP_PDN_VPITCH) 80
 set ::env(FP_PDN_HPITCH) 80
 set ::env(FP_PDN_VOFFSET) 18.43
 set ::env(FP_PDN_HOFFSET) 22.83
 
+set ::env(FP_PDN_CORE_RING) 1
+set ::env(FP_PDN_CORE_RING_VWIDTH) 20
+set ::env(FP_PDN_CORE_RING_HWIDTH) 20
+set ::env(FP_PDN_CORE_RING_VOFFSET) -4
+set ::env(FP_PDN_CORE_RING_HOFFSET) -4
+set ::env(FP_PDN_CORE_RING_VSPACING) 2.4
+set ::env(FP_PDN_CORE_RING_HSPACING) 2.4
+set ::env(FP_PDN_VWIDTH) 6.4
+set ::env(FP_PDN_HWIDTH) 6.4
+set ::env(FP_PDN_HSPACING) 3.2
+set ::env(FP_PDN_VSPACING) 3.2
 
+set ::env(VDD_NETS) {vccd1 vccd2 vdda1 vdda2}
+set ::env(GND_NETS) {vssd1 vssd2 vssa1 vssa2}
 set ::env(VDD_NET) {vccd1}
 set ::env(GND_NET) {vssd1}
 set ::env(VDD_PIN) {vccd1}
@@ -160,6 +174,8 @@ set ::env(GND_PIN) {vssd1}
 set ::env(PDN_STRIPE) {vccd1 vdda1 vssd1 vssa1}
 set ::env(DRT_OPT_ITERS) {32}
 
+set ::env(FP_SIZING) absolute
+set ::env(DIE_AREA) "0 0 3166.63 4766.630"
 set ::env(CORE_AREA) "40 40 3126.63 4726.630"
 
 set ::env(FP_PDN_MACRO_HOOKS) " \
@@ -180,10 +196,10 @@ set ::env(FP_PDN_MACRO_HOOKS) " \
 	u_4x8bit_dac                vccd1 vssd1 VCCD  VSSD,\
 	u_aes                       vccd1 vssd1 vccd1 vssd1,\
 	u_fpu                       vccd1 vssd1 vccd1 vssd1,\
-	u_gpio_right                vccd1 vssd1 vccd vssd,\
-	u_gpio_top                  vccd1 vssd1 vccd vssd,\
-	u_gpio_left                 vccd1 vssd1 vccd vssd,\
-	u_gpio_bottom               vccd1 vssd1 vccd vssd,\
+	u_gpio_right                vccd1 vssd1 vccd1 vssd1,\
+	u_gpio_top                  vccd1 vssd1 vccd1 vssd1,\
+	u_gpio_left                 vccd1 vssd1 vccd1 vssd1,\
+	u_gpio_bottom               vccd1 vssd1 vccd1 vssd1,\
 	u_peri                      vccd1 vssd1 vccd1 vssd1
       	"
 

@@ -69,7 +69,7 @@ set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 #set ::env(MACRO_PLACEMENT_CFG) $::env(DESIGN_DIR)/macro.cfg
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 180 4500"
+set ::env(DIE_AREA) "0 0 180 4250"
 
 #set ::env(GRT_OBS) "met4  0 0 300 1725"
 
