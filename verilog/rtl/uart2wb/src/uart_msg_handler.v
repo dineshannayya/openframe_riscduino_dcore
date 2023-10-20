@@ -45,6 +45,7 @@ module uart_msg_handler (
         reset_n ,
         sys_clk ,
         cfg_uart_enb,
+        cfg_uart_init_cmd,
 
 
     // UART-TX Information
@@ -95,6 +96,7 @@ module uart_msg_handler (
 input        reset_n               ; // line reset
 input        sys_clk               ; // line clock
 input        cfg_uart_enb          ;
+input        cfg_uart_init_cmd     ; // Enable Init Command
 
 
 //--------------------------------------
@@ -175,6 +177,7 @@ begin
       reg_wr        <= 1'b0; // Read request
       reg_be        <= 4'b0; // byte enable
       reg_wdata     <= 0;
+	  RxMsgCnt      <= 0;
       State         <= `POWERON_WAIT;
       NextState     <= `POWERON_WAIT;
       wait_cnt      <= 'h0;
@@ -187,10 +190,20 @@ begin
       `POWERON_WAIT: begin
          if(cfg_uart_enb) begin
            if(wait_cnt == 8'hff) begin
-	           State         <= `IDLE;
+               if(cfg_uart_init_cmd) begin // Enable Init command
+	               State         <= `IDLE;
+               end else begin
+	               RxMsgCnt      <= 0;
+	               State         <= `RX_CMD_PHASE;
+               end
            end else begin
                wait_cnt      <= wait_cnt+1;
            end
+         end else begin
+	       RxMsgCnt      <= 0;
+           wait_cnt      <= 'h0;
+           burst_cnt     <= 'h0;
+
          end
        end
       `IDLE: begin
@@ -206,7 +219,7 @@ begin
       //--------------------------------
       `IDLE_TX_MSG1: begin
 	   TxMsgBuf      <= "wm <ad> <data>\n "; // Align to 16 character format by appending space character 
-           TxMsgSize     <= 15;
+       TxMsgSize     <= 15;
 	   tx_data_avail <= 0;
 	   State         <= `TX_MSG;
 	   NextState     <= `IDLE_TX_MSG2;

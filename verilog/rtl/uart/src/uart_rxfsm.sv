@@ -139,85 +139,95 @@ always @(negedge reset_n or posedge baud_clk_16x) begin
       fifo_data <= 8'h0;
    end
    else begin
-      offset     <= offset + 1;
-      case(rxstate)
-       idle_st   : begin
-            fifo_wr <= 0;
-            if(!si && cfg_rx_enable) begin // Start indication
-               if(fifo_aval) begin
-                 rxstate   <=   xfr_start;
-                 cnt       <=   0;
-                 rxpos     <=   offset + 8; // Assign center rxoffset
-                 error_ind <= 2'b00;
+      if(cfg_rx_enable == 1'b0) begin
+         rxstate   <= 3'b0;
+         offset    <= 4'b0;
+         rxpos     <= 4'b0;
+         cnt       <= 3'b0;
+         error_ind <= 2'b0;
+         fifo_wr   <= 1'b0;
+         fifo_data <= 8'h0;
+      end else begin
+         offset     <= offset + 1;
+         case(rxstate)
+          idle_st   : begin
+               fifo_wr <= 0;
+               if(!si && cfg_rx_enable) begin // Start indication
+                  if(fifo_aval) begin
+                    rxstate   <=   xfr_start;
+                    cnt       <=   0;
+                    rxpos     <=   offset + 8; // Assign center rxoffset
+                    error_ind <= 2'b00;
+                  end
+                  else begin
+                     error_ind <= 2'b11; // fifo full error indication
+                  end
+               end else begin
+                  error_ind <= 2'b00; // Reset Error
                end
-               else begin
-                  error_ind <= 2'b11; // fifo full error indication
+            end
+         xfr_start : begin
+               // Make Sure that minimum 8 cycle low is detected
+               if(cnt < 7 && si) begin // Start indication
+                  rxstate <=   idle_st;
                end
-            end else begin
-               error_ind <= 2'b00; // Reset Error
+               else if(cnt == 7 && !si) begin // Start indication
+                   rxstate <=   xfr_data_st;
+                   cnt     <=   0;
+               end else begin
+                 cnt  <= cnt +1;
+               end
             end
-         end
-      xfr_start : begin
-            // Make Sure that minimum 8 cycle low is detected
-            if(cnt < 7 && si) begin // Start indication
-               rxstate <=   idle_st;
+         xfr_data_st : begin
+                if(rxpos == offset) begin
+                   fifo_data[cnt] <= si;
+                   cnt            <= cnt+1;
+                   if(cnt == 7) begin
+                      if(cfg_pri_mod == 2'b00)  // No Priority
+                          rxstate <=   xfr_stop_st1;
+                      else rxstate <= xfr_pri_st;  
+                   end
+                end
+             end
+          xfr_pri_st   : begin
+               if(rxpos == offset) begin
+                  if(cfg_pri_mod == 2'b10)  // even priority
+                     if( si != ^fifo_data) error_ind <= 2'b10;
+                  else  // Odd Priority
+                     if( si != ~(^fifo_data)) error_ind <= 2'b10;
+                  rxstate <=   xfr_stop_st1;
+               end
             end
-            else if(cnt == 7 && !si) begin // Start indication
-                rxstate <=   xfr_data_st;
-                cnt     <=   0;
-            end else begin
-              cnt  <= cnt +1;
-            end
-         end
-      xfr_data_st : begin
+          xfr_stop_st1  : begin
              if(rxpos == offset) begin
-                fifo_data[cnt] <= si;
-                cnt            <= cnt+1;
-                if(cnt == 7) begin
-                   if(cfg_pri_mod == 2'b00)  // No Priority
-                       rxstate <=   xfr_stop_st1;
-                   else rxstate <= xfr_pri_st;  
+                if(si) begin
+                  if(cfg_stop_bit) // Two Stop bit
+                     rxstate <=   xfr_stop_st2;
+                  else  begin  
+                     fifo_wr <= 1;
+                     rxstate <=   idle_st;
+                  end
+                end else begin // Framing error
+                   error_ind <= 2'b01;
+                   fifo_wr <= 1;
+                   rxstate   <=   idle_st;
                 end
              end
           end
-       xfr_pri_st   : begin
-            if(rxpos == offset) begin
-               if(cfg_pri_mod == 2'b10)  // even priority
-                  if( si != ^fifo_data) error_ind <= 2'b10;
-               else  // Odd Priority
-                  if( si != ~(^fifo_data)) error_ind <= 2'b10;
-               rxstate <=   xfr_stop_st1;
-            end
-         end
-       xfr_stop_st1  : begin
-          if(rxpos == offset) begin
-             if(si) begin
-               if(cfg_stop_bit) // Two Stop bit
-                  rxstate <=   xfr_stop_st2;
-               else  begin  
-                  fifo_wr <= 1;
-                  rxstate <=   idle_st;
-               end
-             end else begin // Framing error
-                error_ind <= 2'b01;
-                fifo_wr <= 1;
-                rxstate   <=   idle_st;
+          xfr_stop_st2  : begin
+             if(rxpos == offset) begin
+             fifo_wr <= 1;
+                if(si) begin
+                   rxstate <=   idle_st;
+                end else begin // Framing error
+                   error_ind <= 2'b01;
+                   rxstate   <=   idle_st;
+                end
              end
           end
+          default: rxstate   <=   idle_st;
+          endcase
        end
-       xfr_stop_st2  : begin
-          if(rxpos == offset) begin
-          fifo_wr <= 1;
-             if(si) begin
-                rxstate <=   idle_st;
-             end else begin // Framing error
-                error_ind <= 2'b01;
-                rxstate   <=   idle_st;
-             end
-          end
-       end
-       default: rxstate   <=   idle_st;
-    endcase
    end
 end
 

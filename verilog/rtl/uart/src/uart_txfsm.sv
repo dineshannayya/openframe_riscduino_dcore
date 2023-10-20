@@ -129,60 +129,69 @@ begin
       divcnt   <= 4'b0;
    end
    else begin
-      divcnt <= divcnt+1;
-      if(divcnt == 4'b0000) begin // Do at once in 16 clock
-         case(txstate)
-          idle_st      : begin
-               if(!fifo_empty && cfg_tx_enable) begin
-                  so       <= 1'b0 ; // Start bit
-                  cnt      <= 3'b0;
-                  fifo_rd  <= 1'b1;
-                  txdata   <= fifo_data;
-                  txstate  <= xfr_data_st;  
+      if(cfg_tx_enable == 1'b0) begin
+           txstate  <= idle_st;
+           so       <= 1'b1;
+           cnt      <= 3'b0;
+           txdata   <= 8'h0;
+           fifo_rd  <= 1'b0;
+           divcnt   <= 4'b0;
+      end else begin
+         divcnt <= divcnt+1;
+         if(divcnt == 4'b0000) begin // Do at once in 16 clock
+            case(txstate)
+             idle_st      : begin
+                  if(!fifo_empty && cfg_tx_enable) begin
+                     so       <= 1'b0 ; // Start bit
+                     cnt      <= 3'b0;
+                     fifo_rd  <= 1'b1;
+                     txdata   <= fifo_data;
+                     txstate  <= xfr_data_st;  
+                  end
                end
-            end
 
-          xfr_data_st  : begin
-              fifo_rd  <= 1'b0;
-              so   <= txdata[cnt];
-              cnt  <= cnt+1;
-              if(cnt == 7) begin
-                 if(cfg_pri_mod == 2'b00) begin // No Priority
-                    txstate  <= xfr_stop_st1;  
-                 end
-                 else begin
-                    txstate <= xfr_pri_st;  
+             xfr_data_st  : begin
+                 fifo_rd  <= 1'b0;
+                 so   <= txdata[cnt];
+                 cnt  <= cnt+1;
+                 if(cnt == 7) begin
+                    if(cfg_pri_mod == 2'b00) begin // No Priority
+                       txstate  <= xfr_stop_st1;  
+                    end
+                    else begin
+                       txstate <= xfr_pri_st;  
+                    end
                  end
               end
-           end
 
-          xfr_pri_st   : begin
-               if(cfg_pri_mod == 2'b10)  // even priority
-                   so <= ^txdata;
-               else begin // Odd Priority
-                   so <= ~(^txdata);
+             xfr_pri_st   : begin
+                  if(cfg_pri_mod == 2'b10)  // even priority
+                      so <= ^txdata;
+                  else begin // Odd Priority
+                      so <= ~(^txdata);
+                  end
+                  txstate  <= xfr_stop_st1;  
                end
-               txstate  <= xfr_stop_st1;  
-            end
 
-          xfr_stop_st1  : begin // First Stop Bit
-               so <= 1;
-               if(cfg_stop_bit == 0)  // 1 Stop Bit
-                    txstate <= idle_st;
-               else // 2 Stop Bit 
-                  txstate  <= xfr_stop_st2;
-            end
+             xfr_stop_st1  : begin // First Stop Bit
+                  so <= 1;
+                  if(cfg_stop_bit == 0)  // 1 Stop Bit
+                       txstate <= idle_st;
+                  else // 2 Stop Bit 
+                     txstate  <= xfr_stop_st2;
+               end
 
-          xfr_stop_st2  : begin // Second Stop Bit
-               so <= 1;
-               txstate <= idle_st;
-            end
-         default: txstate  <= idle_st;
-         endcase
+             xfr_stop_st2  : begin // Second Stop Bit
+                  so <= 1;
+                  txstate <= idle_st;
+               end
+            default: txstate  <= idle_st;
+            endcase
+         end
+         else begin
+            fifo_rd  <= 1'b0;
+         end
       end
-     else begin
-        fifo_rd  <= 1'b0;
-     end
    end
 end
 

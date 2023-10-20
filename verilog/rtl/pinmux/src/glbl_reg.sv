@@ -48,7 +48,7 @@ module glbl_reg (
 	                   input logic             p_reset_n              ,  // power-on reset
                        input logic             s_reset_n              ,  // soft reset
 
-                       input logic [15:0]      pad_strap_in           , // strap from pad
+                       input logic [7:0]      pad_strap_in           , // strap from pad
 
                        input logic            user_clock1            ,
                        input logic            user_clock2            ,
@@ -120,7 +120,7 @@ module glbl_reg (
 // Internal Wire Declarations
 //-----------------------------------------------------------------------
 
-logic [15:0]    strap_latch           ;
+logic [7:0]    strap_latch           ;
 logic          sw_rd_en               ;
 logic          sw_wr_en;
 logic [4:0]    sw_addr; // addressing 16 registers
@@ -541,7 +541,7 @@ strap_ctrl u_strap (
          );
 
 
-assign  reg_12 = {16'h0,strap_latch};
+assign  reg_12 = {24'h0,strap_latch};
 assign  reg_13 = strap_sticky;
 assign  reg_14 = system_strap;
 

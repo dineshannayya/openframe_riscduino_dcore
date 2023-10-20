@@ -58,39 +58,29 @@ clk_enb       XXXXXXXXX_____________________________________________|
 s_reset_n      XXXXXXXXX________________________________________________________|
 
 pad_strap_in decoding
-     bit[1:0] - System Clock Source Selection for wbs/riscv
-                 00 - User clock1  (Default)
-                 01 - User clock2 
-                 10 - Internal PLL
-                 11 - Xtal
-     bit[3:2] - Clock Division for wbs/riscv
-                 00 - 0 Div (Default)
-                 01 - 2 Div
-                 10 - 4 Div
-                 11 - 8 Div
-     bit [4]   - uart master config control
+     bit[0] - System Clock Source Selection for wbs/riscv
+                 0 - User clock1  (Default)
+                 1 - User clock2 
+     bit [1]   - uart master config control
                  1'b0   - Auto Detect (Default)
                  1'b1   - load from LA
-     bit [5]   - QSPI SRAM Mode Selection
+     bit [2]   - QSPI SRAM Mode Selection
                  1'b0 - Single 
                  1'b1 - Quad   (Default)
-     bit [7:6] - QSPI Fash Mode Selection
+     bit [4:3] - QSPI Fash Mode Selection
                  2'b00 - Single 
                  2'b01 - Double
                  2'b10 - Quad   (Default)
                  2'b11 - QDDR
-     bit [8]   - Riscv Reset control
+     bit [5]   - Riscv Reset control
                  0 - Keep Riscv on Reset
                  1 - Removed Riscv on Power On Reset (Default)
-     bit [9]   - Riscv Cache Bypass
+     bit [6]   - Riscv Cache Bypass
                  0 - Cache Enable
                  1 - Bypass cache (Default
-     bit [10]  - Riscv SRAM clock edge selection
+     bit [7]    - Strap Mode
                  0 - Normal
-                 1 - Invert (Default)
-     bit [11]    - Strap Mode
-                   0 - Normal
-                   1 - Pick Default Value
+                 1 - Pick Default Value
 
 system strap decoding
      bit[1:0] - System Clock Source Selection for wbs
@@ -144,14 +134,14 @@ module strap_ctrl (
 	         input logic        p_reset_n           ,  // power-on reset
 	         input logic        s_reset_n           ,  // soft reset
 
-             input logic [15:0] pad_strap_in        , // strap from pad
+             input logic [7:0] pad_strap_in        , // strap from pad
 	         //List of Inputs
 	         input logic        cs                  ,
 	         input logic [3:0]  we                  ,		 
 	         input logic [31:0] data_in             ,
 	         
 	         //List of Outs
-             output logic [15:0] strap_latch         ,
+             output logic [7:0] strap_latch         ,
 	         output logic [31:0] strap_sticky        
 
          );
@@ -161,10 +151,10 @@ module strap_ctrl (
 // Strap Mapping
 //----------------------------------------------
 logic [31:0] strap_map;
-logic [14:0] pstrap_select;
+logic [7:0] pstrap_select;
 
 // Pad Strap selection based on strap mode
-assign pstrap_select = (strap_latch[11] == 1'b1) ?  PSTRAP_DEFAULT_VALUE : strap_latch[10:0];
+assign pstrap_select = (strap_latch[7] == 1'b1) ?  PSTRAP_DEFAULT_VALUE : strap_latch[7:0];
 
 assign strap_map = {
                    1'b0               ,   // bit[31]      - Soft Reboot Request - Need to double sync to local clock
@@ -177,16 +167,16 @@ assign strap_map = {
                    2'b00 ,                // bit[19:18]   - cfg_cska_wh Skew selection
                    2'b00 ,                // bit[17:16]   - cfg_cska_wi Skew selection
                    1'b0                 , // bit[15]      - Reserved
-                   pstrap_select[10]    , // bit[14]      - Riscv SRAM clock edge selection
-                   pstrap_select[9]     , // bit[13]      - Riscv Cache Bypass
-                   pstrap_select[8]     , // bit[12]      - Riscv Reset control
-                   pstrap_select[7:6]   , // bit[11:10]   - QSPI FLASH Mode Selection CS#0
-                   pstrap_select[5]     , // bit[9]       - QSPI SRAM Mode Selection CS#2
-                   pstrap_select[4]     , // bit[8]       - Uart Master Config
-                   pstrap_select[3:2]   , // bit[7:6]     - riscv clock div
-                   pstrap_select[1:0]   , // bit[5:4]     - riscv clock source sel
-                   pstrap_select[3:2]   , // bit[3:2]     - wbs clock division
-                   pstrap_select[1:0]     // bit[1:0]     - wbs clock source sel
+                   1'b1                 , // bit[14]      - Riscv SRAM clock edge selection
+                   pstrap_select[6]     , // bit[13]      - Riscv Cache Bypass
+                   pstrap_select[5]     , // bit[12]      - Riscv Reset control
+                   pstrap_select[4:3]   , // bit[11:10]   - QSPI FLASH Mode Selection CS#0
+                   pstrap_select[2]     , // bit[9]       - QSPI SRAM Mode Selection CS#2
+                   pstrap_select[1]     , // bit[8]       - Uart Master Config
+                   2'b00                , // bit[7:6]     - riscv clock div
+                   1'b0,pstrap_select[0], // bit[5:4]     - riscv clock source sel
+                   2'b00                , // bit[3:2]     - wbs clock division
+                   1'b0,pstrap_select[0]  // bit[1:0]     - wbs clock source sel
                    };
 
 

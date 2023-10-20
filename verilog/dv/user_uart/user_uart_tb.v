@@ -153,7 +153,7 @@ begin
    //wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
    // Enable UART Multi Functional Ports
-   //wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_MUTI_FUNC,'h100);
+   //`SPIM_REG_WRITE(`ADDR_SPACE_GLBL+`GLBL_CFG_MUTI_FUNC,'h100);
    
    repeat (2) @(posedge clock);
    #1;

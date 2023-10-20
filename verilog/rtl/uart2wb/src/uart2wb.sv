@@ -68,6 +68,7 @@ module uart2wb (
         input wire                  app_clk         , //  sys clock    
 
 	// configuration control
+       input wire                  cfg_uart_init_cmd, // Enable Tx Init command
        input wire                  cfg_auto_det     , // Auto Baud Config detect mode
        input wire                  cfg_tx_enable    , // Enable Transmit Path
        input wire                  cfg_rx_enable    , // Enable Received Path
@@ -246,6 +247,7 @@ uart_msg_handler u_msg (
           .reset_n            (line_reset_n ) ,
           .sys_clk            (baud_clk_16x ) ,
           .cfg_uart_enb       (cfg_tx_enable_i),
+          .cfg_uart_init_cmd  (cfg_uart_init_cmd),
 
 
     // UART-TX Information

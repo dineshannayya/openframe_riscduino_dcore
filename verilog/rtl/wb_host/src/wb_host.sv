@@ -209,6 +209,7 @@ logic               wb_err_int            ; // error
 logic               arst_n                ;
 logic               soft_reboot           ;
 logic               clk_enb               ;
+logic [31:0]        cfg_uartm             ; // UART Master config
 
 assign	  e_reset_n              = wbm_rst_n ;  // sync external reset
 assign    cfg_strap_pad_ctrl     = !p_reset_n;
@@ -273,18 +274,19 @@ wbh_reset_fsm u_reset_fsm (
 //      so we are subtracting desired count by 2
 // strap_uartm
 //     1'b0 - Auto Baud Detect
-//     1'b1 - Load from LA
+//     1'b1 - Reguster Config
 //-------------------------------------------------
 
 assign     strap_uartm           = system_strap[`STRAP_UARTM_CFG];
 
-wire       cfg_uartm_tx_enable   = (strap_uartm==1'b1) ? 1'b0     : 1'b1;
-wire       cfg_uartm_rx_enable   = (strap_uartm==1'b1) ? 1'b0     : 1'b1;
-wire       cfg_uartm_tx_stop_bit = (strap_uartm==1'b1) ? 1'b0     : 1'b1;
-wire       cfg_uartm_rx_stop_bit = (strap_uartm==1'b1) ? 1'b0     : 1'b0;
-wire [1:0] cfg_uartm_cfg_pri_mod = (strap_uartm==1'b1) ? 1'b0   : 2'b0;
-wire [11:0]cfg_uart_baud_16x     = (strap_uartm==1'b0) ? 'h0: 'h0;
-wire       cfg_uartm_aut_det     = (strap_uartm==1'b0) ? 1'b1: 1'b0;
+wire [11:0]cfg_uart_baud_16x     = (strap_uartm==1'b1) ? cfg_uartm[11:0]   : 'h0;
+wire       cfg_uartm_tx_enable   = (strap_uartm==1'b1) ? cfg_uartm[12]     : 1'b1;
+wire       cfg_uartm_rx_enable   = (strap_uartm==1'b1) ? cfg_uartm[13]     : 1'b1;
+wire       cfg_uartm_tx_stop_bit = (strap_uartm==1'b1) ? cfg_uartm[14]     : 1'b1;
+wire       cfg_uartm_rx_stop_bit = (strap_uartm==1'b1) ? cfg_uartm[15]     : 1'b0;
+wire [1:0] cfg_uartm_cfg_pri_mod = (strap_uartm==1'b1) ? cfg_uartm[17:16]  : 2'b0;
+wire       cfg_uartm_aut_det     = (strap_uartm==1'b1) ? cfg_uartm[18]     : 1'b1;
+wire       cfg_uart_init_cmd     = (strap_uartm==1'b1) ? cfg_uartm[19]     : 1'b0;
 
 
 
@@ -294,6 +296,7 @@ uart2wb u_uart2wb (
         .app_clk         (wbm_clk_i               ), //  sys clock    
 
 	// configuration control
+       .cfg_uart_init_cmd(cfg_uart_init_cmd       ),
        .cfg_auto_det     (cfg_uartm_aut_det       ), // Auto Baud Value detect
        .cfg_tx_enable    (cfg_uartm_tx_enable     ), // Enable Transmit Path
        .cfg_rx_enable    (cfg_uartm_rx_enable     ), // Enable Received Path
@@ -483,7 +486,8 @@ wbh_reg  u_reg (
                .cfg_clk_skew_ctrl1 (cfg_clk_skew_ctrl1  ),
                .cfg_clk_skew_ctrl2 (cfg_clk_skew_ctrl2  ),
 
-               .cfg_fast_sim       (cfg_fast_sim   )
+               .cfg_fast_sim       (cfg_fast_sim   ),
+               .cfg_uartm          (cfg_uartm      )       
     );
 
 

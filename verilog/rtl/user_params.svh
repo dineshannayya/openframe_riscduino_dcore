@@ -11,55 +11,43 @@ parameter CHIP_REVISION   = 32'h0006_1500;
 parameter CLK_SKEW1_RESET_VAL = 32'b0110_0000_0011_0110_0101_1000_1101_1100;
 parameter CLK_SKEW2_RESET_VAL = 32'b0010_1000_1000_1000_0111_0110_1011_1101;
 
-parameter PSTRAP_DEFAULT_VALUE = 11'b011_1010_0000;
+parameter PSTRAP_DEFAULT_VALUE = 8'b0111_0000;
 
 /*****************************************************
 pad_strap_in decoding
-     bit[1:0] - System Clock Source Selection for wbs/riscv
-                 00 - User clock1 (Default)
-                 01 - User clock2 
-                 10 - Internal PLL
-                 11 - Xtal
-     bit[3:2] - Clock Division for wbs/riscv
-                 00 - 0 Div       (Default)
-                 01 - 2 Div       
-                 10 - 4 Div
-                 11 - 8 Div
-     bit [4]   - uart master config control
+     bit[0] - System Clock Source Selection for wbs/riscv
+                 0 - User clock1 (Default)
+                 1 - User clock2 
+     bit [1]   - uart master config control
                  1'b0   - Auto Detect (Default)
                  1'b1   - load from LA
-     bit [5]   - QSPI SRAM Mode Selection
+     bit [2]   - QSPI SRAM Mode Selection
                  1'b0 - Single    
                  1'b1 - Quad      (Default)
-     bit [7:6] - QSPI Fash Mode Selection
+     bit [4:3] - QSPI Fash Mode Selection
                  2'b00 - Single   
                  2'b01 - Double
                  2'b10 - Quad     (Default
                  2'b11 - QDDR
-     bit [8]   - Riscv Reset control
+     bit [5]   - Riscv Reset control
                  0 - Keep Riscv on Reset
                  1 - Removed Riscv on Power On Reset (Default)
-     bit [9]   - Riscv Cache Bypass
+     bit [6]   - Riscv Cache Bypass
                  0 - Cache Enable
                  1 - Bypass cache  (Default)
-     bit [10]  - Riscv SRAM clock edge selection
-                 0 - Normal      (Default)
-                 1 - Invert        
-     bit[11]   - Strap Mode
-                0 - [14:0] loaded from pad
+     bit[7]   - Strap Mode
+                0 - [7:0] loaded from pad
                 1 - Default reset value loaded
                     PSTRAP_DEFAULT_VALUE
 ****************************************************/
 
-`define PSTRAP_CLK_SRC             1:0
-`define PSTRAP_CLK_DIV             3:2
-`define PSTRAP_UARTM_CFG           4
-`define PSTRAP_QSPI_SRAM           5
-`define PSTRAP_QSPI_FLASH          7:6
-`define PSTRAP_RISCV_RESET_MODE    8
-`define PSTRAP_RISCV_CACHE_BYPASS  9
-`define PSTRAP_RISCV_SRAM_CLK_EDGE 10
-`define PSTRAP_DEFAULT_VALUE       11
+`define PSTRAP_CLK_SRC             0
+`define PSTRAP_UARTM_CFG           1
+`define PSTRAP_QSPI_SRAM           2
+`define PSTRAP_QSPI_FLASH          4:3
+`define PSTRAP_RISCV_RESET_MODE    5
+`define PSTRAP_RISCV_CACHE_BYPASS  6
+`define PSTRAP_DEFAULT_VALUE       7
 
 /************************************************************
 system strap decoding

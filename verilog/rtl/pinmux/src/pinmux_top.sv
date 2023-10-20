@@ -253,7 +253,7 @@ module pinmux_top (
 
 logic         s_reset_ssn;  // Sync Reset
 logic         p_reset_ssn;  // Sync Reset
-logic [15:0]  pad_strap_in;
+logic [7:0]  pad_strap_in;
 logic         dbg_clk_mon;
 logic         cfg_gpio_dgmode; // gpio de-glitch mode
 logic         pwm_intr;   

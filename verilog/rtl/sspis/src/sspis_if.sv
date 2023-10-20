@@ -278,7 +278,6 @@ begin
                 spi_if_st <= idle_st;
              end else if (sck_pdetect) begin
                 if (bitcnt   == 6'b000111) begin
-                   reg_rd     <= 1'b0;
                    bitcnt     <= 6'b0;
                    sdout_oen  <= 1'b0;
                    spi_if_st  <= rd_st;
@@ -289,6 +288,7 @@ begin
           end
 
           rd_st : begin // Send Data to SPI 
+             if(reg_ack) reg_rd     <= 1'b0;
              if (ssn_ss == 1'b1) begin
                 spi_if_st <= idle_st;
              end else if (sck_pdetect) begin

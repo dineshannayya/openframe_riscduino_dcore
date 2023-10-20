@@ -466,6 +466,7 @@
 
 ************************************************************************/
 `define OPENFRAME_IO_PADS 44
+
 `include "user_params.svh"
 
 module openframe_project_wrapper (
@@ -1349,8 +1350,8 @@ gpio_pads_bottom  #(
 
 wire cfg_fast_sim;
 
-wire wb_clk_i    = gpio_in[38];
-wire user_clock2 = gpio_in[39];
+wire wb_clk_i    = gpio_in[41];
+wire user_clock2 = gpio_in[42];
 
 /***********************************************
  Wishbone HOST
@@ -1468,7 +1469,14 @@ ycr2_top_wb u_riscv_top (
           .rst_n                   (wbd_int_rst_n              ),
           .cpu_intf_rst_n          (cpu_intf_rst_n             ),
           .cpu_core_rst_n          (cpu_core_rst_n[1:0]        ),
+
+         `ifdef YCR_SERIAL_DEBUG
+          .serial_riscv_debug_sync(                            ),
+          .serial_riscv_debug_data(                            ),
+          `else
+
           .riscv_debug             (riscv_debug                ),
+          `endif
           .core_debug_sel          (cfg_riscv_debug_sel        ),
 	      .cfg_sram_lphase         (cfg_riscv_sram_lphase      ),
 	      .cfg_cache_ctrl          (cfg_riscv_cache_ctrl       ),
@@ -2223,7 +2231,7 @@ pinmux_top u_pinmux(
 
           .gpio_serial_clock  (gpio_serial_clock            ),
           .gpio_serial_load   (gpio_serial_load             ),
-          .gpio_serial_data   (gpio_serial_data             ),
+          .gpio_serial_data   (gpio_serial_data             )
 
    ); 
 

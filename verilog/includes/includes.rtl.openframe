@@ -1,6 +1,7 @@
 # Caravel user project includes
 +define+UNIT_DELAY=#0.2
 +define+YCR_DBG_EN
++define+YCR_SERIAL_DEBUG
 +incdir+$(USER_PROJECT_VERILOG)/rtl/
 +incdir+$(USER_PROJECT_VERILOG)/rtl/i2cm/src/includes
 +incdir+$(USER_PROJECT_VERILOG)/rtl/usb1_host/src/includes
@@ -150,6 +151,7 @@ $(USER_PROJECT_VERILOG)/rtl/user_reg_map.v
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/lib/ycr_arb.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/lib/ycr_clk_gate1.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/lib/ycr_clk_gate2.sv
+-v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/lib/ycr_serial_debug.sv
 
 $(USER_PROJECT_VERILOG)/rtl/security_core/verilog/rtl/aes128/core/aes_sbox.sv			    
 $(USER_PROJECT_VERILOG)/rtl/security_core/verilog/rtl/aes128/core/aes_rcon.sv			    

@@ -64,7 +64,9 @@ module wbh_reg  (
                        output logic [31:0]   cfg_clk_skew_ctrl1 ,
                        output logic [31:0]   cfg_clk_skew_ctrl2 ,
 
-                       output logic          cfg_fast_sim       
+                       output logic          cfg_fast_sim       ,
+
+                       output logic [31:0]   cfg_uartm      
     );
 
 logic [2:0]         sw_addr               ;
@@ -136,6 +138,7 @@ begin
     3'b001 :   reg_out [31:0] = {16'h0,cfg_bank_sel [15:0]};     
     3'b010 :   reg_out [31:0] = cfg_clk_skew_ctrl1 [31:0];    
     3'b011 :   reg_out [31:0] = cfg_clk_skew_ctrl2[31:0];    
+    3'b100 :   reg_out [31:0] = cfg_uartm[31:0];    
     3'b101 :   reg_out [31:0] = system_strap [31:0];     
     default : reg_out [31:0] = 'h0;
   endcase
@@ -223,6 +226,19 @@ always @ (posedge mclk or negedge p_reset_n ) begin
   end
 end
 
+//-----------------------------------------------
+// reg-4: Uart Master Control
+//     
+//-----------------------------------------------
+generic_register #(32,'h0 ) u_uartm_ctrl (
+	      .we            ({32{sw_wr_en_4}}   ),		 
+	      .data_in       (reg_wdata[31:0]    ),
+	      .reset_n       (e_reset_n         ),
+	      .clk           (mclk         ),
+	      
+	      //List of Outs
+	      .data_out      (cfg_uartm )
+          );
 //-------------------------------------------------------------
 // Note: system_strap reset (p_reset_n) will be released
 //     eariler than s_reset_n to take care of strap loading

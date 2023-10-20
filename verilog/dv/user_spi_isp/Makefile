@@ -51,24 +51,24 @@ vvp:  ${PATTERN:=.vvp}
 %.vvp: %_tb.v
 ifeq ($(SIM),RTL)
    ifeq ($(DUMP),OFF)
-	iverilog -g2012 -DFUNCTIONAL -DYCR_SERIAL_DEBUG -DSIM -I $(PDK_PATH) \
+	iverilog -g2012 -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.lib  \
 	$< -o $@ 
     else  
-	iverilog -g2012 -DWFDUMP -DYCR_SERIAL_DEBUG -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
+	iverilog -g2012 -DWFDUMP -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.lib  \
 	$< -o $@ 
    endif
 else  
    ifeq ($(DUMP),OFF)
-	iverilog -g2012 -DFUNCTIONAL -DYCR_SERIAL_DEBUG -DUSE_POWER_PINS -DGL -I $(PDK_PATH) \
+	iverilog -g2012 -DFUNCTIONAL -DUSE_POWER_PINS -DGL -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.lib \
 	$< -o $@ 
     else  
-	iverilog -g2012 -DWFDUMP -DYCR_SERIAL_DEBUG -DFUNCTIONAL -DUSE_POWER_PINS -DGL -I $(PDK_PATH) \
+	iverilog -g2012 -DWFDUMP -DFUNCTIONAL -DUSE_POWER_PINS -DGL -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.lib \
 	$< -o $@ 

@@ -67,7 +67,7 @@ set ::env(GND_PIN) [list {vssd1}]
 ## Floorplan
 set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 650 625 "
+set ::env(DIE_AREA) "0 0 600 625 "
 #set ::env(CELL_PAD) "8"
 set ::env(GRT_ADJUSTMENT) {0.2}
 
