@@ -640,22 +640,22 @@ always_comb begin
 
      //Pin-17       PB3/WS[3]/MOSI/OC2A(PWM5) digital_io[11]
      if(cfg_spim_enb)                digital_io_oen[11]  = 1'b1; // SPIM MOSI (Input)
+     else if(spis_boot)              digital_io_oen[11]  = 1'b0; // SPIS MISO (Output)
      else if(cfg_pwm_enb[5])         digital_io_oen[11]  = 1'b0;
      else if(cfg_port_b_port_type[3])digital_io_oen[11]  = 1'b0;
      else if(cfg_port_b_dir_sel[3])  digital_io_oen[11]  = 1'b0;
-     else if(spis_boot)              digital_io_oen[11]  = 1'b0; // SPIS MISO (Output)
 
      //Pin-18       PB4/WS[3]/MISO         digital_io[12]
      if(cfg_spim_enb)                digital_io_oen[12]  = 1'b0; // SPIM MISO (Output) 
+     else if(spis_boot)              digital_io_oen[12]  = 1'b1; // SPIS MOSI (Input)
      else if(cfg_port_b_port_type[4])digital_io_oen[12]  = 1'b0;
      else if(cfg_port_b_dir_sel[4])  digital_io_oen[12]  = 1'b0;
-     else if(spis_boot)              digital_io_oen[12]  = 1'b1; // SPIS MOSI (Input)
 
      //Pin-19       PB5/SCK             strap[5] digital_io[13]
      if(cfg_strap_pad_ctrl)          digital_io_oen[13]  = 1'b1;
      else if(cfg_spim_enb)           digital_io_oen[13]  = 1'b0; // SPIM SCK (Output)
-     else if(cfg_port_b_dir_sel[5])  digital_io_oen[13]  = 1'b0;
      else if(spis_boot)              digital_io_oen[13]  = 1'b1; // SPIS SCK (Input)
+     else if(cfg_port_b_dir_sel[5])  digital_io_oen[13]  = 1'b0;
      
      //Pin-23       PC0/ADC0    digital_io[16]/analog_io[11]
      if(cfg_port_c_dir_sel[0])       digital_io_oen[16]  = 1'b0;

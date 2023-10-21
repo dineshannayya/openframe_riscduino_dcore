@@ -3,6 +3,7 @@
 `define SPIM_REG_BE_WRITE       `TB_TOP.u_bfm_spim.reg_be_wr_dword           // Reg Write with Byte Enable
 `define SPIM_REG_READ           `TB_TOP.u_bfm_spim.reg_rd_dword              // Reg Read
 `define SPIM_REG_CHECK          `TB_TOP.u_bfm_spim.reg_rd_dword_cmp          // Reg Read and compare
+`define SPIM_REG_MASK_CHECK     `TB_TOP.u_bfm_spim.reg_rd_dword_mask_cmp     // Reg Read , Mask and compare
 `define SPIM_REG_READ_RWAIT     `TB_TOP.u_bfm_spim.reg_rd_dword_rwait        // Reg Read with readback wait
 `define SPIM_REG_CHECK_RWAIT    `TB_TOP.u_bfm_spim.reg_rd_dword_cmp_rwait    // Reg Read and compare with readback wait
 
@@ -81,7 +82,10 @@ always #(XTAL_PERIOD/2) xtal_clk <= (xtal_clk === 1'b0);
 
 assign io_in[41] = clock;
 assign io_in[42] = clock2;
+
+`ifndef GPIO_TEST
 assign io_in[14] = xtal_clk;
+`endif
 
 //-----------------------------------------
 // Variable Initiatlization
@@ -245,6 +249,8 @@ generate
     end
 endgenerate
 
+`ifdef GL
+
  // Add Non Strap with pull-up to avoid unkown propagation during gate sim 
  pullup(io_in[0]); 
  pullup(io_in[1]); 
@@ -281,7 +287,7 @@ endgenerate
  pullup(io_in[41]); 
  pullup(io_in[42]); 
 
-
+`endif
 
 //-----------------------------------------
 // DUT Instatiation
@@ -357,7 +363,7 @@ wire     sdo;
 wire     sd_oen;
 
 
-assign io_in[22] = (io_oeb[22]  == 1'b1) ? 1'b0 : 1'b0;
+assign io_in[22] = 1'b0;
 assign io_in[13] = (io_oeb[13] == 1'b1) ? sclk : 1'b0;
 assign io_in[12] = (io_oeb[12] == 1'b1) ? sdi  : 1'b0;
 assign sdo       = (io_oeb[11] == 1'b0) ? io_out[11] : 1'b0;

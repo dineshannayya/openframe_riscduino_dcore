@@ -214,6 +214,39 @@ end
 endtask
 
 //-----------------------------
+// Reg Read 32 Bit, Mask compare
+//-----------------------------
+task reg_rd_dword_mask_cmp;
+input [31:0] addr;
+input [31:0] mask_dword;
+input [31:0] exp_dword;
+reg [31:0] addr;
+reg [31:0] dword;
+integer i;
+begin
+
+  set_spi_sel_n;
+  send_cmd(8'h10);
+  send_dword(addr);
+  send_byte(8'h0); // Dummy byte
+  receive_dword(dword);
+
+  if ((exp_dword & mask_dword) !== (dword & mask_dword) )
+  begin
+    $display("ERROR: At time %t: SPI READ FAILED ADDR: %x EXP = %x RXD : %x ",$time,addr,exp_dword & mask_dword,dword & mask_dword);
+    -> error_detected;
+   `TB_TOP.test_fail = 1;
+
+  end else begin
+    $display("STATUS: At time %t: SPI READ ADDR: %x RXD : %x ",$time,addr,dword & mask_dword);
+
+  end
+
+  reset_spi_sel_n;
+end
+endtask
+
+//-----------------------------
 // Reg Read 32 Bit compare with Readback wait
 //-----------------------------
 task reg_rd_dword_cmp_rwait;

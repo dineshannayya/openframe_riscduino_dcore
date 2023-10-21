@@ -128,7 +128,7 @@ set ::env(EXTRA_GDS_FILES) "\
 	$gds_root/vssd1_connection.gds \
 	"
 
-set ::env(SYNTH_DEFINES) [list PnR SYNTHESIS USE_POWER_PINS YCR_DBG_EN ]
+set ::env(SYNTH_DEFINES) [list PnR SYNTHESIS USE_POWER_PINS YCR_DBG_EN YCR_SERIAL_DEBUG ]
 
 set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/includes ]
 
