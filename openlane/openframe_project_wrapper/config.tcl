@@ -171,6 +171,8 @@ set ::env(GND_NET) {vssd1}
 set ::env(VDD_PIN) {vccd1}
 set ::env(GND_PIN) {vssd1}
 
+set ::env(FP_TEMPLATE_PINS) { vccd1 vssd1 vccd vssd vccd2 vssd2 vssa vdda vssa1 vdda1 vssa2 vdda2 vddio vssio }
+
 set ::env(PDN_STRIPE) {vccd1 vdda1 vssd1 vssa1}
 set ::env(DRT_OPT_ITERS) {32}
 

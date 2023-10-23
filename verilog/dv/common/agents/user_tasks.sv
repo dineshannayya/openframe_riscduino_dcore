@@ -1,4 +1,6 @@
 
+`ifndef DISABLE_SSPIM
+
 `define SPIM_REG_WRITE          `TB_TOP.u_bfm_spim.reg_wr_dword              // Reg Write
 `define SPIM_REG_BE_WRITE       `TB_TOP.u_bfm_spim.reg_be_wr_dword           // Reg Write with Byte Enable
 `define SPIM_REG_READ           `TB_TOP.u_bfm_spim.reg_rd_dword              // Reg Read
@@ -7,7 +9,7 @@
 `define SPIM_REG_READ_RWAIT     `TB_TOP.u_bfm_spim.reg_rd_dword_rwait        // Reg Read with readback wait
 `define SPIM_REG_CHECK_RWAIT    `TB_TOP.u_bfm_spim.reg_rd_dword_cmp_rwait    // Reg Read and compare with readback wait
 
-
+`endif
 
 /***********************************************
 
@@ -352,6 +354,8 @@ openframe_project_wrapper u_top(
     .gpio_loopback_one (),
     .gpio_loopback_zero()
 );
+
+`ifndef DISABLE_SSPIM
 //--------------------------------------------------
 // SPI Slave to Manage the boot up configuration
 //--------------------------------------------------
@@ -379,7 +383,9 @@ bfm_spim  u_bfm_spim (
 
 
 
+`endif
 
+`ifndef  DISABLE_SSPIM
 
 `ifdef RISC_BOOT // RISCV Based Test case
 //-------------------------------------------
@@ -439,6 +445,8 @@ begin
 
 end
 endtask
+
+`endif
 
 `endif
 

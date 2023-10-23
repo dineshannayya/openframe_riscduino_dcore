@@ -33,6 +33,7 @@ reg	        spi_clk;
 reg	        spi_sel_n;
 reg         spi_din;
 reg         error_ind;
+reg         busy;
 
 event       error_detected;
 integer     err_cnt;
@@ -45,6 +46,7 @@ spi_sel_n = 1;
 spi_din = 0;
 error_ind = 0;
 err_cnt = 0;
+busy = 0;
 
 end
 
@@ -53,6 +55,7 @@ begin
    spi_clk=1;
    spi_sel_n=1;
    spi_din=1;  
+   busy = 0;
 end
 endtask
 
@@ -66,17 +69,17 @@ end
 
 task set_spi_sel_n;
 begin
-  #10;
+  #`TB_SPI_CLK_PW;
   spi_sel_n=0;
-  #100;
+  #`TB_SPI_CLK_PW;
 end
 endtask
 
 task reset_spi_sel_n;
 begin
-  #10;
+  #`TB_SPI_CLK_PW;
   spi_sel_n=1;
-  #100;
+  #`TB_SPI_CLK_PW;
 end
 endtask
 
@@ -93,7 +96,8 @@ input [31:0] dword;
 reg [31:0]   addr;
 reg [31:0]   dword;
 begin
-
+  wait(busy == 0); // To manage two thread
+  busy = 1;
   set_spi_sel_n;
   send_cmd(8'h2F);
   send_dword(addr);
@@ -103,6 +107,7 @@ begin
   $display("STATUS: At time %t: SPI WRITE : ADDR = %h DATA = %h ", $time, addr, dword);
 
   reset_spi_sel_n;
+  busy = 0;
 
 end
 endtask
@@ -116,6 +121,8 @@ reg [31:0]   addr;
 reg [31:0]   dword;
 begin
 
+  wait(busy == 0); // To manage two thread
+  busy = 1;
   set_spi_sel_n;
   send_cmd({4'h2, be[3:0]});
   send_dword(addr);
@@ -125,6 +132,7 @@ begin
   $display("STATUS: At time %t: SPI WRITE : ADDR = %h DATA = %h Byte Enable: %h ", $time, addr, dword,be);
 
   reset_spi_sel_n;
+  busy = 0;
 
 end
 endtask
@@ -140,6 +148,8 @@ reg [31:0] dword;
 integer i;
 begin
 
+  wait(busy == 0); // To manage two thread
+  busy = 1;
   set_spi_sel_n;
   send_cmd(8'h10);
   send_dword(addr);
@@ -149,6 +159,7 @@ begin
   $display("STATUS: At time %t: SPI READ :addr = %h data = %h ", $time, addr, dword);
 
   reset_spi_sel_n;
+  busy = 0;
 end
 endtask
 
@@ -164,6 +175,8 @@ reg [31:0] dword;
 integer i;
 begin
 
+  wait(busy == 0); // To manage two thread
+  busy = 1;
   set_spi_sel_n;
   send_cmd(8'h10);
   send_dword(addr);
@@ -178,6 +191,7 @@ begin
   $display("STATUS: At time %t: SPI READ :addr = %h data = %h ", $time, addr, dword);
 
   reset_spi_sel_n;
+  busy = 0;
 end
 endtask
 
@@ -192,6 +206,8 @@ reg [31:0] dword;
 integer i;
 begin
 
+  wait(busy == 0); // To manage two thread
+  busy = 1;
   set_spi_sel_n;
   send_cmd(8'h10);
   send_dword(addr);
@@ -210,6 +226,7 @@ begin
   end
 
   reset_spi_sel_n;
+  busy = 0;
 end
 endtask
 
@@ -225,6 +242,8 @@ reg [31:0] dword;
 integer i;
 begin
 
+  wait(busy == 0); // To manage two thread
+  busy = 1;
   set_spi_sel_n;
   send_cmd(8'h10);
   send_dword(addr);
@@ -243,6 +262,7 @@ begin
   end
 
   reset_spi_sel_n;
+  busy = 0;
 end
 endtask
 
@@ -258,6 +278,8 @@ reg [31:0] dword;
 integer i;
 begin
 
+  wait(busy == 0); // To manage two thread
+  busy = 1;
   set_spi_sel_n;
   send_cmd(8'h10);
   send_dword(addr);
@@ -281,6 +303,7 @@ begin
   end
 
   reset_spi_sel_n;
+  busy = 0;
 end
 endtask
 

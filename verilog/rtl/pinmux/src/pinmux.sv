@@ -499,10 +499,10 @@ always_comb begin
      else if(cfg_port_b_dir_sel[2])  digital_io_out[10]  = port_b_out[2];
 
      //Pin-17       PB3/MOSI/WS[3]/OC2A(PWM5) digital_io[11]
-     if(cfg_pwm_enb[5])              digital_io_out[11]  = pwm_wfm[5];
+     if(spis_boot)                     digital_io_out[11]  = spis_miso;   // SPIM MOSI (Input) = SPIS MISO (Output)
+     else if(cfg_pwm_enb[5])           digital_io_out[11]  = pwm_wfm[5];
      else if(cfg_port_b_port_type[3])  digital_io_out[11]  = ws_txd[3];
-     else if(cfg_port_b_dir_sel[3])  digital_io_out[11]  = port_b_out[3];
-     else if(spis_boot)              digital_io_out[11]  = spis_miso;   // SPIM MOSI (Input) = SPIS MISO (Output)
+     else if(cfg_port_b_dir_sel[3])    digital_io_out[11]  = port_b_out[3];
 
      //Pin-18       PB4/WS[3]/MISO            digital_io[12]
      if(cfg_spim_enb)                digital_io_out[12]  = spim_miso;   // SPIM MISO (Output) = SPIS MOSI (Input)
