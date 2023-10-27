@@ -14,6 +14,8 @@ module sky130_sram_2kbyte_1rw1r_32x512_8(
     clk1,csb1,addr1,dout1
   );
 
+/// sta-blackbox
+
   parameter NUM_WMASKS = 4 ;
   parameter DATA_WIDTH = 32 ;
   parameter ADDR_WIDTH = 9 ;

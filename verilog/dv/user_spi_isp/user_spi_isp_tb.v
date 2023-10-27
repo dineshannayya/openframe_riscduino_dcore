@@ -66,9 +66,10 @@
 `timescale 1 ns / 1 ps
 
 `include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
-`include "bfm_spim.v"
 
 `define TB_TOP user_spi_isp_tb
+
+`include "bfm_spim.v"
 
 module `TB_TOP;
 

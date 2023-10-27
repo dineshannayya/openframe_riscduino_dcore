@@ -474,9 +474,11 @@ module openframe_project_wrapper (
     inout vdda,		// User area 0 3.3V supply
     inout vdda1,	// User area 1 3.3V supply
     inout vdda2,	// User area 2 3.3V supply
+    inout vddio,    // Caravel io supply
     inout vssa,		// User area 0 analog ground
     inout vssa1,	// User area 1 analog ground
     inout vssa2,	// User area 2 analog ground
+    inout vssio,    // caravel io supply
     inout vccd,		// Common 1.8V supply
     inout vccd1,	// User area 1 1.8V supply
     inout vccd2,	// User area 2 1.8v supply
@@ -2297,15 +2299,15 @@ dac_top  u_4x8bit_dac(
           .VCCD               (vccd1                        ),
           .VSSD               (vssd1                        ),
 `endif
-          .VREFH              (analog_io[23]                ),
+          .VREFH              (                             ),
           .Din0               (cfg_dac0_mux_sel             ),
           .Din1               (cfg_dac1_mux_sel             ),
           .Din2               (cfg_dac2_mux_sel             ),
           .Din3               (cfg_dac3_mux_sel             ),
-          .VOUT0              (analog_io[15]                ),
-          .VOUT1              (analog_io[16]                ),
-          .VOUT2              (analog_io[17]                ),
-          .VOUT3              (analog_io[18]                )
+          .VOUT0              (                             ),
+          .VOUT1              (                             ),
+          .VOUT2              (                             ),
+          .VOUT3              (                             )
    );
 
 endmodule	// openframe_project_wrapper

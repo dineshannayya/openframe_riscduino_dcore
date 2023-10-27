@@ -109,11 +109,14 @@ set ::env(MAGIC_EXT_USE_GDS) {1}
 #set ::env(GLB_RT_MAXLAYER) 3
 set ::env(RT_MAX_LAYER) {met3}
 
-set ::env(FP_PDN_LOWER_LAYER) {met2}
-set ::env(FP_PDN_UPPER_LAYER) {met3}
+set ::env(FP_PDN_HORIZONTAL_LAYER) {met3}
+set ::env(FP_PDN_VERTICAL_LAYER) {met2}
 
 set ::env(FP_IO_HLAYER) {met2}
 set ::env(FP_IO_VLAYER) {met1}
+
+set ::env(FP_IO_VEXTEND) 4
+set ::env(FP_IO_HEXTEND) 4
 
 
 #Lef 

@@ -383,6 +383,8 @@ bfm_spim  u_bfm_spim (
 
 
 
+`else
+  assign io_in[22] = 1'b1;
 `endif
 
 `ifndef  DISABLE_SSPIM

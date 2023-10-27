@@ -75,15 +75,15 @@
 *   Pin-27        18            PC4/ADC4/SDA                                digital_io[20]/analog_io[15] -
 *   Pin-28        19            PC5/ADC5/SCL                                digital_io[21]/analog_io[16] -
 
-*   pin-29                      PA0/trst_n/sm_a1                            digital_io[0] -
-*   pin-30                      PA1/tck/sm_a2                               digital_io[1] -
-*   pin-31                      PA2/tms/sm_b1                               digital_io[2] -
-*   pin-32                      PA3/tdi/sm_b2                               digital_io[3] -
-*   pin-33                      PA4/tdo                                     digital_io[4] -
-*   pin-34                      PA5                                         digital_io[5] -
-*   pin-35                      PA6                                         digital_io[6] -
-*   pin-36                      PA7                                         digital_io[7] -
-*   pin-37                      PC7                                         digital_io[23] -
+*   pin-29      24                PA0/trst_n/sm_a1                            digital_io[0] -
+*   pin-30      25                PA1/tck/sm_a2                               digital_io[1] -
+*   pin-31      26                PA2/tms/sm_b1                               digital_io[2] -
+*   pin-32      27                PA3/tdi/sm_b2                               digital_io[3] -
+*   pin-33      28                PA4/tdo                                     digital_io[4] -
+*   pin-34      29                PA5                                         digital_io[5] -
+*   pin-35      30                PA6                                         digital_io[6] -
+*   pin-36      31                PA7                                         digital_io[7] -
+*   pin-37      23                PC7                                         digital_io[23] -
 *  Additional Pad used for Externam ROM/RAM
 *                               sflash_sck                    strap[0]     digital_io[32]
 *                               sflash_ss[0]                  strap[1]     digital_io[33]
@@ -260,6 +260,7 @@ wire        cfg_i2cm_enb         = cfg_multi_func_sel[15];
 wire        cfg_usb_enb          = cfg_multi_func_sel[16];
 wire        cfg_ir_tx_enb        = cfg_multi_func_sel[17]; // NEC IR TX Enable
 wire        cfg_sm_enb           = cfg_multi_func_sel[18]; // Stepper Motor Enable
+wire        cfg_spis_dis         = cfg_multi_func_sel[19]; // Disable spis_boot
 wire        cfg_tap_enb          = cfg_multi_func_sel[30]; // 1 - Riscv Tap Enable
 wire        cfg_muart_enb        = cfg_multi_func_sel[31]; // 1 - uart master enable, 
 
@@ -278,7 +279,7 @@ logic        pin_resetn,spis_boot;
 
 // On Reset internal SPI Master is disabled, If cfg_spim_enb = 0, then we are in
 // SPIS Boot Mode
-assign      spis_boot = (cfg_spim_enb ) ? 1'b0: !pin_resetn; 
+assign      spis_boot = (cfg_spim_enb  || cfg_spis_dis ) ? 1'b0: !pin_resetn; 
 assign      spis_ssn  = (spis_boot    ) ? pin_resetn : 1'b1;
 
 // datain selection

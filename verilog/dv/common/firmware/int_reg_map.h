@@ -146,3 +146,10 @@
 #define reg_cpu_glbl_cfg (*(volatile uint32_t*)0x0C490018)  // Global config
 #define reg_cpu_clk_cfg  (*(volatile uint32_t*)0x0C49001C)  // CPU clock config
 
+
+// Stepper motor control
+#define reg_smotor_config       (*(volatile uint32_t*)0x10020580)
+#define reg_smotor_multiplier   (*(volatile uint32_t*)0x10020584)
+#define reg_smotor_divider      (*(volatile uint32_t*)0x10020588)
+#define reg_smotor_period       (*(volatile uint32_t*)0x1002058C)
+#define reg_smotor_control      (*(volatile uint32_t*)0x10020590)

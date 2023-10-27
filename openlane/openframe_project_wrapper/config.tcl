@@ -57,6 +57,8 @@ set ::env(SDC_FILE) $::env(DESIGN_DIR)/base.sdc
 set ::env(BASE_SDC_FILE) $::env(DESIGN_DIR)/base.sdc
 
 set ::env(SYNTH_READ_BLACKBOX_LIB) 1
+set ::env(RUN_LINTER) "0"
+
 
 ### Black-box verilog and views
 set ::env(VERILOG_FILES_BLACKBOX) "\
@@ -69,7 +71,7 @@ set ::env(VERILOG_FILES_BLACKBOX) "\
 	    $::env(DESIGN_DIR)/../../verilog/gl/ycr_core_top.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/ycr2_iconnect.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/dg_pll.v \
-	    $::env(PDK_ROOT)/$::env(PDK)/libs.ref/sky130_sram_macros/verilog/sky130_sram_2kbyte_1rw1r_32x512_8.v \
+	    $::env(DESIGN_DIR)/../../verilog/rtl/sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/dac_top.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/aes_top.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/fpu_wrapper.v \
@@ -134,18 +136,21 @@ set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/yifiv
 
 #set ::env(GLB_RT_MAXLAYER) 6
 set ::env(RT_MAX_LAYER) {met5}
-set ::env(GRT_ALLOW_CONGESTION) {1}
+set ::env(GRT_ALLOW_CONGESTION) {0}
 set ::env(SYNTH_USE_PG_PINS_DEFINES) "USE_POWER_PINS"
 
 
 ## Internal Macros
 ### Macro PDN Connections
-set ::env(RUN_IRDROP_REPORT) "1"
+set ::env(RUN_IRDROP_REPORT) "0"
 ####################
 set ::env(FP_PDN_ENABLE_MACROS_GRID) {1}
 set ::env(FP_PDN_ENABLE_GLOBAL_CONNECTIONS) "0"
 set ::env(FP_PDN_CHECK_NODES) 1
 set ::env(FP_PDN_ENABLE_RAILS) 0
+
+set ::env(FP_PDN_HORIZONTAL_LAYER) {met5}
+set ::env(FP_PDN_VERTICAL_LAYER) {met4}
 
 set ::env(FP_PDN_VPITCH) 80
 set ::env(FP_PDN_HPITCH) 80
@@ -198,32 +203,43 @@ set ::env(FP_PDN_MACRO_HOOKS) " \
 	u_4x8bit_dac                vccd1 vssd1 VCCD  VSSD,\
 	u_aes                       vccd1 vssd1 vccd1 vssd1,\
 	u_fpu                       vccd1 vssd1 vccd1 vssd1,\
-	u_gpio_right                vccd1 vssd1 vccd1 vssd1,\
-	u_gpio_top                  vccd1 vssd1 vccd1 vssd1,\
-	u_gpio_left                 vccd1 vssd1 vccd1 vssd1,\
-	u_gpio_bottom               vccd1 vssd1 vccd1 vssd1,\
+	u_gpio_right                vccd1 vssd1 vccd  vssd,\
+	u_gpio_top                  vccd1 vssd1 vccd  vssd,\
+	u_gpio_left                 vccd1 vssd1 vccd  vssd,\
+	u_gpio_bottom               vccd1 vssd1 vccd  vssd,\
 	u_peri                      vccd1 vssd1 vccd1 vssd1
       	"
 
 
 
 # The following is because there are no std cells in the example wrapper project.
-set ::env(SYNTH_TOP_LEVEL) 0
+set ::env(SYNTH_ELABORATE_ONLY) 0
 set ::env(PL_RANDOM_GLB_PLACEMENT) 1
+
+set ::env(GLB_RESIZER_DESIGN_OPTIMIZATIONS) "0"
+set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) "0"
+
+
 set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 0
 set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 0
 set ::env(PL_RESIZER_BUFFER_INPUT_PORTS) 0
 set ::env(PL_RESIZER_BUFFER_OUTPUT_PORTS) 0
-set ::env(DIODE_INSERTION_STRATEGY) 0
+set ::env(PL_RESIZER_REPAIR_TIE_FANOUT) "0"
+
+set ::env(GRT_REPAIR_ANTENNAS) 0
+set ::env(RUN_HEURISTIC_DIODE_INSERTION) 0
 set ::env(RUN_FILL_INSERTION) 0
 set ::env(RUN_TAP_DECAP_INSERTION) 0
-set ::env(CLOCK_TREE_SYNTH) 0
 set ::env(QUIT_ON_LVS_ERROR) "1"
-set ::env(QUIT_ON_MAGIC_DRC) "0"
+set ::env(QUIT_ON_MAGIC_DRC) "1"
 set ::env(QUIT_ON_NEGATIVE_WNS) "0"
 set ::env(QUIT_ON_SLEW_VIOLATIONS) "0"
 set ::env(QUIT_ON_TIMING_VIOLATIONS) "0"
 
+
 set ::env(RUN_MAGIC_DRC) 0
+set ::env(RUN_CTS) 0
+set ::env(RUN_CVS) 0
 set ::env(RUN_LVS) 0
+set ::env(RUN_MAGIC_DRC) "1"
 
