@@ -1,4 +1,20 @@
 
+`ifdef CARAVEL_TOP
+`define DUT_TOP  `TB_TOP.u_caravel.u_mprj
+`define GPIO_IN  `TB_TOP.gpio
+`define GPIO_OUT `TB_TOP.gpio
+`define GPIO_OEB `DUT_TOP.gpio_oeb
+
+`else
+`define DUT_TOP  `TB_TOP.u_top
+`define GPIO_IN  `TB_TOP.io_in
+`define GPIO_OUT `TB_TOP.io_out
+`define GPIO_OEB `TB_TOP.io_oeb
+
+`endif
+
+
+
 `ifndef DISABLE_SSPIM
 
 `define SPIM_REG_WRITE          `TB_TOP.u_bfm_spim.reg_wr_dword              // Reg Write
@@ -10,6 +26,7 @@
 `define SPIM_REG_CHECK_RWAIT    `TB_TOP.u_bfm_spim.reg_rd_dword_cmp_rwait    // Reg Read and compare with readback wait
 
 `endif
+
 
 /***********************************************
 
@@ -60,17 +77,23 @@ reg            power3, power4;
 
 
 // User I/O
-wire [43:0]    io_oeb        ;
-wire [43:0]    io_out        ;
-wire [43:0]    io_in         ;
+`ifdef CARAVEL_TOP
+   tri  [43:0]    gpio       ;
+   tri  [43:0]    gpio1      ;
+`else
+   wire [43:0]    io_oeb     ;
+   wire [43:0]    io_out     ;
+   wire [43:0]    io_in      ;
+`endif
 
-reg            test_fail     ;
-reg [31:0]     write_data    ;
-reg [31:0]     read_data     ;
-integer        d_risc_id     ;
-wire          rst_n;
+reg               test_fail  ;
+reg [31:0]        write_data ;
+reg [31:0]        read_data  ;
+integer           d_risc_id  ;
+wire              rst_n;
 
 wire USER_VDD1V8 = 1'b1;
+wire USER_VDD3V3 = 1'b1;
 wire VSS = 1'b0;
 
 //-----------------------------------------
@@ -82,12 +105,13 @@ always #(CLK2_PERIOD/2) clock2 <= (clock2 === 1'b0);
 always #(XTAL_PERIOD/2) xtal_clk <= (xtal_clk === 1'b0);
 
 
-assign io_in[41] = clock;
-assign io_in[42] = clock2;
+assign `GPIO_IN[41] = clock;
+assign `GPIO_IN[42] = clock2;
 
 `ifndef GPIO_TEST
-assign io_in[14] = xtal_clk;
+assign `GPIO_IN[14] = xtal_clk;
 `endif
+
 
 //-----------------------------------------
 // Variable Initiatlization
@@ -98,11 +122,11 @@ begin
    `ifdef GL
        // Note During wb_host resynth this FF is changes,
        // Keep cross-check during Gate Sim - u_reg.cfg_glb_ctrl[8]
-       force u_top.u_wb_host._10252_.Q= 1'b1; 
+       force `DUT_TOP.u_wb_host._10252_.Q= 1'b1; 
        //force u_top.u_wb_host.u_reg.u_fastsim_buf.u_buf.X = 1'b1; 
        //force u_top.u_wb_host.u_reg.cfg_fast_sim = 1'b1; 
    `else
-       force u_top.u_wb_host.u_reg.u_fastsim_buf.X = 1'b1; 
+       force `DUT_TOP.u_wb_host.u_reg.u_fastsim_buf.X = 1'b1; 
     `endif
 
     clock = 0;
@@ -117,7 +141,7 @@ end
 	// Reset logic
 	// ----------------------------------------------------------------
     event	      reinit_event;
-	bit [1:0]     rst_cnt;
+	bit [4:0]     rst_cnt;
     bit           rst_init;
 
 
@@ -136,11 +160,12 @@ end
 //--------------------------------------------------------
 // Apply Reset Sequence and wait for reset completion
 //-------------------------------------------------------
-
+reg drv_strap;
 task init;
 begin
    //#1 - Apply Reset
    rst_init = 1; 
+   drv_strap = 1;
    repeat (10) @(posedge clock);
    #100 rst_init = 0; 
 
@@ -148,11 +173,13 @@ begin
    wait(rst_n == 1'b1);
 
    repeat (10) @(posedge clock);
+
+   drv_strap = 0;
    //#4 - Wait for Power on reset removal
-   wait(u_top.p_reset_n == 1);          
+   wait(`DUT_TOP.p_reset_n == 1);          
 
    // #5 - Wait for system reset removal
-   wait(u_top.s_reset_n == 1);          // Wait for system reset removal
+   wait(`DUT_TOP.s_reset_n == 1);          // Wait for system reset removal
    repeat (10) @(posedge clock);
 
   end
@@ -168,34 +195,34 @@ begin
    repeat (10) @(posedge clock);
    //#1 - Apply Reset
    rst_init = 1; 
-   force u_top.gpio_in[43] = strap[7];
-   force u_top.gpio_in[38] = strap[6];
-   force u_top.gpio_in[37] = strap[5];
-   force u_top.gpio_in[36] = strap[4];
-   force u_top.gpio_in[35] = strap[3];
-   force u_top.gpio_in[34] = strap[2];
-   force u_top.gpio_in[33] = strap[1];
-   force u_top.gpio_in[32]  = strap[0];
+   force `DUT_TOP.gpio_in[43] = strap[7];
+   force `DUT_TOP.gpio_in[38] = strap[6];
+   force `DUT_TOP.gpio_in[37] = strap[5];
+   force `DUT_TOP.gpio_in[36] = strap[4];
+   force `DUT_TOP.gpio_in[35] = strap[3];
+   force `DUT_TOP.gpio_in[34] = strap[2];
+   force `DUT_TOP.gpio_in[33] = strap[1];
+   force `DUT_TOP.gpio_in[32]  = strap[0];
    repeat (10) @(posedge clock);
     
    //#3 - Remove Reset
    rst_init = 0; // Remove Reset
 
    //#4 - Wait for Power on reset removal
-   wait(u_top.p_reset_n == 1);          
+   wait(`DUT_TOP.p_reset_n == 1);          
 
    // #5 - Release the Strap
-   release u_top.gpio_in[43] ;
-   release u_top.gpio_in[38] ;
-   release u_top.gpio_in[37] ;
-   release u_top.gpio_in[36] ;
-   release u_top.gpio_in[35] ;
-   release u_top.gpio_in[34] ;
-   release u_top.gpio_in[33] ;
-   release u_top.gpio_in[32]  ;
+   release `DUT_TOP.gpio_in[43] ;
+   release `DUT_TOP.gpio_in[38] ;
+   release `DUT_TOP.gpio_in[37] ;
+   release `DUT_TOP.gpio_in[36] ;
+   release `DUT_TOP.gpio_in[35] ;
+   release `DUT_TOP.gpio_in[34] ;
+   release `DUT_TOP.gpio_in[33] ;
+   release `DUT_TOP.gpio_in[32]  ;
 
    // #6 - Wait for system reset removal
-   wait(u_top.s_reset_n == 1);          // Wait for system reset removal
+   wait(`DUT_TOP.s_reset_n == 1);          // Wait for system reset removal
    repeat (10) @(posedge clock);
 
 
@@ -206,90 +233,87 @@ endtask
 // Create Pull Up/Down Based on Reset Strap Parameter
 // System strap are in io_in[13] to [20] and 29 to [36]
 //---------------------------------------------------------
-genvar gCnt;
-generate
-    if(PAD_STRAP[0]) begin
-        pullup(io_in[32]); 
-    end else begin
-        pulldown(io_in[32]); 
-    end
 
-    if(PAD_STRAP[1]) begin
-        pullup(io_in[33]); 
-    end else begin
-        pulldown(io_in[33]); 
-    end
-    if(PAD_STRAP[2]) begin
-        pullup(io_in[34]); 
-    end else begin
-        pulldown(io_in[34]); 
-    end
-    if(PAD_STRAP[3]) begin
-        pullup(io_in[35]); 
-    end else begin
-        pulldown(io_in[35]); 
-    end
-    if(PAD_STRAP[4]) begin
-        pullup(io_in[36]); 
-    end else begin
-        pulldown(io_in[36]); 
-    end
-    if(PAD_STRAP[5]) begin
-        pullup(io_in[37]); 
-    end else begin
-        pulldown(io_in[37]); 
-    end
-    if(PAD_STRAP[6]) begin
-        pullup(io_in[38]); 
-    end else begin
-        pulldown(io_in[38]); 
-    end
-    if(PAD_STRAP[7]) begin
-        pullup(io_in[43]); 
-    end else begin
-        pulldown(io_in[43]); 
-    end
-endgenerate
+   assign `GPIO_IN[32] = (drv_strap) ? PAD_STRAP[0] : 1'bz;
+   assign `GPIO_IN[33] = (drv_strap) ? PAD_STRAP[1] : 1'bz;
+   assign `GPIO_IN[34] = (drv_strap) ? PAD_STRAP[2] : 1'bz;
+   assign `GPIO_IN[35] = (drv_strap) ? PAD_STRAP[3] : 1'bz;
+   assign `GPIO_IN[36] = (drv_strap) ? PAD_STRAP[4] : 1'bz;
+   assign `GPIO_IN[37] = (drv_strap) ? PAD_STRAP[5] : 1'bz;
+   assign `GPIO_IN[38] = (drv_strap) ? PAD_STRAP[6] : 1'bz;
+   assign `GPIO_IN[43] = (drv_strap) ? PAD_STRAP[7] : 1'bz;
 
 `ifdef GL
 
  // Add Non Strap with pull-up to avoid unkown propagation during gate sim 
- pullup(io_in[0]); 
- pullup(io_in[1]); 
- pullup(io_in[2]); 
- pullup(io_in[3]); 
- pullup(io_in[4]); 
- pullup(io_in[5]); 
- pullup(io_in[6]); 
- pullup(io_in[8]); 
- pullup(io_in[9]); 
- pullup(io_in[10]); 
- pullup(io_in[11]); 
- pullup(io_in[12]); 
- pullup(io_in[14]); 
- pullup(io_in[15]); 
- pullup(io_in[16]); 
- pullup(io_in[17]); 
- pullup(io_in[18]); 
- pullup(io_in[19]); 
- pullup(io_in[20]); 
- pullup(io_in[21]); 
- pullup(io_in[22]); 
- pullup(io_in[23]); 
- pullup(io_in[24]); 
- pullup(io_in[25]); 
- pullup(io_in[26]); 
- pullup(io_in[27]); 
- pullup(io_in[28]); 
- pullup(io_in[29]); 
- pullup(io_in[30]); 
- pullup(io_in[31]); 
- pullup(io_in[39]); 
- pullup(io_in[40]); 
- pullup(io_in[41]); 
- pullup(io_in[42]); 
+ pullup(`GPIO_IN[0]); 
+ pullup(`GPIO_IN[1]); 
+ pullup(`GPIO_IN[2]); 
+ pullup(`GPIO_IN[3]); 
+ pullup(`GPIO_IN[4]); 
+ pullup(`GPIO_IN[5]); 
+ pullup(`GPIO_IN[6]); 
+ pullup(`GPIO_IN[8]); 
+ pullup(`GPIO_IN[9]); 
+ pullup(`GPIO_IN[10]); 
+ pullup(`GPIO_IN[11]); 
+ pullup(`GPIO_IN[12]); 
+ pullup(`GPIO_IN[14]); 
+ pullup(`GPIO_IN[15]); 
+ pullup(`GPIO_IN[16]); 
+ pullup(`GPIO_IN[17]); 
+ pullup(`GPIO_IN[18]); 
+ pullup(`GPIO_IN[19]); 
+ pullup(`GPIO_IN[20]); 
+ pullup(`GPIO_IN[21]); 
+ pullup(`GPIO_IN[22]); 
+ pullup(`GPIO_IN[23]); 
+ pullup(`GPIO_IN[24]); 
+ pullup(`GPIO_IN[25]); 
+ pullup(`GPIO_IN[26]); 
+ pullup(`GPIO_IN[27]); 
+ pullup(`GPIO_IN[28]); 
+ pullup(`GPIO_IN[29]); 
+ pullup(`GPIO_IN[30]); 
+ pullup(`GPIO_IN[31]); 
+ pullup(`GPIO_IN[39]); 
+ pullup(`GPIO_IN[40]); 
+ pullup(`GPIO_IN[41]); 
+ pullup(`GPIO_IN[42]); 
 
 `endif
+
+`ifdef CARAVEL_TOP
+
+
+caravel_openframe   u_caravel(
+
+    // All top-level I/O are package-facing pins
+
+    .vddio    (USER_VDD3V3),	    // Common 3.3V padframe/ESD power
+    .vddio_2  (USER_VDD3V3),	    // Common 3.3V padframe/ESD power
+    .vssio    (VSS),	        // Common padframe/ESD ground
+    .vssio_2  (VSS),	        // Common padframe/ESD ground
+    .vdda     (USER_VDD3V3),    // Management 3.3V power
+    .vssa     (VSS),		    // Common analog ground
+    .vccd     (USER_VDD1V8),    // Management/Common 1.8V power
+    .vssd     (VSS),		    // Common digital ground
+    .vdda1    (USER_VDD3V3),    // User area 1 3.3V power
+    .vdda1_2  (USER_VDD3V3),    // User area 1 3.3V power
+    .vdda2    (USER_VDD3V3),    // User area 2 3.3V power
+    .vssa1    (VSS),	        // User area 1 analog ground
+    .vssa1_2  (VSS),	        // User area 1 analog ground
+    .vssa2    (VSS),	        // User area 2 analog ground
+    .vccd1    (USER_VDD1V8),	// User area 1 1.8V power
+    .vccd2    (USER_VDD1V8),	// User area 2 1.8V power
+    .vssd1    (VSS),	        // User area 1 digital ground
+    .vssd2    (VSS),	        // User area 2 digital ground
+
+    .gpio     (gpio),
+    .resetb   (rst_n)	// Reset input (sense inverted)
+);
+
+`else
 
 //-----------------------------------------
 // DUT Instatiation
@@ -297,16 +321,16 @@ endgenerate
 openframe_project_wrapper u_top(
 `ifdef USE_POWER_PINS
     .vccd1(USER_VDD1V8),	// User area 1 1.8V supply
-    .vssd1(VSS)	// User area 1 digital ground
+    .vssd1(VSS),	// User area 1 digital ground
 `endif
     /* Signals exported from the frame area to the user project */
     /* The user may elect to use any of these inputs.		*/
 
-    .porb_h     (),	// power-on reset, sense inverted, 3.3V domain
-    .porb_l     (rst_n),	// power-on reset, sense inverted, 1.8V domain
-    .por_l      (),	// power-on reset, noninverted, 1.8V domain
-    .resetb_h   (),	// master reset, sense inverted, 3.3V domain
-    .resetb_l   (),	// master reset, sense inverted, 1.8V domain
+    .porb_h     (1'b1),	// power-on reset, sense inverted, 3.3V domain
+    .porb_l     (1'b1),	// power-on reset, sense inverted, 1.8V domain
+    .por_l      (1'b1),	// power-on reset, noninverted, 1.8V domain
+    .resetb_h   (rst_n),// master reset, sense inverted, 3.3V domain
+    .resetb_l   (rst_n),// master reset, sense inverted, 1.8V domain
     .mask_rev   (),	// 32-bit user ID, 1.8V domain
 
     /* GPIOs.  There are 44 GPIOs (19 left, 19 right, 6 bottom). */
@@ -355,6 +379,8 @@ openframe_project_wrapper u_top(
     .gpio_loopback_zero()
 );
 
+`endif
+
 `ifndef DISABLE_SSPIM
 //--------------------------------------------------
 // SPI Slave to Manage the boot up configuration
@@ -366,11 +392,10 @@ wire     sdi;
 wire     sdo;
 wire     sd_oen;
 
-
-assign io_in[22] = 1'b0;
-assign io_in[13] = (io_oeb[13] == 1'b1) ? sclk : 1'b0;
-assign io_in[12] = (io_oeb[12] == 1'b1) ? sdi  : 1'b0;
-assign sdo       = (io_oeb[11] == 1'b0) ? io_out[11] : 1'b0;
+assign `GPIO_IN[22] = 1'b0;
+assign `GPIO_IN[13] = (`GPIO_OEB[13] == 1'b1) ? sclk : 1'b0;
+assign `GPIO_IN[12] = (`GPIO_OEB[12] == 1'b1) ? sdi  : 1'b0;
+assign sdo           = (`GPIO_OEB[11] == 1'b0) ? `GPIO_OUT[11] : 1'b0;
 
 bfm_spim  u_bfm_spim (
           // SPI
@@ -381,10 +406,9 @@ bfm_spim  u_bfm_spim (
 
                 );
 
-
-
 `else
-  assign io_in[22] = 1'b1;
+   // disable the SPIS detection
+     assign `GPIO_IN[22] = 1'b1;
 `endif
 
 `ifndef  DISABLE_SSPIM
@@ -405,7 +429,6 @@ begin
        `SPIM_REG_READ(`ADDR_SPACE_GLBL+`GLBL_CFG_MAIL_BOX,read_data);
 	    repeat (100) @(posedge clock);
    end
-
    $display("Status:  RISCV Core is Booted ");
 
 end

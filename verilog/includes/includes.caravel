@@ -1,0 +1,16 @@
++define+USE_POWER_PINS
+-v $(USER_PROJECT_VERILOG)/dv/common/caravel/caravel_defines.v
+-v $(USER_PROJECT_VERILOG)/dv/common/caravel/user_defines.v
+-v $(USER_PROJECT_VERILOG)/dv/common/caravel/caravel_pads.v
+-v $(USER_PROJECT_VERILOG)/dv/common/caravel/caravel_openframe.v
+-v $(USER_PROJECT_VERILOG)/dv/common/caravel/chip_io_openframe.v
+-v $(USER_PROJECT_VERILOG)/dv/common/caravel/constant_block.v
+-v $(USER_PROJECT_VERILOG)/dv/common/caravel/simple_por.v
+-v $(USER_PROJECT_VERILOG)/dv/common/caravel/user_id_programming.v
+-v $(USER_PROJECT_VERILOG)/dv/common/caravel/xres_buf.v
+-v $(PDK_ROOT)/$(PDK)/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v
+-v $(PDK_ROOT)/$(PDK)/libs.ref/sky130_fd_io/verilog/sky130_ef_io.v
+-v $(PDK_ROOT)/$(PDK)/libs.ref/sky130_fd_sc_hd/verilog/primitives.v
+-v $(PDK_ROOT)/$(PDK)/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v
+-v $(PDK_ROOT)/$(PDK)/libs.ref/sky130_fd_sc_hvl/verilog/primitives.v
+-v $(PDK_ROOT)/$(PDK)/libs.ref/sky130_fd_sc_hvl/verilog/sky130_fd_sc_hvl.v

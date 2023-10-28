@@ -31,6 +31,8 @@ export USER_PROJECT_VERILOG ?=  $(DESIGNS)/verilog
 ## Simulation mode: RTL/GL
 SIM?=RTL
 DUMP?=OFF
+#DUT_TOP =<OPENFRAME/CARAVEL_TOP>
+DUT_TOP?=OPENFRAME
 
 ### To Enable IVERILOG FST DUMP
 export IVERILOG_DUMPER = fst
@@ -48,24 +50,26 @@ vvp:  ${PATTERN:=.vvp}
 %.vvp: %_tb.v
 ifeq ($(SIM),RTL)
    ifeq ($(DUMP),OFF)
-	iverilog -g2012 -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
+	iverilog -g2012 -DFUNCTIONAL -D$(DUT_TOP) -DSIM -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.lib  \
+	-f$(USER_PROJECT_VERILOG)/includes/includes.caravel  \
 	$< -o $@ 
     else  
-	iverilog -g2012 -DWFDUMP -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
+	iverilog -g2012 -DWFDUMP -D$(DUT_TOP) -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.lib  \
+	-f$(USER_PROJECT_VERILOG)/includes/includes.caravel  \
 	$< -o $@ 
    endif
 else  
    ifeq ($(DUMP),OFF)
-	iverilog -g2012 -DFUNCTIONAL -DUSE_POWER_PINS -DGL -I $(PDK_PATH) \
+	iverilog -g2012 -DFUNCTIONAL -D$(DUT_TOP) -DUSE_POWER_PINS -DGL -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.lib \
 	$< -o $@ 
     else  
-	iverilog -g2012 -DWFDUMP -DFUNCTIONAL -DUSE_POWER_PINS -DGL -I $(PDK_PATH) \
+	iverilog -g2012 -DWFDUMP -DFUNCTIONAL -D$(DUT_TOP) -DUSE_POWER_PINS -DGL -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.lib \
 	$< -o $@ 

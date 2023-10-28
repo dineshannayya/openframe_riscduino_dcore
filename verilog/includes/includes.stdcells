@@ -1,0 +1,8 @@
+	`include "libs.ref/sky130_fd_io/sky130_fd_io.v"
+	`include "libs.ref/sky130_fd_io/sky130_ef_io.v"
+	`include "libs.ref/sky130_fd_sc_hd/primitives.v"
+	`include "libs.ref/sky130_fd_sc_hd/sky130_fd_sc_hd.v"
+	`include "libs.ref/sky130_fd_sc_hvl/primitives.v"
+	`include "libs.ref/sky130_fd_sc_hvl/sky130_fd_sc_hvl.v"
+	`include "libs.ref/sky130_fd_io/verilog/sky130_fd_io.v"
+	`include "libs.ref/sky130_fd_io/verilog/sky130_ef_io.v"

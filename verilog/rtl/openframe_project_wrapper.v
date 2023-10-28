@@ -1385,7 +1385,7 @@ wb_host u_wb_host(
           .wbd_pll_rst_n           (wbd_pll_rst_n           ),
 
     // Master Port
-          .ext_resetn              (porb_l                  ),  
+          .ext_resetn              (resetb_l                ),  
           .wbm_clk_i               (wb_clk_i                ),  
 
     // Clock Skeq Adjust

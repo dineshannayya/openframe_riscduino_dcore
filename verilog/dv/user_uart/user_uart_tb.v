@@ -95,20 +95,20 @@ parameter real XTAL_PERIOD = 6;
 //----------------------------------
 // Uart Configuration
 // ---------------------------------
-reg [1:0]      uart_data_bit        ;
-reg	       uart_stop_bits       ; // 0: 1 stop bit; 1: 2 stop bit;
-reg	       uart_stick_parity    ; // 1: force even parity
-reg	       uart_parity_en       ; // parity enable
-reg	       uart_even_odd_parity ; // 0: odd parity; 1: even parity
+reg [1:0]      uart_data_bit           ;
+reg	           uart_stop_bits          ; // 0: 1 stop bit; 1: 2 stop bit;
+reg	           uart_stick_parity       ; // 1: force even parity
+reg	           uart_parity_en          ; // parity enable
+reg	           uart_even_odd_parity    ; // 0: odd parity; 1: even parity
 
-reg [7:0]      uart_data            ;
-reg [15:0]     uart_divisor         ;	// divided by n * 16
-reg [15:0]     uart_timeout         ;// wait time limit
+reg [7:0]      uart_data               ;
+reg [15:0]     uart_divisor            ; // divided by n * 16
+reg [15:0]     uart_timeout            ; // wait time limit
 
-reg [15:0]     uart_rx_nu           ;
-reg [15:0]     uart_tx_nu           ;
-reg [7:0]      uart_write_data [0:39];
-reg 	       uart_fifo_enable     ;	// fifo mode disable
+reg [15:0]     uart_rx_nu              ;
+reg [15:0]     uart_tx_nu              ;
+reg [7:0]      uart_write_data [0:39]  ;
+reg 	       uart_fifo_enable        ; // fifo mode disable
 
 
 integer i,j;
@@ -118,11 +118,11 @@ integer i,j;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(1, `TB_TOP);
-	   	$dumpvars(0, `TB_TOP.u_top);
-	   	$dumpvars(0, `TB_TOP.u_top.u_wb_host);
-	   	$dumpvars(2, `TB_TOP.u_top.u_riscv_top);
-	   	$dumpvars(0, `TB_TOP.u_top.u_pinmux);
+	   	$dumpvars(0, `TB_TOP);
+	   	$dumpvars(0, `DUT_TOP);
+	   	$dumpvars(0, `DUT_TOP.u_wb_host);
+	   	$dumpvars(2, `DUT_TOP.u_riscv_top);
+	   	$dumpvars(0, `DUT_TOP.u_pinmux);
 	   end
        `endif
 
@@ -246,22 +246,51 @@ end
 //  user core using the gpio pads
 //  ----------------------------------------------------
 
-   wire flash_clk = (io_oeb[32] == 1'b0) ? io_out[32]: 1'b0;
-   wire flash_csb = (io_oeb[33] == 1'b0) ? io_out[33]: 1'b0;
-   // Creating Pad Delay
-   wire #1 io_oeb_37 = io_oeb[37];
-   wire #1 io_oeb_38 = io_oeb[38];
-   wire #1 io_oeb_39 = io_oeb[39];
-   wire #1 io_oeb_40 = io_oeb[40];
-   tri  #1 flash_io0 = (io_oeb_37== 1'b0) ? io_out[37] : 1'bz;
-   tri  #1 flash_io1 = (io_oeb_38== 1'b0) ? io_out[38] : 1'bz;
-   tri  #1 flash_io2 = (io_oeb_39== 1'b0) ? io_out[39] : 1'bz;
-   tri  #1 flash_io3 = (io_oeb_40== 1'b0) ? io_out[40] : 1'bz;
+`ifdef CARAVEL_TOP
+   wire flash_clk = `GPIO_OUT[32];
+   wire flash_csb = `GPIO_OUT[33];
 
-   assign io_in[37] = (io_oeb[37] == 1'b1) ? flash_io0: 1'b0;
-   assign io_in[38] = (io_oeb[38] == 1'b1) ? flash_io1: 1'b0;
-   assign io_in[39] = (io_oeb[39] == 1'b1) ? flash_io2: 1'b0;
-   assign io_in[40] = (io_oeb[40] == 1'b1) ? flash_io3: 1'b0;
+   //tri   flash_io0 = `GPIO_OUT[37] ;
+   //tri   flash_io1 = `GPIO_OUT[38] ;
+   //tri   flash_io2 = `GPIO_OUT[39] ;
+   //tri   flash_io3 = `GPIO_OUT[40] ;
+
+   // Quard flash
+     s25fl256s #(.mem_file_name(`TB_HEX),
+	         .otp_file_name("none"), 
+                 .TimingModel("S25FL512SAGMFI010_F_30pF")) 
+		 u_spi_flash_256mb
+       (
+           // Data Inputs/Outputs
+       .SI      (`GPIO_OUT[37]),
+       .SO      (`GPIO_OUT[38]),
+       // Controls
+       .SCK     (flash_clk),
+       .CSNeg   (flash_csb),
+       .WPNeg   (`GPIO_OUT[39]),
+       .HOLDNeg (`GPIO_OUT[40]),
+       .RSTNeg  (!wb_rst_i)
+
+       );
+
+`else 
+   wire flash_clk = (`GPIO_OEB[32] == 1'b0) ? `GPIO_OUT[32]: 1'b0;
+   wire flash_csb = (`GPIO_OEB[33] == 1'b0) ? `GPIO_OUT[33]: 1'b0;
+   // Creating Pad Delay
+   wire #1 io_oeb_37 = `GPIO_OEB[37];
+   wire #1 io_oeb_38 = `GPIO_OEB[38];
+   wire #1 io_oeb_39 = `GPIO_OEB[39];
+   wire #1 io_oeb_40 = `GPIO_OEB[40];
+   tri  #1 flash_io0 = (io_oeb_37== 1'b0) ? `GPIO_OUT[37] : 1'bz;
+   tri  #1 flash_io1 = (io_oeb_38== 1'b0) ? `GPIO_OUT[38] : 1'bz;
+   tri  #1 flash_io2 = (io_oeb_39== 1'b0) ? `GPIO_OUT[39] : 1'bz;
+   tri  #1 flash_io3 = (io_oeb_40== 1'b0) ? `GPIO_OUT[40] : 1'bz;
+
+   assign `GPIO_IN[37] = (`GPIO_OEB[37] == 1'b1) ? flash_io0: 1'b0;
+   assign `GPIO_IN[38] = (`GPIO_OEB[38] == 1'b1) ? flash_io1: 1'b0;
+   assign `GPIO_IN[39] = (`GPIO_OEB[39] == 1'b1) ? flash_io2: 1'b0;
+   assign `GPIO_IN[40] = (`GPIO_OEB[40] == 1'b1) ? flash_io3: 1'b0;
+
 
    // Quard flash
      s25fl256s #(.mem_file_name(`TB_HEX),
@@ -281,14 +310,15 @@ end
 
        );
 
+`endif
 
 //---------------------------
 //  UART Agent integration
 // --------------------------
 wire uart_txd,uart_rxd;
 
-assign uart_txd   = (io_oeb[25] == 1'b0) ? io_out[25] : 1'b0;
-assign io_in[24]   = (io_oeb[24] == 1'b1) ? uart_rxd  : 1'b0;
+assign uart_txd   = (`GPIO_OEB[25] == 1'b0) ? `GPIO_OUT[25] : 1'b0;
+assign `GPIO_IN[24]   = (`GPIO_OEB[24] == 1'b1) ? uart_rxd  : 1'b0;
  
 uart_agent tb_uart(
 	.mclk                (clock              ),

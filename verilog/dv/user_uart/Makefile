@@ -36,6 +36,8 @@ GCC_PREFIX?=riscv32-unknown-elf
 SIM?=RTL
 DUMP?=OFF
 RISC_CORE?=0
+#DUT_TOP =<OPENFRAME/CARAVEL_TOP>
+DUT_TOP?=OPENFRAME
 
 ### To Enable IVERILOG FST DUMP
 export IVERILOG_DUMPER = fst
@@ -59,24 +61,26 @@ vvp:  ${PATTERN:=.vvp}
 	rm crt.o ${PATTERN}.o
 ifeq ($(SIM),RTL)
    ifeq ($(DUMP),OFF)
-	iverilog -g2012 -DFUNCTIONAL -DSIM -DRISC_BOOT -I $(PDK_PATH) \
+	iverilog -g2012 -DFUNCTIONAL -DRISC_BOOT -D$(DUT_TOP) -DSIM -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.lib  \
+	-f$(USER_PROJECT_VERILOG)/includes/includes.caravel  \
 	$< -o $@ 
     else  
-	iverilog -g2012 -DWFDUMP -DFUNCTIONAL -DRISC_BOOT -DSIM -I $(PDK_PATH) \
+	iverilog -g2012 -DWFDUMP -DRISC_BOOT -D$(DUT_TOP) -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.lib  \
+	-f$(USER_PROJECT_VERILOG)/includes/includes.caravel  \
 	$< -o $@ 
    endif
 else  
    ifeq ($(DUMP),OFF)
-	iverilog -g2012 -DFUNCTIONAL -DUSE_POWER_PINS -DRISC_BOOT -DGL -I $(PDK_PATH) \
+	iverilog -g2012 -DFUNCTIONAL -DRISC_BOOT -D$(DUT_TOP) -DUSE_POWER_PINS -DGL -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.lib \
 	$< -o $@ 
     else  
-	iverilog -g2012 -DWFDUMP -DFUNCTIONAL -DUSE_POWER_PINS -DRISC_BOOT -DGL -I $(PDK_PATH) \
+	iverilog -g2012 -DWFDUMP -DFUNCTIONAL -DRISC_BOOT -D$(DUT_TOP) -DUSE_POWER_PINS -DGL -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.lib \
 	$< -o $@ 

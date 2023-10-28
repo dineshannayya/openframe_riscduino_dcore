@@ -167,12 +167,12 @@ integer i,j;
 	   	$dumpfile("simx.vcd");
 	   	$dumpvars(2, `TB_TOP);
 	   	$dumpvars(0, `TB_TOP.tb_master_uart);
-	   	$dumpvars(1, `TB_TOP.u_top);
-	   	//$dumpvars(0, `TB_TOP.u_top.u_pll);
-	   	$dumpvars(0, `TB_TOP.u_top.u_wb_host);
-	   	$dumpvars(0, `TB_TOP.u_top.u_intercon);
-	   	//$dumpvars(1, `TB_TOP.u_top.u_intercon);
-	   	$dumpvars(0, `TB_TOP.u_top.u_pinmux);
+	   	$dumpvars(1, `TB_TOP.`DUT_TOP);
+	   	//$dumpvars(0, `TB_TOP.`DUT_TOP.u_pll);
+	   	$dumpvars(0, `TB_TOP.`DUT_TOP.u_wb_host);
+	   	$dumpvars(0, `TB_TOP.`DUT_TOP.u_intercon);
+	   	//$dumpvars(1, `TB_TOP.`DUT_TOP.u_intercon);
+	   	$dumpvars(0, `TB_TOP.`DUT_TOP.u_pinmux);
 	   end
        `endif
 
@@ -267,14 +267,14 @@ begin
        test_id = 4;
        for(i = 0; i < 31; i = i+1) begin
          // #1 - Write Data to Sticky bit and Set Reboot Request
-          wait(u_top.s_reset_n == 1);          // Wait for system reset removal
+          wait(`DUT_TOP.s_reset_n == 1);          // Wait for system reset removal
          write_data = (1<< i) ; // bit[31] = 1 in soft reboot request
          write_data = write_data + (1 << `STRAP_SOFT_REBOOT_REQ); // bit[STRAP_SOFT_REBOOT_REQ] = 1 in soft reboot request
          `SPIM_REG_WRITE(`ADDR_SPACE_GLBL+`GLBL_CFG_STRAP_STICKY,write_data);
 
 
           // #3 - Wait for system reset removal
-          wait(u_top.s_reset_n == 1);          // Wait for system reset removal
+          wait(`DUT_TOP.s_reset_n == 1);          // Wait for system reset removal
           `SPIM_REG_CHECK(`ADDR_SPACE_GLBL+`GLBL_CFG_STRAP_STICKY,{1'b0,write_data[30:0]});
           `SPIM_REG_CHECK(`ADDR_SPACE_GLBL+`GLBL_CFG_SYSTEM_STRAP,write_data);
           repeat (10) @(posedge clock);
@@ -478,8 +478,8 @@ begin
         `SPIM_REG_CHECK(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC2,'h33);
         `SPIM_REG_CHECK(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC3,'h44);
         repeat (10) @(posedge clock);
-        if((u_top.u_4x8bit_dac.Din0 != 'h11) || (u_top.u_4x8bit_dac.Din1 != 'h22) ||
-           (u_top.u_4x8bit_dac.Din2 != 'h33) || (u_top.u_4x8bit_dac.Din3 != 'h44)) begin
+        if((`DUT_TOP.u_4x8bit_dac.Din0 != 'h11) || (`DUT_TOP.u_4x8bit_dac.Din1 != 'h22) ||
+           (`DUT_TOP.u_4x8bit_dac.Din2 != 'h33) || (`DUT_TOP.u_4x8bit_dac.Din3 != 'h44)) begin
            test_fail = 1;
         end
 
@@ -524,8 +524,13 @@ end
 //  UART Agent integration
 // --------------------------
 
-assign uart_txd   = (io_oeb[25] == 1'b0) ? io_out[25] : 1'b0;
-assign io_in[24]  = uart_rxd ; // Assigned at top-level
+`ifdef CARAVEL_TOP
+   assign uart_txd   = (`DUT_TOP.gpio_oeb[25] == 1'b0) ? gpio[25] : 1'b0;
+   assign gpio[24]  = uart_rxd ; // Assigned at top-level
+`else
+   assign uart_txd   = (io_oeb[25] == 1'b0) ? io_out[25] : 1'b0;
+   assign io_in[24]  = uart_rxd ; // Assigned at top-level
+`endif
  
 uart_agent tb_master_uart(
 	.mclk                (clock              ),
@@ -541,7 +546,7 @@ input [3:0] wbs_cfg;
 real        exp_cpu_period; // ns
 real        exp_wbs_period; // ns
 begin
-   force clock_mon = u_top.u_wb_host.cpu_clk;
+   force clock_mon = `DUT_TOP.u_wb_host.cpu_clk;
    case(cpu_cfg)
    4'b0000: exp_cpu_period = CLK1_PERIOD;
    4'b0001: exp_cpu_period = CLK2_PERIOD;
@@ -563,7 +568,7 @@ begin
    check_clock_period("CPU CLock",exp_cpu_period);
    release clock_mon;
 
-   force clock_mon = u_top.u_wb_host.wbs_clk_out;
+   force clock_mon = `DUT_TOP.u_wb_host.wbs_clk_out;
    case(wbs_cfg)
    4'b0000: exp_wbs_period = CLK1_PERIOD;
    4'b0001: exp_wbs_period = CLK2_PERIOD;
@@ -593,19 +598,19 @@ input [15:0] exp_usb_period;
 input [15:0] exp_rtc_period;
 input [15:0] exp_wbs_period;
 begin
-   force clock_mon = u_top.u_wb_host.cpu_clk;
+   force clock_mon = `DUT_TOP.u_wb_host.cpu_clk;
    check_clock_period("CPU CLock",exp_cpu_period);
    release clock_mon;
 
-   force clock_mon = u_top.u_pinmux.usb_clk;
+   force clock_mon = `DUT_TOP.u_pinmux.usb_clk;
    check_clock_period("USB Clock",exp_usb_period);
    release clock_mon;
 
-   force clock_mon = u_top.u_pinmux.rtc_clk;
+   force clock_mon = `DUT_TOP.u_pinmux.rtc_clk;
    check_clock_period("RTC Clock",exp_rtc_period);
    release clock_mon;
 
-   force clock_mon = u_top.u_wb_host.wbs_clk_out;
+   force clock_mon = `DUT_TOP.u_wb_host.wbs_clk_out;
    check_clock_period("WBS Clock",exp_wbs_period);
    release clock_mon;
 end
@@ -614,11 +619,11 @@ endtask
 task pll_clock_monitor;
 input real exp_period;
 begin
-   //force clock_mon = u_top.u_wb_host.pll_clk_out[0];
+   //force clock_mon = `DUT_TOP.u_wb_host.pll_clk_out[0];
    `ifdef GL
-      force clock_mon = u_top.u_wb_host.int_pll_clock;
+      force clock_mon = `DUT_TOP.u_wb_host.int_pll_clock;
     `else
-      force clock_mon = u_top.u_wb_host.int_pll_clock;
+      force clock_mon = `DUT_TOP.u_wb_host.int_pll_clock;
 
     `endif
    check_clock_period("PLL CLock",exp_period);
@@ -630,9 +635,9 @@ task uartm_clock_monitor;
 input real exp_period;
 begin
    `ifdef GL
-   force clock_mon = u_top.u_wb_host._10366_.Q;
+   force clock_mon = `DUT_TOP.u_wb_host._10366_.Q;
     `else
-   force clock_mon = u_top.u_wb_host.u_uart2wb.u_core.line_clk_16x;
+   force clock_mon = `DUT_TOP.u_wb_host.u_uart2wb.u_core.line_clk_16x;
     `endif
    check_clock_period("UART CLock",exp_period);
    release clock_mon;
@@ -640,7 +645,12 @@ end
 endtask
 
 
+`ifdef CARAVEL_TOP
+wire dbg_clk_mon = (`DUT_TOP.gpio_oeb[43] == 1'b0) ? gpio[43]: 1'b0;
+`else
 wire dbg_clk_mon = (io_oeb[43] == 1'b0) ? io_out[43]: 1'b0;
+
+`endif
 
 //assign dbg_clk_ref  =    (cfg_mon_sel == 4'b000) ? user_clock1    :
 //	                       (cfg_mon_sel == 4'b001) ? user_clock2    :
