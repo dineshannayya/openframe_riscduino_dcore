@@ -67,7 +67,7 @@
 
 `include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
 
-`define TB_TOP  user_uart_tb
+`define TB_TOP  user_cache_bypass_tb
 
 `include "bfm_spim.v"
 
@@ -85,8 +85,9 @@ reg  [15:0]    strap_in;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(2, user_cache_bypass_tb);
-	   	$dumpvars(0, user_cache_bypass_tb.u_top.u_riscv_top);
+	   	$dumpvars(2, `TB_TOP);
+	   	$dumpvars(0, `TB_TOP.u_top.u_riscv_top);
+	   	$dumpvars(0, `TB_TOP.u_top.u_qspi_master);
 	   end
        `endif
 

@@ -66,6 +66,18 @@ set ::env(VERILOG_FILES) "\
     $::env(DESIGN_DIR)/../../verilog/rtl/usb1_host/src/phy/usb_fs_phy.v     \
     $::env(DESIGN_DIR)/../../verilog/rtl/usb1_host/src/phy/usb_transceiver.v\
     $::env(DESIGN_DIR)/../../verilog/rtl/usb1_host/src/top/usb1_host.sv     \
+    $::env(DESIGN_DIR)/../../verilog/rtl/usb1b_device/src/phy/usb1bd_phy.v   \
+    $::env(DESIGN_DIR)/../../verilog/rtl/usb1b_device/src/phy/usb1bd_rx_phy.v \ 
+    $::env(DESIGN_DIR)/../../verilog/rtl/usb1b_device/src/phy/usb1bd_tx_phy.v\
+    $::env(DESIGN_DIR)/../../verilog/rtl/usb1b_device/src/core/usb1bd_core.v  \
+    $::env(DESIGN_DIR)/../../verilog/rtl/usb1b_device/src/core/usb1bd_crc16.v  \
+    $::env(DESIGN_DIR)/../../verilog/rtl/usb1b_device/src/core/usb1bd_crc5.v  \
+    $::env(DESIGN_DIR)/../../verilog/rtl/usb1b_device/src/core/usb1bd_pa.sv  \
+    $::env(DESIGN_DIR)/../../verilog/rtl/usb1b_device/src/core/usb1bd_pd.sv  \
+    $::env(DESIGN_DIR)/../../verilog/rtl/usb1b_device/src/core/usb1bd_pl.sv  \
+    $::env(DESIGN_DIR)/../../verilog/rtl/usb1b_device/src/core/usb1bd_utmi_if.v\
+    $::env(DESIGN_DIR)/../../verilog/rtl/usb1b_device/src/top/usb1bd_reg.sv\
+    $::env(DESIGN_DIR)/../../verilog/rtl/usb1b_device/src/top/usb1bd_top.sv\
     $::env(DESIGN_DIR)/../../verilog/rtl/sspim/src/sspim_top.sv             \
     $::env(DESIGN_DIR)/../../verilog/rtl/sspim/src/sspim_ctl.sv             \
     $::env(DESIGN_DIR)/../../verilog/rtl/sspim/src/sspim_if.sv              \
@@ -73,11 +85,13 @@ set ::env(VERILOG_FILES) "\
     $::env(DESIGN_DIR)/../../verilog/rtl/sspim/src/sspim_clkgen.sv             \
     $::env(DESIGN_DIR)/../../verilog/rtl/uart_i2c_usb_spi/src/uart_i2c_usb_spi.sv\
     $::env(DESIGN_DIR)/../../verilog/rtl/lib/ctech_cells.sv     \
+    $::env(DESIGN_DIR)/../../verilog/rtl/lib/async_reg_bus.sv     \
+    $::env(DESIGN_DIR)/../../verilog/rtl/lib/sync_fifo_occ.sv     \
     "
 
 set ::env(SYNTH_NO_FLAT) {1}
 set ::env(SYNTH_READ_BLACKBOX_LIB) 1
-set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/i2cm/src/includes $::env(DESIGN_DIR)/../../verilog/rtl/usb1_host/src/includes ]
+set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/i2cm/src/includes $::env(DESIGN_DIR)/../../verilog/rtl/usb1_host/src/includes $::env(DESIGN_DIR)/../../verilog/rtl/usb1b_device/src/includes ]
 set ::env(SYNTH_DEFINES) [list SYNTHESIS ]
 
 set ::env(SDC_FILE) $::env(DESIGN_DIR)/base.sdc
@@ -95,7 +109,7 @@ set ::env(GND_PIN) [list {vssd1}]
 
 set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 set ::env(FP_SIZING) "absolute"
-set ::env(DIE_AREA) "0 0 500 700"
+set ::env(DIE_AREA) "0 0 500 800"
 
 
 
@@ -106,7 +120,7 @@ set ::env(RUN_CVC) 0
 
 
 set ::env(PL_TIME_DRIVEN) 1
-set ::env(PL_TARGET_DENSITY) "0.43"
+set ::env(PL_TARGET_DENSITY) "0.45"
 
 # helps in anteena fix
 set ::env(USE_ARC_ANTENNA_CHECK) "0"

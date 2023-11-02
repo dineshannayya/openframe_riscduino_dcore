@@ -71,7 +71,8 @@ module glbl_reg (
                        output logic            sspim_rst_n            ,
                        output logic  [1:0]     uart_rst_n             ,
                        output logic            i2cm_rst_n             ,
-                       output logic            usb_rst_n              ,
+                       output logic            usbh_rst_n              ,
+                       output logic            usbd_rst_n              ,
 
 		       // Reg Bus Interface Signal
                        input logic             reg_cs                 ,
@@ -90,7 +91,8 @@ module glbl_reg (
                        output logic [31:0]     irq_lines              ,
                        output logic            soft_irq               ,
                        output logic [2:0]      user_irq               ,
-		               input  logic            usb_intr               ,
+		               input  logic            usbh_intr              ,
+		               input  logic            usbd_intr              ,
 		               input  logic            i2cm_intr              ,
 		               input  logic            pwm_intr              ,
 		               input  logic            rtc_intr              ,
@@ -280,8 +282,9 @@ ctech_buf u_buf_qspim_rst     (.A(cfg_rst_ctrl[1]),.X(qspim_rst_n));
 ctech_buf u_buf_sspim_rst     (.A(cfg_rst_ctrl[2]),.X(sspim_rst_n));
 ctech_buf u_buf_uart0_rst     (.A(cfg_rst_ctrl[3]),.X(uart_rst_n[0]));
 ctech_buf u_buf_i2cm_rst      (.A(cfg_rst_ctrl[4]),.X(i2cm_rst_n));
-ctech_buf u_buf_usb_rst       (.A(cfg_rst_ctrl[5]),.X(usb_rst_n));
+ctech_buf u_buf_usbh_rst      (.A(cfg_rst_ctrl[5]),.X(usbh_rst_n));
 ctech_buf u_buf_uart1_rst     (.A(cfg_rst_ctrl[6]),.X(uart_rst_n[1]));
+ctech_buf u_buf_usbd_rst      (.A(cfg_rst_ctrl[7]),.X(usbd_rst_n));
 
 ctech_buf u_buf_cpu0_rst      (.A(cfg_rst_ctrl[8]),.X(cpu_core_rst_n[0]));
 ctech_buf u_buf_cpu1_rst      (.A(cfg_rst_ctrl[9]),.X(cpu_core_rst_n[1]));
@@ -371,7 +374,8 @@ assign  irq_lines     = reg_3[31:0] & reg_4[31:0];
 
 // In Arduino GPIO[7:0] is corresponds to PORT-A which is not available for user access
 
-logic usb_intr_s,usb_intr_ss;   // Usb Interrupt Double Sync
+logic usbh_intr_s,usbh_intr_ss;   // Usb Interrupt Double Sync
+logic usbd_intr_s,usbd_intr_ss;   // Usb Interrupt Double Sync
 logic i2cm_intr_s,i2cm_intr_ss; // I2C Interrupt Double Sync
 logic rtc_intr_s,rtc_intr_ss;
 logic ir_intr_s,ir_intr_ss;
@@ -379,8 +383,10 @@ logic ir_intr_s,ir_intr_ss;
 always @ (posedge mclk or negedge s_reset_n)
 begin  
    if (s_reset_n == 1'b0) begin
-     usb_intr_s       <= 'h0;
-     usb_intr_ss      <= 'h0;
+     usbh_intr_s       <= 'h0;
+     usbh_intr_ss      <= 'h0;
+     usbd_intr_s       <= 'h0;
+     usbd_intr_ss      <= 'h0;
      i2cm_intr_s      <= 'h0;
      i2cm_intr_ss     <= 'h0;
      rtc_intr_s       <= 'h0;
@@ -388,8 +394,10 @@ begin
      ir_intr_s        <= 'h0;
      ir_intr_ss       <= 'h0;
    end else begin
-     usb_intr_s   <= usb_intr;
-     usb_intr_ss  <= usb_intr_s;
+     usbh_intr_s   <= usbh_intr;
+     usbh_intr_ss  <= usbh_intr_s;
+     usbd_intr_s   <= usbd_intr;
+     usbd_intr_ss  <= usbd_intr_s;
      i2cm_intr_s  <= i2cm_intr;
      i2cm_intr_ss <= i2cm_intr_s;
      rtc_intr_s   <= rtc_intr;
@@ -400,7 +408,7 @@ begin
    end
 end
 
-wire [31:0] hware_intr_req = {gpio_intr[31:8], ir_intr_ss,rtc_intr_ss,pwm_intr,usb_intr_ss, i2cm_intr_ss,timer_intr[2:0]};
+wire [31:0] hware_intr_req = {gpio_intr[31:8], ir_intr_ss,rtc_intr_ss,pwm_intr,usbh_intr_ss | usbd_intr_ss, i2cm_intr_ss,timer_intr[2:0]};
 
 // Interrupt can be set by hware req or by writting reg_10
 wire [31:0]  intr_req = {{({8{sw_wr_en_10 & reg_ack & wr_be[3]}} & sw_reg_wdata[31:24]) | hware_intr_req[31:24] },

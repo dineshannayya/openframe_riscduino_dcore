@@ -69,7 +69,7 @@ set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 #set ::env(MACRO_PLACEMENT_CFG) $::env(DESIGN_DIR)/macro.cfg
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 150 4100"
+set ::env(DIE_AREA) "0 0 125 3800"
 
 #set ::env(GRT_OBS) "met4  0 0 300 1725"
 
@@ -112,6 +112,8 @@ set ::env(RT_MAX_LAYER) {met3}
 
 set ::env(FP_PDN_VERTICAL_LAYER) {met2}
 set ::env(FP_PDN_HORIZONTAL_LAYER) {met3}
+set ::env(FP_PDN_LOWER_LAYER) {met2}
+set ::env(FP_PDN_UPPER_LAYER) {met3}
 
 set ::env(FP_IO_HLAYER) {met2}
 set ::env(FP_IO_VLAYER) {met1}

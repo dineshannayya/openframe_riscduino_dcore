@@ -184,7 +184,6 @@ end
 `else 
     wire [WB-1:0]     in_data_s  ; // One   Cycle sync 
     wire [WB-1:0]     in_data_2s ; // two   Cycle sync 
-    wire [WB-1:0]     out_data ; // three Cycle sync 
     generate
        if (WB > 1)
        begin : bus_

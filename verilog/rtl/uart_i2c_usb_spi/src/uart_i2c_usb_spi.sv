@@ -77,11 +77,12 @@ module uart_i2c_usb_spi_top
    output logic	       wbd_clk_uart,
 
    input logic  [1:0]  uart_rstn  , // async reset
-   input logic         i2c_rstn    ,  // async reset
-   input logic         usb_rstn    ,  // async reset
-   input logic         spi_rstn    ,  // async reset
-   input logic         app_clk     ,
-   input logic         usb_clk     ,   // 48Mhz usb clock
+   input logic         i2c_rstn   ,  // async reset
+   input logic         usbh_rstn  ,  // async reset
+   input logic         usbd_rstn  ,  // async reset
+   input logic         spi_rstn   ,  // async reset
+   input logic         app_clk    ,
+   input logic         usb_clk    ,   // 48Mhz usb clock
 
         // Reg Bus Interface Signal
    input logic         reg_cs,
@@ -111,14 +112,24 @@ module uart_i2c_usb_spi_top
    output logic  [1:0] uart_txd               ,
 
    // USB 1.1 HOST I/F
-   input  logic        usb_in_dp              ,
-   input  logic        usb_in_dn              ,
+   input  logic        usbh_in_dp              ,
+   input  logic        usbh_in_dn              ,
 
-   output logic        usb_out_dp             ,
-   output logic        usb_out_dn             ,
-   output logic        usb_out_tx_oen         ,
+   output logic        usbh_out_dp             ,
+   output logic        usbh_out_dn             ,
+   output logic        usbh_out_tx_oen         ,
    
-   output logic        usb_intr_o            ,
+   output logic        usbh_intr_o            ,
+
+   // USB 1.1 DEVICE I/F
+   input  logic        usbd_in_dp              ,
+   input  logic        usbd_in_dn              ,
+
+   output logic        usbd_out_dp             ,
+   output logic        usbd_out_dn             ,
+   output logic        usbd_out_tx_oen         ,
+   
+   output logic        usbd_intr_o            ,
 
    // SPIM I/F
    output logic        sspim_sck, // clock out
@@ -142,9 +153,10 @@ clk_skew_adjust u_skew_uart
 
 `define SEL_UART0 3'b000
 `define SEL_I2C   3'b001
-`define SEL_USB   3'b010
+`define SEL_USBH  3'b010
 `define SEL_SPI   3'b011
 `define SEL_UART1 3'b100
+`define SEL_USBD  3'b101
 
 
 
@@ -154,28 +166,32 @@ clk_skew_adjust u_skew_uart
 logic [7:0]   reg_uart0_rdata;
 logic [7:0]   reg_uart1_rdata;
 logic [7:0]   reg_i2c_rdata;
-logic [31:0]  reg_usb_rdata;
+logic [31:0]  reg_usbh_rdata;
+logic [31:0]  reg_usbd_rdata;
 logic [31:0]  reg_spim_rdata;
 logic         reg_uart0_ack;
 logic         reg_uart1_ack;
 logic         reg_i2c_ack;
-logic         reg_usb_ack;
+logic         reg_usbh_ack;
+logic         reg_usbd_ack;
 logic         reg_spim_ack;
 
 
 assign reg_rdata = (reg_addr[8:6] == `SEL_UART0) ? {24'h0,reg_uart0_rdata} : 
-	           (reg_addr[8:6] == `SEL_UART1) ? {24'h0,reg_uart1_rdata} :
-	           (reg_addr[8:6] == `SEL_I2C) ? {24'h0,reg_i2c_rdata} :
-	           (reg_addr[8:6] == `SEL_USB) ? reg_usb_rdata : reg_spim_rdata;
+	               (reg_addr[8:6] == `SEL_UART1) ? {24'h0,reg_uart1_rdata} :
+	               (reg_addr[8:6] == `SEL_I2C) ? {24'h0,reg_i2c_rdata} :
+	               (reg_addr[8:6] == `SEL_USBH) ? reg_usbh_rdata : 
+	               (reg_addr[8:6] == `SEL_USBD) ? reg_usbd_rdata : reg_spim_rdata;
 assign reg_ack   = (reg_addr[8:6] == `SEL_UART0) ? reg_uart0_ack   : 
-	           (reg_addr[8:6] == `SEL_UART1) ? reg_uart1_ack   : 
-	           (reg_addr[8:6] == `SEL_I2C)   ? reg_i2c_ack     : 
-	           (reg_addr[8:6] == `SEL_USB)   ? reg_usb_ack     : reg_spim_ack;
+	               (reg_addr[8:6] == `SEL_UART1) ? reg_uart1_ack   : 
+	               (reg_addr[8:6] == `SEL_I2C)   ? reg_i2c_ack     : 
+	               (reg_addr[8:6] == `SEL_USBH)  ? reg_usbh_ack    :
+	               (reg_addr[8:6] == `SEL_USBD)  ? reg_usbd_ack     : reg_spim_ack;
 
 wire reg_uart0_cs  = (reg_addr[8:6] == `SEL_UART0) ? reg_cs : 1'b0;
 wire reg_uart1_cs  = (reg_addr[8:6] == `SEL_UART1) ? reg_cs : 1'b0;
 wire reg_i2cm_cs   = (reg_addr[8:6] == `SEL_I2C)   ? reg_cs : 1'b0;
-wire reg_usb_cs    = (reg_addr[8:6] == `SEL_USB)   ? reg_cs : 1'b0;
+wire reg_usbh_cs    = (reg_addr[8:6] == `SEL_USBH)   ? reg_cs : 1'b0;
 wire reg_spim_cs   = (reg_addr[8:6] == `SEL_SPI)   ? reg_cs : 1'b0;
 
 uart_core  u_uart0_core (  
@@ -247,36 +263,74 @@ i2cm_top  u_i2cm (
 
          );
 
+//----------------------------------
+// USB 1.1 HOST
+//----------------------------------
 
 usb1_host u_usb_host (
-    .usb_clk_i      (usb_clk       ),
-    .usb_rstn_i     (usb_rstn      ),
+    .usb_clk_i      (usb_clk        ),
+    .usb_rstn_i     (usbh_rstn      ),
 
     // USB D+/D-
-    .in_dp          (usb_in_dp     ),
-    .in_dn          (usb_in_dn     ),
+    .in_dp          (usbh_in_dp     ),
+    .in_dn          (usbh_in_dn     ),
 
-    .out_dp         (usb_out_dp    ),
-    .out_dn         (usb_out_dn    ),
-    .out_tx_oen     (usb_out_tx_oen),
+    .out_dp         (usbh_out_dp    ),
+    .out_dn         (usbh_out_dn    ),
+    .out_tx_oen     (usbh_out_tx_oen),
 
     // Master Port
-    .wbm_rst_n      (usb_rstn      ),  // Regular Reset signal
-    .wbm_clk_i      (app_clk       ),  // System clock
-    .wbm_stb_i      (reg_usb_cs    ),  // strobe/request
-    .wbm_adr_i      (reg_addr[5:0]),  // address
-    .wbm_we_i       (reg_wr        ),  // write
-    .wbm_dat_i      (reg_wdata     ),  // data output
-    .wbm_sel_i      (reg_be        ),  // byte enable
-    .wbm_dat_o      (reg_usb_rdata ),  // data input
-    .wbm_ack_o      (reg_usb_ack   ),  // acknowlegement
-    .wbm_err_o      (              ),  // error
+    .wbm_rst_n      (usbh_rstn      ),  // Regular Reset signal
+    .wbm_clk_i      (app_clk        ),  // System clock
+    .wbm_stb_i      (reg_usbh_cs    ),  // strobe/request
+    .wbm_adr_i      (reg_addr[5:0]  ),  // address
+    .wbm_we_i       (reg_wr         ),  // write
+    .wbm_dat_i      (reg_wdata      ),  // data output
+    .wbm_sel_i      (reg_be         ),  // byte enable
+    .wbm_dat_o      (reg_usbh_rdata ),  // data input
+    .wbm_ack_o      (reg_usbh_ack   ),  // acknowlegement
+    .wbm_err_o      (               ),  // error
 
     // Outputs
-    .usb_intr_o    ( usb_intr_o    )
+    .usb_intr_o    ( usbh_intr_o    )
 
     );
 
+//----------------------------------
+// USB 1.1 Device
+//----------------------------------
+
+usb1bd_top  u_usb_device(
+     .usb_clk      (usb_clk), 
+     .app_clk      (app_clk), 
+     .arst_n       (usbd_rstn),
+
+     // Transciever Interface
+     .usb_txoe     (usbd_out_tx_oen), // USB TX OEN, Output driven at txoe=0
+     .usb_txdp     (usbd_out_dp),
+     .usb_txdn     (usbd_out_dn),
+
+     .usb_rxdp     (usbd_in_dp),
+     .usb_rxdn     (usbd_in_dp),
+
+	// Register Interface
+
+     .app_reg_req     (reg_usbd_cs),
+     .app_reg_addr    (reg_addr[5:2]),
+     .app_reg_we      (reg_wr),
+     .app_reg_be      (reg_be),
+     .app_reg_wdata   (reg_wdata),
+
+	 .app_reg_rdata   (reg_usbd_rdata),
+	 .app_reg_ack     (reg_usbd_ack),
+
+     .usb_irq         (usbd_intr_o)
+
+        );      
+
+//--------------------------------------
+// SPI Master
+//-------------------------------------
 sspim_top u_sspim (
      .clk          (app_clk         ),
      .reset_n      (spi_rstn        ),          

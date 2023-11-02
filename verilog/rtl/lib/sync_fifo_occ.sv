@@ -69,7 +69,12 @@ module sync_fifo_occ  #(parameter WD = 8,parameter DP = 4,
 	   input  logic	         wr_en        , // FIFO Write enable
 	   input  logic [WD-1:0] wr_data      , // FIFO Write Data
 	   output logic 	     full         , // FIFO Full
+	   output logic 	     afull        , // FIFO About Full
+       output logic          oflow        , // FIFO overflow error
+
        output logic	         empty        , // FIFO Empty
+       output logic	         aempty       , // FIFO About Empty
+       output logic          uflow        , // FIFO under flow error
 	   input  logic	         rd_en        , // FIFO Read enable
 	   output logic [WD-1:0] rd_data      , // FIFO Read Data
        output logic [AW:0]   occupancy      // Show the current FIFO occpancy
@@ -93,8 +98,13 @@ module sync_fifo_occ  #(parameter WD = 8,parameter DP = 4,
    reg [AW-1 : 0]   rd_ptr, wr_ptr;
 
 
-   assign empty =  (occupancy == 0);  
-   assign full  =  (occupancy == DP);  
+   assign empty  =  (occupancy == 0);  
+   assign aempty =  (occupancy == 1);  
+   assign full   =  (occupancy == DP);  
+   assign afull  =  (occupancy == DP-1);  
+
+   assign oflow  =  (wr_en && full);
+   assign uflow  =  (rd_en && empty);
 
    // occpuancy computation
    always @ (posedge clk or negedge reset_n) 

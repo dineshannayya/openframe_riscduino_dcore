@@ -2,6 +2,7 @@
 # Timing Constraints
 ###############################################################################
 create_clock -name core_clk -period 10.0000 [get_ports {clk}]
+create_clock -name tap_clk -period 100.0000 [get_ports {tapc_tck}]
 
 set_clock_transition 0.1500 [all_clocks]
 set_clock_uncertainty -setup 0.5000 [all_clocks]
@@ -13,6 +14,12 @@ set_timing_derate -early [expr {1-$::env(SYNTH_TIMING_DERATE)}]
 set_timing_derate -late [expr {1+$::env(SYNTH_TIMING_DERATE)}]
 
 set_dont_touch { u_skew_core_clk.* }
+
+
+set_clock_groups -name async_clock -asynchronous \
+ -group [get_clocks {core_clk}]      \
+ -group [get_clocks {tap_clk}]     \
+ -comment {Async Clock group}
 
 
 #IMEM Constraints

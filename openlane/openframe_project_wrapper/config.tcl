@@ -132,11 +132,11 @@ set ::env(EXTRA_GDS_FILES) "\
 
 set ::env(SYNTH_DEFINES) [list PnR SYNTHESIS USE_POWER_PINS YCR_DBG_EN YCR_SERIAL_DEBUG ]
 
-set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/includes ]
+set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/yifive/includes ]
 
 #set ::env(GLB_RT_MAXLAYER) 6
 set ::env(RT_MAX_LAYER) {met5}
-set ::env(GRT_ALLOW_CONGESTION) {0}
+set ::env(GRT_ALLOW_CONGESTION) {1}
 set ::env(SYNTH_USE_PG_PINS_DEFINES) "USE_POWER_PINS"
 
 
@@ -191,6 +191,9 @@ set ::env(FP_PDN_MACRO_HOOKS) " \
 	u_pinmux                    vccd1 vssd1 vccd1 vssd1,\
 	u_qspi_master               vccd1 vssd1 vccd1 vssd1,\
 	u_tsram0_2kb                vccd1 vssd1 vccd1 vssd1,\
+	u_tsram1_2kb                vccd1 vssd1 vccd1 vssd1,\
+	u_tsram2_2kb                vccd1 vssd1 vccd1 vssd1,\
+	u_tsram3_2kb                vccd1 vssd1 vccd1 vssd1,\
 	u_icache_2kb                vccd1 vssd1 vccd1 vssd1,\
 	u_dcache_2kb                vccd1 vssd1 vccd1 vssd1,\
 	u_uart_i2c_usb_spi          vccd1 vssd1 vccd1 vssd1,\

@@ -68,10 +68,10 @@
 *   Pin-20                      AVCC                -
 *   Pin-21                      AREF                                        analog_io[10]
 *   Pin-22                      GND                 -
-*   Pin-23        14            PC0/ADC0                                    digital_io[16]/analog_io[11] -
-*   Pin-24        15            PC1/ADC1                                    digital_io[17]/analog_io[12] -
-*   Pin-25        16            PC2/usb_dp/ADC2                             digital_io[18]/analog_io[13] -
-*   Pin-26        17            PC3/usb_dn/ADC3                             digital_io[19]/analog_io[14] -
+*   Pin-23        14            PC0/usbd_dp/ADC0                            digital_io[16]/analog_io[11] -
+*   Pin-24        15            PC1/usbd_dp/ADC1                            digital_io[17]/analog_io[12] -
+*   Pin-25        16            PC2/usbh_dp/ADC2                            digital_io[18]/analog_io[13] -
+*   Pin-26        17            PC3/usbh_dn/ADC3                            digital_io[19]/analog_io[14] -
 *   Pin-27        18            PC4/ADC4/SDA                                digital_io[20]/analog_io[15] -
 *   Pin-28        19            PC5/ADC5/SCL                                digital_io[21]/analog_io[16] -
 
@@ -158,12 +158,19 @@ module pinmux (
 		       //input  logic [3:0]      ssram_do,
 		       //output logic [3:0]      ssram_di,
 
-		       // USB I/F
-		       input   logic           usb_dp_o,
-		       input   logic           usb_dn_o,
-		       input   logic           usb_oen,
-		       output   logic          usb_dp_i,
-		       output   logic          usb_dn_i,
+		       // USB Host I/F
+		       input   logic           usbh_dp_o,
+		       input   logic           usbh_dn_o,
+		       input   logic           usbh_oen,
+		       output   logic          usbh_dp_i,
+		       output   logic          usbh_dn_i,
+
+		       // USB Device I/F
+		       input   logic           usbd_dp_o,
+		       input   logic           usbd_dn_o,
+		       input   logic           usbd_oen,
+		       output   logic          usbd_dp_i,
+		       output   logic          usbd_dn_i,
 
 		       // UART I/F
 		       input   logic  [1:0]    uart_txd,
@@ -257,10 +264,11 @@ wire [1:0]  cfg_uart_enb         = cfg_multi_func_sel[9:8];
 wire        cfg_spim_enb         = cfg_multi_func_sel[10];
 wire [3:0]  cfg_spim_cs_enb      = cfg_multi_func_sel[14:11];
 wire        cfg_i2cm_enb         = cfg_multi_func_sel[15];
-wire        cfg_usb_enb          = cfg_multi_func_sel[16];
+wire        cfg_usbh_enb         = cfg_multi_func_sel[16];
 wire        cfg_ir_tx_enb        = cfg_multi_func_sel[17]; // NEC IR TX Enable
 wire        cfg_sm_enb           = cfg_multi_func_sel[18]; // Stepper Motor Enable
 wire        cfg_spis_dis         = cfg_multi_func_sel[19]; // Disable spis_boot
+wire        cfg_usbd_enb         = cfg_multi_func_sel[20]; // Disable spis_boot
 wire        cfg_tap_enb          = cfg_multi_func_sel[30]; // 1 - Riscv Tap Enable
 wire        cfg_muart_enb        = cfg_multi_func_sel[31]; // 1 - uart master enable, 
 
@@ -360,18 +368,20 @@ always_comb begin
      port_b_in[5]= digital_io_in[13];
      spis_sck    = (spis_boot) ? digital_io_in[13] : 1'b1;   // SPIM SCK (Output) = SPIS SCK (Input)
      
-     //Pin-23       PC0/ADC0            digital_io[16]/analog_io[11]
+     //Pin-23       PC0/ADC0            digital_io[16]/usbd_dp/analog_io[11]
+     usbd_dp_i     = (cfg_usbd_enb) ? digital_io_in[16] : 1'b1;
      port_c_in[0] = digital_io_in[16];
 
-     //Pin-24       PC1/ADC1            digital_io[17]/analog_io[12]
+     //Pin-24       PC1/ADC1            digital_io[17]/usbh_dn/analog_io[12]
+     usbd_dn_i     = (cfg_usbd_enb) ? digital_io_in[17] : 1'b1;
      port_c_in[1] = digital_io_in[17];
 
-     //Pin-25       PC2/ADC2            digital_io[18]/usb_dp/analog_io[13]
-     usb_dp_i     = (cfg_usb_enb) ? digital_io_in[18] : 1'b1;
+     //Pin-25       PC2/ADC2            digital_io[18]/usbh_dp/analog_io[13]
+     usbh_dp_i     = (cfg_usbh_enb) ? digital_io_in[18] : 1'b1;
      port_c_in[2] = digital_io_in[18];
 
-     //Pin-26       PC3/ADC3            digital_io[19]/usb_dn/analog_io[14]
-     usb_dn_i     = (cfg_usb_enb) ? digital_io_in[19] : 1'b1;
+     //Pin-26       PC3/ADC3            digital_io[19]/usbh_dn/analog_io[14]
+     usbh_dn_i     = (cfg_usbh_enb) ? digital_io_in[19] : 1'b1;
      port_c_in[3] = digital_io_in[19];
 
      //Pin-27       PC4/ADC4/SDA        digital_io[20]/analog_io[15]
@@ -514,18 +524,20 @@ always_comb begin
      if(cfg_spim_enb)             digital_io_out[13]  = spim_sck;      // SPIM SCK (Output) = SPIS SCK (Input)
      else if(cfg_port_b_dir_sel[5])  digital_io_out[13]  = port_b_out[5];
      
-     //Pin-23       PC0/ADC0    digital_io[16]/analog_io[11]
-     if(cfg_port_c_dir_sel[0])  digital_io_out[16]  = port_c_out[0];
+     //Pin-23       PC0/USBD_DP/ADC0    digital_io[16]/analog_io[11]
+     if(cfg_usbd_enb)                digital_io_out[16]  = usbd_dp_o;
+     else if(cfg_port_c_dir_sel[0])  digital_io_out[16]  = port_c_out[0];
 
-     //Pin-24       PC1/ADC1    digital_io[17]/analog_io[12]
-     if(cfg_port_c_dir_sel[1])  digital_io_out[17]  = port_c_out[1];
+     //Pin-24       PC1/USBD_DN/ADC1    digital_io[17]/analog_io[12]
+     if(cfg_usbd_enb)                digital_io_out[17]  = usbd_dn_o;
+     else if(cfg_port_c_dir_sel[1])  digital_io_out[17]  = port_c_out[1];
 
-     //Pin-25       PC2/USB_DP/ADC2  digital_io[18]/analog_io[13]
-     if(cfg_usb_enb)                 digital_io_out[18]  = usb_dp_o;
+     //Pin-25       PC2/USBH_DP/ADC2  digital_io[18]/analog_io[13]
+     if(cfg_usbh_enb)                 digital_io_out[18]  = usbh_dp_o;
      else if(cfg_port_c_dir_sel[2])  digital_io_out[18]  = port_c_out[2];
 
-     //Pin-26       PC3/USB_DN/ADC3  digital_io[19]/analog_io[14]
-     if(cfg_usb_enb)                 digital_io_out[19]  = usb_dn_o;
+     //Pin-26       PC3/USBH_DN/ADC3  digital_io[19]/analog_io[14]
+     if(cfg_usbh_enb)                 digital_io_out[19]  = usbh_dn_o;
      if(cfg_port_c_dir_sel[3])       digital_io_out[19]  = port_c_out[3];
 
      //Pin-27       PC4/ADC4/SDA        digital_io[20]/analog_io[15]
@@ -658,18 +670,20 @@ always_comb begin
      else if(spis_boot)              digital_io_oen[13]  = 1'b1; // SPIS SCK (Input)
      else if(cfg_port_b_dir_sel[5])  digital_io_oen[13]  = 1'b0;
      
-     //Pin-23       PC0/ADC0    digital_io[16]/analog_io[11]
-     if(cfg_port_c_dir_sel[0])       digital_io_oen[16]  = 1'b0;
+     //Pin-23       PC0/USBD_DP/ADC0    digital_io[16]/analog_io[11]
+     if(cfg_usbd_enb)                  digital_io_oen[16]  = usbd_oen;
+     else if(cfg_port_c_dir_sel[0])    digital_io_oen[16]  = 1'b0;
 
-     //Pin-24       PC1/ADC1    digital_io[17]/analog_io[12]
-     if(cfg_port_c_dir_sel[1])       digital_io_oen[17]  = 1'b0;
+     //Pin-24       PC1/USBD_DN/ADC1    digital_io[17]/analog_io[12]
+     if(cfg_usbd_enb)                 digital_io_oen[17]  = usbd_oen;
+     else if(cfg_port_c_dir_sel[1])   digital_io_oen[17]  = 1'b0;
 
-     //Pin-25       PC2/USB_DP/ADC2  digital_io[18]/analog_io[13]
-     if(cfg_usb_enb)                 digital_io_oen[18]  = usb_oen;
+     //Pin-25       PC2/USBH_DP/ADC2  digital_io[18]/analog_io[13]
+     if(cfg_usbh_enb)                 digital_io_oen[18]  = usbh_oen;
      else if(cfg_port_c_dir_sel[2])  digital_io_oen[18]  = 1'b0;
 
-     //Pin-26       PC3/USB_DN/ADC3  digital_io[19]/analog_io[14]
-     if(cfg_usb_enb)                 digital_io_oen[19]  = usb_oen;
+     //Pin-26       PC3/USBH_DN/ADC3  digital_io[19]/analog_io[14]
+     if(cfg_usbh_enb)                 digital_io_oen[19]  = usbh_oen;
      else if(cfg_port_c_dir_sel[3])  digital_io_oen[19]  = 1'b0;
 
      //Pin-27       PC4/ADC4/SDA        digital_io[20]/analog_io[15]

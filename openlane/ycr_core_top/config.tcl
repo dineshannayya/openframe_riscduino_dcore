@@ -61,8 +61,9 @@ set ::env(VERILOG_FILES) "\
         $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/top/ycr_req_retiming.sv               \
         $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/lib/sync_fifo2.sv                     \
 	"
-set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/includes ]
+set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/yifive/includes ]
 set ::env(SYNTH_READ_BLACKBOX_LIB) 1
+set ::env(RUN_LINTER) "0"
 set ::env(SYNTH_DEFINES) [list SYNTHESIS ]
 
 

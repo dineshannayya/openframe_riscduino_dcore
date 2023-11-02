@@ -50,7 +50,7 @@ set ::env(VERILOG_FILES) "\
         $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/lib/async_fifo.sv                       \
 	$::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/core/primitives/ycr_reset_cells.sv     \
 	"
-set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/includes ]
+set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/yifive/includes ]
 set ::env(SYNTH_READ_BLACKBOX_LIB) 1
 set ::env(SYNTH_DEFINES) [list SYNTHESIS ]
 
@@ -60,6 +60,7 @@ set ::env(BASE_SDC_FILE) $::env(DESIGN_DIR)/base.sdc
 
 set ::env(SYNTH_ENB_CG) 1
 set ::env(LEC_ENABLE) 0
+set ::env(RUN_LINTER) 0
 
 set ::env(VDD_PIN) [list {vccd1}]
 set ::env(GND_PIN) [list {vssd1}]
@@ -67,7 +68,7 @@ set ::env(GND_PIN) [list {vssd1}]
 ## Floorplan
 set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 600 625 "
+set ::env(DIE_AREA) "0 0 700 625 "
 #set ::env(CELL_PAD) "8"
 set ::env(GRT_ADJUSTMENT) {0.2}
 

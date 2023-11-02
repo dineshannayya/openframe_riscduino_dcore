@@ -777,6 +777,7 @@ We are looking for community help in following activity, interested user can pin
 * **i2c**           - http://www.opencores.org/projects/i2c/
 * **USB1 core**     - https://github.com/ultraembedded/core_usb_host
 * **USB1 phy**      - https://github.com/ultraembedded/core_usb_fs_phy
+* **USB1 Device**   - https://github.com/ulixxe/usb_cdc.git
 * **8 bit DAC**     - https://github.com/pramitpal/8bit_dac
 * **IR-Receiver**   - https://github.com/JulienOury/ChristmasTreeController/
 * **Random Number** - https://github.com/JulienOury/ChristmasTreeController/

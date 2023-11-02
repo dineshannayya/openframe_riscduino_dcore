@@ -701,7 +701,8 @@ wire                           qspim_rst_n                            ;
 wire                           sspim_rst_n                            ;
 wire [1:0]                     uart_rst_n                             ; // uart reset
 wire                           i2c_rst_n                              ; // i2c reset
-wire                           usb_rst_n                              ; // i2c reset
+wire                           usbh_rst_n                              ; // i2c reset
+wire                           usbd_rst_n                              ; // i2c reset
 wire                           bist_rst_n                             ; // i2c reset
 wire                           cpu_clk                                ;
 wire                           rtc_clk                                ;
@@ -775,12 +776,19 @@ wire [3:0]                     sflash_di                              ;
 //wire [3:0]                   ssram_do                               ;
 //wire [3:0]                   ssram_di                               ;
 
-// USB I/F
-wire                           usb_dp_o                               ;
-wire                           usb_dn_o                               ;
-wire                           usb_oen                                ;
-wire                           usb_dp_i                               ;
-wire                           usb_dn_i                               ;
+// USB Host I/F
+wire                           usbh_dp_o                               ;
+wire                           usbh_dn_o                               ;
+wire                           usbh_oen                                ;
+wire                           usbh_dp_i                               ;
+wire                           usbh_dn_i                               ;
+
+// USB Device I/F
+wire                           usbd_dp_o                               ;
+wire                           usbd_dn_o                               ;
+wire                           usbd_oen                                ;
+wire                           usbd_dp_i                               ;
+wire                           usbd_dn_i                               ;
 
 // UART I/F
 wire       [1:0]               uart_txd                               ;
@@ -836,6 +844,38 @@ wire                           sram1_csb1                             ; // CS#
 wire  [8:0]                    sram1_addr1                            ; // Address
 wire  [31:0]                   sram1_dout1                            ; // Read Data
 
+// SRAM-2 PORT-0 - DMEM I/F
+wire                           sram2_clk0                             ; // CLK
+wire                           sram2_csb0                             ; // CS#
+wire                           sram2_web0                             ; // WE#
+wire   [8:0]                   sram2_addr0                            ; // Address
+wire   [3:0]                   sram2_wmask0                           ; // WMASK#
+wire   [31:0]                  sram2_din0                             ; // Write Data
+wire   [31:0]                  sram2_dout0                            ; // Read Data
+
+// SRAM-2 PORT-1, IMEM I/F
+wire                           sram2_clk1                             ; // CLK
+wire                           sram2_csb1                             ; // CS#
+wire  [8:0]                    sram2_addr1                            ; // Address
+wire  [31:0]                   sram2_dout1                            ; // Read Data
+
+// SRAM-3 PORT-0 - DMEM I/F
+wire                           sram3_clk0                             ; // CLK
+wire                           sram3_csb0                             ; // CS#
+wire                           sram3_web0                             ; // WE#
+wire   [8:0]                   sram3_addr0                            ; // Address
+wire   [3:0]                   sram3_wmask0                           ; // WMASK#
+wire   [31:0]                  sram3_din0                             ; // Write Data
+wire   [31:0]                  sram3_dout0                            ; // Read Data
+
+// SRAM-3 PORT-1, IMEM I/F
+wire                           sram3_clk1                             ; // CLK
+wire                           sram3_csb1                             ; // CS#
+wire  [8:0]                    sram3_addr1                            ; // Address
+wire  [31:0]                   sram3_dout1                            ; // Read Data
+
+
+
 `endif
 
 // SPIM I/F
@@ -851,7 +891,8 @@ wire                           sspis_si                               ; // seria
 wire                           sspis_ssn                              ; // cs_n
 
 
-wire                           usb_intr_o                             ;
+wire                           usbh_intr_o                             ;
+wire                           usbd_intr_o                             ;
 wire                           i2cm_intr_o                            ;
 
 wire                           qspim_mclk                             ;
@@ -1108,25 +1149,9 @@ gpio_pads_right  #(
     .gpio_analog_pol      (gpio_analog_pol  [OPENFRAME_IO_RIGHT_PADS-1:0] ),
     .gpio_dm2             (gpio_dm2         [OPENFRAME_IO_RIGHT_PADS-1:0] ),
     .gpio_dm1             (gpio_dm1         [OPENFRAME_IO_RIGHT_PADS-1:0] ),
-    .gpio_dm0             (gpio_dm0         [OPENFRAME_IO_RIGHT_PADS-1:0] ),
+    .gpio_dm0             (gpio_dm0         [OPENFRAME_IO_RIGHT_PADS-1:0] )
 
-    /* These signals correct directly to the pad.  Pads using analog I/O
-     * connections should keep the digital input and output buffers turned
-     * off.  Both signals connect to the same pad.  The "noesd" signal
-     * is a direct connection to the pad;  the other signal connects through
-     * a series resistor which gives it minimal ESD protection.  Both signals
-     * have basic over- and under-voltage protection at the pad.  These
-     * signals may be expected to attenuate heavily above 50MHz.
-     */
-    .analog_io            (analog_io        [OPENFRAME_IO_RIGHT_PADS-1:0]),
-    .analog_noesd_io      (analog_noesd_io  [OPENFRAME_IO_RIGHT_PADS-1:0]),
 
-    /* These signals are constant one and zero in the 1.8V domain, one for
-     * each GPIO pad, and can be looped back to the control signals on the
-     * same GPIO pad to set a static configuration at power-up.
-     */
-    .gpio_loopback_one    (gpio_loopback_one [OPENFRAME_IO_RIGHT_PADS-1:0]),
-    .gpio_loopback_zero   (gpio_loopback_zero[OPENFRAME_IO_RIGHT_PADS-1:0])
 
 
 );
@@ -1180,25 +1205,8 @@ gpio_pads_top  #(
     .gpio_analog_pol     (gpio_analog_pol[OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS]),
     .gpio_dm2            (gpio_dm2[OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS]),
     .gpio_dm1            (gpio_dm1[OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS]),
-    .gpio_dm0            (gpio_dm0[OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS]),
+    .gpio_dm0            (gpio_dm0[OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS])
 
-    /* These signals correct directly to the pad.  Pads using analog I/O
-     * connections should keep the digital input and output buffers turned
-     * off.  Both signals connect to the same pad.  The "noesd" signal
-     * is a direct connection to the pad;  the other signal connects through
-     * a series resistor which gives it minimal ESD protection.  Both signals
-     * have basic over- and under-voltage protection at the pad.  These
-     * signals may be expected to attenuate heavily above 50MHz.
-     */
-    .analog_io          (analog_io[OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS]),
-    .analog_noesd_io    (analog_noesd_io[OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS]),
-
-    /* These signals are constant one and zero in the 1.8V domain, one for
-     * each GPIO pad, and can be looped back to the control signals on the
-     * same GPIO pad to set a static configuration at power-up.
-     */
-    .gpio_loopback_one  (gpio_loopback_one[OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS]),
-    .gpio_loopback_zero (gpio_loopback_zero[OPENFRAME_IO_TOP_PADS-1:OPENFRAME_IO_RIGHT_PADS])
 
 
 );
@@ -1253,25 +1261,8 @@ gpio_pads_left  #(
     .gpio_analog_pol     (gpio_analog_pol[OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS]),
     .gpio_dm2            (gpio_dm2[OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS]),
     .gpio_dm1            (gpio_dm1[OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS]),
-    .gpio_dm0            (gpio_dm0[OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS]),
+    .gpio_dm0            (gpio_dm0[OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS])
 
-    /* These signals correct directly to the pad.  Pads using analog I/O
-     * connections should keep the digital input and output buffers turned
-     * off.  Both signals connect to the same pad.  The "noesd" signal
-     * is a direct connection to the pad;  the other signal connects through
-     * a series resistor which gives it minimal ESD protection.  Both signals
-     * have basic over- and under-voltage protection at the pad.  These
-     * signals may be expected to attenuate heavily above 50MHz.
-     */
-    .analog_io          (analog_io[OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS]),
-    .analog_noesd_io    (analog_noesd_io[OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS]),
-
-    /* These signals are constant one and zero in the 1.8V domain, one for
-     * each GPIO pad, and can be looped back to the control signals on the
-     * same GPIO pad to set a static configuration at power-up.
-     */
-    .gpio_loopback_one  (gpio_loopback_one[OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS]),
-    .gpio_loopback_zero (gpio_loopback_zero[OPENFRAME_IO_LEFT_PADS-1:OPENFRAME_IO_TOP_PADS])
 
 
 );
@@ -1327,25 +1318,8 @@ gpio_pads_bottom  #(
     .gpio_analog_pol     (gpio_analog_pol [OPENFRAME_IO_BOTTOM_PADS-1:OPENFRAME_IO_LEFT_PADS]),
     .gpio_dm2            (gpio_dm2        [OPENFRAME_IO_BOTTOM_PADS-1:OPENFRAME_IO_LEFT_PADS]),
     .gpio_dm1            (gpio_dm1        [OPENFRAME_IO_BOTTOM_PADS-1:OPENFRAME_IO_LEFT_PADS]),
-    .gpio_dm0            (gpio_dm0        [OPENFRAME_IO_BOTTOM_PADS-1:OPENFRAME_IO_LEFT_PADS]),
+    .gpio_dm0            (gpio_dm0        [OPENFRAME_IO_BOTTOM_PADS-1:OPENFRAME_IO_LEFT_PADS])
 
-    /* These signals correct directly to the pad.  Pads using analog I/O
-     * connections should keep the digital input and output buffers turned
-     * off.  Both signals connect to the same pad.  The "noesd" signal
-     * is a direct connection to the pad;  the other signal connects through
-     * a series resistor which gives it minimal ESD protection.  Both signals
-     * have basic over- and under-voltage protection at the pad.  These
-     * signals may be expected to attenuate heavily above 50MHz.
-     */
-    .analog_io          (analog_io        [OPENFRAME_IO_BOTTOM_PADS-1:OPENFRAME_IO_LEFT_PADS]),
-    .analog_noesd_io    (analog_noesd_io  [OPENFRAME_IO_BOTTOM_PADS-1:OPENFRAME_IO_LEFT_PADS]),
-
-    /* These signals are constant one and zero in the 1.8V domain, one for
-     * each GPIO pad, and can be looped back to the control signals on the
-     * same GPIO pad to set a static configuration at power-up.
-     */
-    .gpio_loopback_one  (gpio_loopback_one [OPENFRAME_IO_BOTTOM_PADS-1:OPENFRAME_IO_LEFT_PADS]),
-    .gpio_loopback_zero (gpio_loopback_zero[OPENFRAME_IO_BOTTOM_PADS-1:OPENFRAME_IO_LEFT_PADS])
 
 
 );
@@ -1519,20 +1493,50 @@ ycr2_top_wb u_riscv_top (
           .sram0_addr1            (sram0_addr1                  ),
           .sram0_dout1            (sram0_dout1                  ),
 
-  //  // SRAM-1 PORT-0
-  //      .sram1_clk0             (sram1_clk0                   ),
-  //      .sram1_csb0             (sram1_csb0                   ),
-  //      .sram1_web0             (sram1_web0                   ),
-  //      .sram1_addr0            (sram1_addr0                  ),
-  //      .sram1_wmask0           (sram1_wmask0                 ),
-  //      .sram1_din0             (sram1_din0                   ),
-  //      .sram1_dout0            (sram1_dout0                  ),
-  //  
-  //  // SRAM PORT-0
-  //      .sram1_clk1             (sram1_clk1                   ),
-  //      .sram1_csb1             (sram1_csb1                   ),
-  //      .sram1_addr1            (sram1_addr1                  ),
-  //      .sram1_dout1            (sram1_dout1                  ),
+    // SRAM-1 PORT-0
+        .sram1_clk0             (sram1_clk0                   ),
+        .sram1_csb0             (sram1_csb0                   ),
+        .sram1_web0             (sram1_web0                   ),
+        .sram1_addr0            (sram1_addr0                  ),
+        .sram1_wmask0           (sram1_wmask0                 ),
+        .sram1_din0             (sram1_din0                   ),
+        .sram1_dout0            (sram1_dout0                  ),
+    
+    // SRAM PORT-0
+        .sram1_clk1             (sram1_clk1                   ),
+        .sram1_csb1             (sram1_csb1                   ),
+        .sram1_addr1            (sram1_addr1                  ),
+        .sram1_dout1            (sram1_dout1                  ),
+
+    // SRAM-2 PORT-0
+        .sram2_clk0             (sram2_clk0                   ),
+        .sram2_csb0             (sram2_csb0                   ),
+        .sram2_web0             (sram2_web0                   ),
+        .sram2_addr0            (sram2_addr0                  ),
+        .sram2_wmask0           (sram2_wmask0                 ),
+        .sram2_din0             (sram2_din0                   ),
+        .sram2_dout0            (sram2_dout0                  ),
+    
+    // SRAM PORT-0
+        .sram2_clk1             (sram2_clk1                   ),
+        .sram2_csb1             (sram2_csb1                   ),
+        .sram2_addr1            (sram2_addr1                  ),
+        .sram2_dout1            (sram2_dout1                  ),
+
+    // SRAM-3 PORT-0
+        .sram3_clk0             (sram3_clk0                   ),
+        .sram3_csb0             (sram3_csb0                   ),
+        .sram3_web0             (sram3_web0                   ),
+        .sram3_addr0            (sram3_addr0                  ),
+        .sram3_wmask0           (sram3_wmask0                 ),
+        .sram3_din0             (sram3_din0                   ),
+        .sram3_dout0            (sram3_dout0                  ),
+    
+    // SRAM PORT-0
+        .sram3_clk1             (sram3_clk1                   ),
+        .sram3_csb1             (sram3_csb1                   ),
+        .sram3_addr1            (sram3_addr1                  ),
+        .sram3_dout1            (sram3_dout1                  ),
 `endif
     
           .wb_rst_n                (wbd_int_rst_n           ),
@@ -1653,7 +1657,6 @@ sky130_sram_2kbyte_1rw1r_32x512_8 u_tsram0_2kb(
           .dout1              (sram0_dout1                  )
   );
 
-/***
 sky130_sram_2kbyte_1rw1r_32x512_8 u_tsram1_2kb(
 `ifdef USE_POWER_PINS
           .vccd1              (vccd1                        ),// User area 1 1.8V supply
@@ -1673,7 +1676,52 @@ sky130_sram_2kbyte_1rw1r_32x512_8 u_tsram1_2kb(
           .addr1              (sram1_addr1                  ),
           .dout1              (sram1_dout1                  )
   );
-***/
+
+sky130_sram_2kbyte_1rw1r_32x512_8 u_tsram2_2kb(
+`ifdef USE_POWER_PINS
+          .vccd1              (vccd1                        ),// User area 1 1.8V supply
+          .vssd1              (vssd1                        ),// User area 1 digital ground
+`endif
+// Port 0: RW
+          .clk0               (sram2_clk0                   ),
+          .csb0               (sram2_csb0                   ),
+          .web0               (sram2_web0                   ),
+          .wmask0             (sram2_wmask0                 ),
+          .addr0              (sram2_addr0                  ),
+          .din0               (sram2_din0                   ),
+          .dout0              (sram2_dout0                  ),
+// Port 1: R
+          .clk1               (sram2_clk1                   ),
+          .csb1               (sram2_csb1                   ),
+          .addr1              (sram2_addr1                  ),
+          .dout1              (sram2_dout1                  )
+  );
+
+
+sky130_sram_2kbyte_1rw1r_32x512_8 u_tsram3_2kb(
+`ifdef USE_POWER_PINS
+          .vccd1              (vccd1                        ),// User area 1 1.8V supply
+          .vssd1              (vssd1                        ),// User area 1 digital ground
+`endif
+// Port 0: RW
+          .clk0               (sram3_clk0                   ),
+          .csb0               (sram3_csb0                   ),
+          .web0               (sram3_web0                   ),
+          .wmask0             (sram3_wmask0                 ),
+          .addr0              (sram3_addr0                  ),
+          .din0               (sram3_din0                   ),
+          .dout0              (sram3_dout0                  ),
+// Port 1: R
+          .clk1               (sram3_clk1                   ),
+          .csb1               (sram3_csb1                   ),
+          .addr1              (sram3_addr1                  ),
+          .dout1              (sram3_dout1                  )
+  );
+
+
+
+
+
 `endif
 
 //------------------------------------------------
@@ -2033,7 +2081,8 @@ uart_i2c_usb_spi_top   u_uart_i2c_usb_spi (
 
           .uart_rstn          (uart_rst_n                   ), // uart reset
           .i2c_rstn           (i2c_rst_n                    ), // i2c reset
-          .usb_rstn           (usb_rst_n                    ), // USB reset
+          .usbh_rstn          (usbh_rst_n                   ), // USB Host reset
+          .usbd_rstn          (usbd_rst_n                   ), // USB Device reset
           .spi_rstn           (sspim_rst_n                  ), // SPI reset
           .app_clk            (wbd_clk_uart_skew            ),
           .usb_clk            (usb_clk                      ),
@@ -2063,14 +2112,23 @@ uart_i2c_usb_spi_top   u_uart_i2c_usb_spi (
           .uart_rxd           (uart_rxd                     ),
           .uart_txd           (uart_txd                     ),
 
-          .usb_in_dp          (usb_dp_i                     ),
-          .usb_in_dn          (usb_dn_i                     ),
+          // USB HOST
+          .usbh_in_dp         (usbh_dp_i                    ),
+          .usbh_in_dn         (usbh_dn_i                    ),
 
-          .usb_out_dp         (usb_dp_o                     ),
-          .usb_out_dn         (usb_dn_o                     ),
-          .usb_out_tx_oen     (usb_oen                      ),
-       
-          .usb_intr_o         (usb_intr_o                   ),
+          .usbh_out_dp        (usbh_dp_o                    ),
+          .usbh_out_dn        (usbh_dn_o                    ),
+          .usbh_out_tx_oen    (usbh_oen                     ),
+          .usbh_intr_o        (usbh_intr_o                  ),
+
+          // USB DEVICE
+          .usbd_in_dp         (usbd_dp_i                    ),
+          .usbd_in_dn         (usbd_dn_i                    ),
+
+          .usbd_out_dp        (usbd_dp_o                    ),
+          .usbd_out_dn        (usbd_dn_o                    ),
+          .usbd_out_tx_oen    (usbd_oen                     ),
+          .usbd_intr_o        (usbd_intr_o                  ),
 
       // SPIM Master
           .sspim_sck          (sspim_sck                    ), 
@@ -2131,7 +2189,8 @@ pinmux_top u_pinmux(
           .sspim_rst_n        (sspim_rst_n                  ),
           .uart_rst_n         (uart_rst_n                   ),
           .i2cm_rst_n         (i2c_rst_n                    ),
-          .usb_rst_n          (usb_rst_n                    ),
+          .usbh_rst_n         (usbh_rst_n                    ),
+          .usbd_rst_n         (usbd_rst_n                    ),
 
           .cfg_riscv_ctrl     (cfg_riscv_ctrl               ),
 
@@ -2151,7 +2210,8 @@ pinmux_top u_pinmux(
           .irq_lines          (irq_lines                    ),
           .soft_irq           (soft_irq                     ),
           .user_irq           (                             ),
-          .usb_intr           (usb_intr_o                   ),
+          .usbh_intr          (usbh_intr_o                  ),
+          .usbd_intr          (usbd_intr_o                  ),
           .i2cm_intr          (i2cm_intr_o                  ),
 
        // Digital IO
@@ -2167,12 +2227,19 @@ pinmux_top u_pinmux(
           .sflash_di          (sflash_di                    ),
 
 
-       // USB I/F
-          .usb_dp_o           (usb_dp_o                     ),
-          .usb_dn_o           (usb_dn_o                     ),
-          .usb_oen            (usb_oen                      ),
-          .usb_dp_i           (usb_dp_i                     ),
-          .usb_dn_i           (usb_dn_i                     ),
+       // USB Host I/F
+          .usbh_dp_o           (usbh_dp_o                     ),
+          .usbh_dn_o           (usbh_dn_o                     ),
+          .usbh_oen            (usbh_oen                      ),
+          .usbh_dp_i           (usbh_dp_i                     ),
+          .usbh_dn_i           (usbh_dn_i                     ),
+
+       // USB Device I/F
+          .usbd_dp_o           (usbd_dp_o                     ),
+          .usbd_dn_o           (usbd_dn_o                     ),
+          .usbd_oen            (usbd_oen                      ),
+          .usbd_dp_i           (usbd_dp_i                     ),
+          .usbd_dn_i           (usbd_dn_i                     ),
 
        // UART I/F
           .uart_txd           (uart_txd                     ),

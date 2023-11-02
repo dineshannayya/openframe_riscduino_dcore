@@ -125,7 +125,8 @@ module pinmux_top (
                        output logic            sspim_rst_n      ,
                        output logic [1:0]      uart_rst_n       ,
                        output logic            i2cm_rst_n       ,
-                       output logic            usb_rst_n        ,
+                       output logic            usbh_rst_n        ,
+                       output logic            usbd_rst_n        ,
 
 		               output logic [15:0]     cfg_riscv_ctrl,
 
@@ -144,7 +145,8 @@ module pinmux_top (
                        output logic [31:0]     irq_lines,
                        output logic            soft_irq,
                        output logic [2:0]      user_irq,
-		               input  logic            usb_intr,
+		               input  logic            usbh_intr,
+		               input  logic            usbd_intr,
 		               input  logic            i2cm_intr,
 
                        // Digital IO
@@ -166,12 +168,19 @@ module pinmux_top (
 		       //input  logic [3:0]      ssram_do,
 		       //output logic [3:0]      ssram_di,
 
-		       // USB I/F
-		       input   logic           usb_dp_o,
-		       input   logic           usb_dn_o,
-		       input   logic           usb_oen,
-		       output   logic          usb_dp_i,
-		       output   logic          usb_dn_i,
+		       // USB I/F HOST
+		       input   logic           usbh_dp_o,
+		       input   logic           usbh_dn_o,
+		       input   logic           usbh_oen,
+		       output   logic          usbh_dp_i,
+		       output   logic          usbh_dn_i,
+
+		       // USB I/F Device
+		       input   logic           usbd_dp_o,
+		       input   logic           usbd_dn_o,
+		       input   logic           usbd_oen,
+		       output   logic          usbd_dp_i,
+		       output   logic          usbd_dn_i,
 
 		       // UART I/F
 		       input   logic  [1:0]    uart_txd,
@@ -404,7 +413,8 @@ glbl_reg u_glbl_reg(
           .sspim_rst_n                  (sspim_rst_n             ),
           .uart_rst_n                   (uart_rst_n              ),
           .i2cm_rst_n                   (i2cm_rst_n              ),
-          .usb_rst_n                    (usb_rst_n               ),
+          .usbh_rst_n                   (usbh_rst_n               ),
+          .usbd_rst_n                   (usbd_rst_n               ),
 
 	      .cfg_riscv_ctrl               (cfg_riscv_ctrl          ),
           .cfg_multi_func_sel           (cfg_multi_func_sel      ),
@@ -425,7 +435,8 @@ glbl_reg u_glbl_reg(
 	      .irq_lines                    (irq_lines               ),
 	      .soft_irq                     (soft_irq                ),
 	      .user_irq                     (user_irq                ),
-          .usb_intr                     (usb_intr                ),
+          .usbh_intr                    (usbh_intr                ),
+          .usbd_intr                    (usbd_intr                ),
           .i2cm_intr                    (i2cm_intr               ),
           .pwm_intr                     (pwm_intr                ),
           .rtc_intr                     (rtc_intr                ),
@@ -620,12 +631,20 @@ pinmux u_pinmux (
 		       .sflash_do               (sflash_do           ),
 		       .sflash_di               (sflash_di           ),
 
-		       // USB I/F
-		       .usb_dp_o                (usb_dp_o            ),
-		       .usb_dn_o                (usb_dn_o            ),
-		       .usb_oen                 (usb_oen             ),
-		       .usb_dp_i                (usb_dp_i            ),
-		       .usb_dn_i                (usb_dn_i            ),
+		       // USB Host I/F
+		       .usbh_dp_o                (usbh_dp_o            ),
+		       .usbh_dn_o                (usbh_dn_o            ),
+		       .usbh_oen                 (usbh_oen             ),
+		       .usbh_dp_i                (usbh_dp_i            ),
+		       .usbh_dn_i                (usbh_dn_i            ),
+
+		       // USB Device I/F
+		       .usbd_dp_o                (usbd_dp_o            ),
+		       .usbd_dn_o                (usbd_dn_o            ),
+		       .usbd_oen                 (usbd_oen             ),
+		       .usbd_dp_i                (usbd_dp_i            ),
+		       .usbd_dn_i                (usbd_dn_i            ),
+
 
 		       // UART I/F
 		       .uart_txd                (uart_txd            ),

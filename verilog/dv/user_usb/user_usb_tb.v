@@ -57,7 +57,6 @@
 `include "usb_agents.v"
 `include "test_control.v"
 `include "usb1d_defines.v"
-`include "usbd_files.v"
 
 `include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
 `include "user_params.svh"
@@ -180,29 +179,35 @@ parameter real XTAL_PERIOD = 6;
 
 // Drive USB Pads
 //
-tri usbd_txdp = (io_oeb[18] == 1'b0) ? io_out[18] : 1'bz;
-tri usbd_txdn = (io_oeb[19] == 1'b0) ? io_out[19] : 1'bz;
+wire usbd_txoe,usbd_txdp,usbd_txdn;
 
-assign io_in[18] = usbd_txdp;
-assign io_in[19] = usbd_txdn;
+tri usb_txdp = (io_oeb[18] == 1'b0) ? io_out[18] : (usbd_txoe == 1'b0) ? usbd_txdp : 1'bz;
+tri usb_txdn = (io_oeb[19] == 1'b0) ? io_out[19] : (usbd_txoe == 1'b0) ? usbd_txdn : 1'bz;
+
+assign io_in[18] = usb_txdp;
+assign io_in[19] = usb_txdn;
 
 // Full Speed Device Indication
 
-pullup(usbd_txdp); 
-pulldown(usbd_txdn);
+pullup(usb_txdp); 
+pulldown(usb_txdn);
 
-usb1d_top u_usb_top(
+usb1d_top u_bfm_usbd(
 
 	.clk_i           (clock), 
 	.rstn_i          (!wb_rst_i),
  
 		// USB PHY Interface
-	.usb_dp          (usbd_txdp), 
-	.usb_dn          (usbd_txdn), 
+    .usb_txoe       (usbd_txoe),
+    .usb_txdp       (usbd_txdp),
+    .usb_txdn       (usbd_txdn),
+
+    .usb_rxdp       (usb_txdp),
+    .usb_rxdn       (usb_txdn),
  
 	// USB Misc
 	.phy_tx_mode     (1'b1), 
-        .usb_rst         (),
+    .usb_rst         (),
  
 	// Interrupts
 	.dropped_frame   (), 
@@ -221,62 +226,62 @@ usb1d_top u_usb_top(
 	.ep_sel          (),
  
 	// End point 1 configuration
-	.ep1_cfg         (	`ISO  | `IN  | 14'd0256		),
+	.ep1_cfg         (	`USBF_ISO  | `USBF_IN  | 14'd0256		),
 	// End point 1 'OUT' FIFO i/f
 	.ep1_dout        (					),
 	.ep1_we          (					),
-	.ep1_full        (		1'b0			),
+	.ep1_full        (		1'b0		),
 	// End point 1 'IN' FIFO i/f
-	.ep1_din         (		8'h0		        ),
-	.ep1_re          (		   		        ),
-	.ep1_empty       (		1'b0     		),
-	.ep1_bf_en       (		1'b0			),
-	.ep1_bf_size     (		7'h0			),
+	.ep1_din         (		8'h0		),
+	.ep1_re          (		   		    ),
+	.ep1_empty       (		1'b0     	),
+	.ep1_bf_en       (		1'b0		),
+	.ep1_bf_size     (		7'h0		),
  
 	// End point 2 configuration
-	.ep2_cfg         (	`ISO  | `OUT | 14'd0256		),
+	.ep2_cfg         (	`USBF_ISO  | `USBF_OUT | 14'd0256		),
 	// End point 2 'OUT' FIFO i/f
-	.ep2_dout        (				        ),
-	.ep2_we          (				        ),
-	.ep2_full        (		1'b0     		),
+	.ep2_dout        (				    ),
+	.ep2_we          (				    ),
+	.ep2_full        (		1'b0     	),
 	// End point 2 'IN' FIFO i/f
-	.ep2_din         (		8'h0			),
+	.ep2_din         (		8'h0		),
 	.ep2_re          (					),
-	.ep2_empty       (		1'b0			),
-	.ep2_bf_en       (		1'b0			),
-	.ep2_bf_size     (		7'h0			),
+	.ep2_empty       (		1'b0		),
+	.ep2_bf_en       (		1'b0		),
+	.ep2_bf_size     (		7'h0		),
  
 	// End point 3 configuration
-	.ep3_cfg         (	`BULK | `IN  | 14'd064		),
+	.ep3_cfg         (	`USBF_BULK | `USBF_IN  | 14'd064		),
 	// End point 3 'OUT' FIFO i/f
 	.ep3_dout        (					),
 	.ep3_we          (					),
-	.ep3_full        (		1'b0			),
+	.ep3_full        (		1'b0		),
 	// End point 3 'IN' FIFO i/f
-	.ep3_din         (		8'h0      		),
-	.ep3_re          (		        		),
-	.ep3_empty       (		1'b0    		),
-	.ep3_bf_en       (		1'b0			),
-	.ep3_bf_size     (		7'h0			),
+	.ep3_din         (		8'h0      	),
+	.ep3_re          (		        	),
+	.ep3_empty       (		1'b0    	),
+	.ep3_bf_en       (		1'b0		),
+	.ep3_bf_size     (		7'h0		),
  
 	// End point 4 configuration
-	.ep4_cfg         (	`BULK | `OUT | 14'd064		),
+	.ep4_cfg         (	`USBF_BULK | `USBF_OUT | 14'd064		),
 	// End point 4 'OUT' FIFO i/f
 	.ep4_dout        (		        		),
 	.ep4_we          (		        		),
 	.ep4_full        (		1'b0     		),
 	// End point 4 'IN' FIFO i/f
 	.ep4_din         (		8'h0			),
-	.ep4_re          (					),
+	.ep4_re          (					    ),
 	.ep4_empty       (		1'b0			),
 	.ep4_bf_en       (		1'b0			),
 	.ep4_bf_size     (		7'h0			),
  
 	// End point 5 configuration
-	.ep5_cfg         (	`INT  | `IN  | 14'd064		),
+	.ep5_cfg         (	`USBF_INT  | `USBF_IN  | 14'd064		),
 	// End point 5 'OUT' FIFO i/f
-	.ep5_dout        (					),
-	.ep5_we          (					),
+	.ep5_dout        (					    ),
+	.ep5_we          (					    ),
 	.ep5_full        (		1'b0			),
 	// End point 5 'IN' FIFO i/f
 	.ep5_din         (		8'h0     		),
@@ -288,12 +293,12 @@ usb1d_top u_usb_top(
 	// End point 6 configuration
 	.ep6_cfg         (		14'h00			),
 	// End point 6 'OUT' FIFO i/f
-	.ep6_dout        (					),
-	.ep6_we          (					),
+	.ep6_dout        (					    ),
+	.ep6_we          (					    ),
 	.ep6_full        (		1'b0			),
 	// End point 6 'IN' FIFO i/f
 	.ep6_din         (		8'h0			),
-	.ep6_re          (					),
+	.ep6_re          (					    ),
 	.ep6_empty       (		1'b0			),
 	.ep6_bf_en       (		1'b0			),
 	.ep6_bf_size     (		7'h0			),
@@ -301,23 +306,23 @@ usb1d_top u_usb_top(
 	// End point 7 configuration
 	.ep7_cfg         (		14'h00			),
 	// End point 7 'OUT' FIFO i/f
-	.ep7_dout        (					),
-	.ep7_we          (					),
+	.ep7_dout        (					    ),
+	.ep7_we          (					    ),
 	.ep7_full        (		1'b0			),
 	// End point 7 'IN' FIFO i/f
 	.ep7_din         (		8'h0			),
-	.ep7_re          (					),
+	.ep7_re          (					    ),
 	.ep7_empty       (		1'b0			),
 	.ep7_bf_en       (		1'b0			),
 	.ep7_bf_size     (		7'h0			),
  
         // Register Interface
-	.reg_addr        (usbd_reg_addr),
-	.reg_rdwrn       (usbd_reg_rdwrn),
-	.reg_req         (usbd_reg_req),
-	.reg_wdata       (usbd_reg_wdata),
-	.reg_rdata       (usbd_reg_rdata),
-	.reg_ack         (usbd_reg_ack)
+	.reg_addr        (usbd_reg_addr         ),
+	.reg_rdwrn       (usbd_reg_rdwrn        ),
+	.reg_req         (usbd_reg_req          ),
+	.reg_wdata       (usbd_reg_wdata        ),
+	.reg_rdata       (usbd_reg_rdata        ),
+	.reg_ack         (usbd_reg_ack          )
  
 	);
 

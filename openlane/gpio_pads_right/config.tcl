@@ -69,7 +69,7 @@ set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 #set ::env(MACRO_PLACEMENT_CFG) $::env(DESIGN_DIR)/macro.cfg
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 150 4200"
+set ::env(DIE_AREA) "0 0 125 4200"
 
 #set ::env(GRT_OBS) "met4  0 0 300 1725"
 
@@ -79,7 +79,8 @@ set ::env(RUN_CVC) 0
 #set ::env(PDN_CFG) $::env(DESIGN_DIR)/pdn.tcl
 
 
-set ::env(PL_TIME_DRIVEN) 1
+set ::env(GRT_ALLOW_CONGESTION) {0}
+set ::env(PL_TIME_DRIVEN) 0
 set ::env(PL_TARGET_DENSITY) "0.20"
 set ::env(CELL_PAD) "8"
 
@@ -89,6 +90,7 @@ set ::env(USE_ARC_ANTENNA_CHECK) "0"
 
 #set ::env(GLB_RT_MAX_DIODE_INS_ITERS) 10
 set ::env(DIODE_INSERTION_STRATEGY) 4
+set ::env(FP_PDN_CHECK_NODES) "1"
 
 ## CTS
 set ::env(CLOCK_TREE_SYNTH) {1}
@@ -108,6 +110,8 @@ set ::env(MAGIC_EXT_USE_GDS) {1}
 #set ::env(GLB_RT_MAXLAYER) 3
 set ::env(RT_MAX_LAYER) {met3}
 
+set ::env(FP_PDN_VERTICAL_LAYER) {met2}
+set ::env(FP_PDN_HORIZONTAL_LAYER) {met3}
 set ::env(FP_PDN_LOWER_LAYER) {met2}
 set ::env(FP_PDN_UPPER_LAYER) {met3}
 
