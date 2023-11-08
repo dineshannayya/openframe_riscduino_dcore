@@ -82,6 +82,10 @@ set ::env(VERILOG_FILES_BLACKBOX) "\
 	    $::env(DESIGN_DIR)/../../verilog/gl/peri_top.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/vccd1_connection.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/vssd1_connection.v \
+	    $::env(DESIGN_DIR)/../../verilog/gl/vdda1_connection_0.v \
+	    $::env(DESIGN_DIR)/../../verilog/gl/vdda1_connection_1.v \
+	    $::env(DESIGN_DIR)/../../verilog/gl/vssa1_connection_0.v \
+	    $::env(DESIGN_DIR)/../../verilog/gl/vssa1_connection_1.v \
 	    "
 
 set ::env(EXTRA_LEFS) "\
@@ -105,6 +109,10 @@ set ::env(EXTRA_LEFS) "\
 	$lef_root/peri_top.lef \
 	$lef_root/vccd1_connection.lef \
 	$lef_root/vssd1_connection.lef \
+	$lef_root/vdda1_connection_0.lef \
+	$lef_root/vdda1_connection_1.lef \
+	$lef_root/vssa1_connection_0.lef \
+	$lef_root/vssa1_connection_1.lef \
 	"
 
 set ::env(EXTRA_GDS_FILES) "\
@@ -128,6 +136,10 @@ set ::env(EXTRA_GDS_FILES) "\
 	$gds_root/peri_top.gds \
 	$gds_root/vccd1_connection.gds \
 	$gds_root/vssd1_connection.gds \
+	$gds_root/vdda1_connection_0.gds \
+	$gds_root/vdda1_connection_1.gds \
+	$gds_root/vssa1_connection_0.gds \
+	$gds_root/vssa1_connection_1.gds \
 	"
 
 set ::env(SYNTH_DEFINES) [list PnR SYNTHESIS USE_POWER_PINS YCR_DBG_EN YCR_SERIAL_DEBUG ]
@@ -156,34 +168,34 @@ set ::env(FP_PDN_VPITCH) 80
 set ::env(FP_PDN_HPITCH) 80
 set ::env(FP_PDN_VOFFSET) 18.43
 set ::env(FP_PDN_HOFFSET) 22.83
-
-set ::env(FP_PDN_CORE_RING) 1
-set ::env(FP_PDN_CORE_RING_VWIDTH) 20
-set ::env(FP_PDN_CORE_RING_HWIDTH) 20
-set ::env(FP_PDN_CORE_RING_VOFFSET) -4
-set ::env(FP_PDN_CORE_RING_HOFFSET) -4
-set ::env(FP_PDN_CORE_RING_VSPACING) 2.4
-set ::env(FP_PDN_CORE_RING_HSPACING) 2.4
 set ::env(FP_PDN_VWIDTH) 6.4
 set ::env(FP_PDN_HWIDTH) 6.4
 set ::env(FP_PDN_HSPACING) 3.2
 set ::env(FP_PDN_VSPACING) 3.2
 
+set ::env(FP_PDN_CORE_RING) 1
+set ::env(FP_PDN_CORE_RING_VWIDTH) 20
+set ::env(FP_PDN_CORE_RING_HWIDTH) 20
+set ::env(FP_PDN_CORE_RING_VOFFSET) -8.780
+set ::env(FP_PDN_CORE_RING_HOFFSET) -8
+set ::env(FP_PDN_CORE_RING_VSPACING) 2.4
+set ::env(FP_PDN_CORE_RING_HSPACING) 2.4
+
 set ::env(VDD_NETS) {vccd1 vdda1 }
 set ::env(GND_NETS) {vssd1 vssa1 }
-set ::env(VDD_NET) {vccd1}
-set ::env(GND_NET) {vssd1}
+set ::env(VDD_NET) {vdda1}
+set ::env(GND_NET) {vssa1}
 set ::env(VDD_PIN) {vccd1}
 set ::env(GND_PIN) {vssd1}
 
 set ::env(FP_TEMPLATE_PINS) { vccd1 vssd1 vccd vssd vccd2 vssd2 vssa vdda vssa1 vdda1 vssa2 vdda2 vddio vssio }
 
-set ::env(PDN_STRIPE) {vccd1 vdda1 vssd1 vssa1}
+set ::env(PDN_STRIPE) {vdda1 vccd1 vssa1 vssd1}
 set ::env(DRT_OPT_ITERS) {32}
 
 set ::env(FP_SIZING) absolute
 set ::env(DIE_AREA) "0 0 3166.63 4766.630"
-set ::env(CORE_AREA) "40 40 3126.63 4726.630"
+set ::env(CORE_AREA) "80 80 3086.63 4686.630"
 
 set ::env(FP_PDN_MACRO_HOOKS) " \
     u_pll                       vccd1 vssd1 VPWR  VGND, \
@@ -240,9 +252,9 @@ set ::env(QUIT_ON_SLEW_VIOLATIONS) "0"
 set ::env(QUIT_ON_TIMING_VIOLATIONS) "0"
 
 
-set ::env(RUN_MAGIC_DRC) 0
 set ::env(RUN_CTS) 0
 set ::env(RUN_CVS) 0
 set ::env(RUN_LVS) 0
-set ::env(RUN_MAGIC_DRC) "1"
+set ::env(RUN_KLAYOUT_XOR) 0
+set ::env(RUN_MAGIC_DRC) 0
 
