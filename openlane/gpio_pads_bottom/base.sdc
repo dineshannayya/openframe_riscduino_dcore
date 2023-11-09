@@ -2,6 +2,14 @@
 # Timing Constraints
 ###############################################################################
 create_clock -name serial_clock -period 10.0000 [get_ports {serial_clock_in}]
+create_clock -name serial_load -period 10.0000 [get_ports {serial_load_in}]
+
+set_clock_groups \
+   -name clock_group \
+   -logically_exclusive \
+   -group [get_clocks {serial_clock}]\
+   -group [get_clocks {serial_load}]\
+   -comment {Async Clock group}
 
 set_clock_transition 0.1500 [all_clocks]
 set_clock_uncertainty -setup 0.5000 [all_clocks]

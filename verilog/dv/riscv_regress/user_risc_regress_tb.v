@@ -219,11 +219,6 @@ parameter real XTAL_PERIOD = 6;
 `include "riscv_runtests.sv"
 
 
-// SSPI Slave I/F
-assign io_in[5]  = 1'b1; // RESET
-assign io_in[21] = 1'b0 ; // SPIS SCK 
-
-
 logic [31:0] riscv_dmem_req_cnt; // cnt dmem req
 initial 
 begin

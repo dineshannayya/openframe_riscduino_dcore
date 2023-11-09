@@ -197,6 +197,8 @@ set ::env(FP_SIZING) absolute
 set ::env(DIE_AREA) "0 0 3166.63 4766.630"
 set ::env(CORE_AREA) "80 80 3086.63 4686.630"
 
+set ::env(GRT_OBS) " met5  0 0 3166.63  4766.630"
+
 set ::env(FP_PDN_MACRO_HOOKS) " \
     u_pll                       vccd1 vssd1 VPWR  VGND, \
 	u_intercon                  vccd1 vssd1 vccd1 vssd1,\

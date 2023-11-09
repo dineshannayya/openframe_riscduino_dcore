@@ -27,7 +27,7 @@ set ::env(FP_PDN_CORE_RING) {1}
 
 # Timing configuration
 set ::env(CLOCK_PERIOD) "10"
-set ::env(CLOCK_PORT) "serial_clock_in"
+set ::env(CLOCK_PORT) "serial_clock_in serial_load_in"
 
 set ::env(SYNTH_MAX_FANOUT) 4
 set ::env(SYNTH_BUFFERING) {0}

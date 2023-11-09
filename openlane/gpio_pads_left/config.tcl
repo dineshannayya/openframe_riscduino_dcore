@@ -27,7 +27,7 @@ set ::env(FP_PDN_CORE_RING) {1}
 
 # Timing configuration
 set ::env(CLOCK_PERIOD) "10"
-set ::env(CLOCK_PORT) "serial_clock_in"
+set ::env(CLOCK_PORT) "serial_clock_in serial_load_in"
 
 set ::env(SYNTH_MAX_FANOUT) 4
 set ::env(SYNTH_BUFFERING) {0}
@@ -69,7 +69,7 @@ set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 #set ::env(MACRO_PLACEMENT_CFG) $::env(DESIGN_DIR)/macro.cfg
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 125 3800"
+set ::env(DIE_AREA) "0 0 125 1800"
 
 #set ::env(GRT_OBS) "met4  0 0 300 1725"
 
@@ -117,6 +117,9 @@ set ::env(FP_PDN_UPPER_LAYER) {met3}
 
 set ::env(FP_IO_HLAYER) {met2}
 set ::env(FP_IO_VLAYER) {met1}
+
+#set ::env(FP_IO_VEXTEND) 1
+#set ::env(FP_IO_HEXTEND) 1
 
 
 #Lef 

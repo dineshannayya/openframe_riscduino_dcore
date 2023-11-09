@@ -94,6 +94,7 @@ set ::env(RUN_CVC) 0
 set ::env(PL_TIME_DRIVEN) 1
 set ::env(PL_TARGET_DENSITY) "0.20"
 set ::env(CELL_PAD) "8"
+set ::env(GRT_ALLOW_CONGESTION) {1}
 
 # helps in anteena fix
 set ::env(USE_ARC_ANTENNA_CHECK) "0"

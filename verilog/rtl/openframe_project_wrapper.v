@@ -1072,8 +1072,12 @@ wire       cpu_clk_rp_pinmux = cpu_clk_rp[2];
 
 wire       riscv_wbclk;
 
-	(* keep *) vccd1_connection vccd1_connection ();
-	(* keep *) vssd1_connection vssd1_connection ();
+	(* keep *) vccd1_connection   u_vccd1_connection   ();
+	(* keep *) vssd1_connection   u_vssd1_connection   ();
+	(* keep *) vssa1_connection_0 u_vssa1_connection_0 ();
+	(* keep *) vssa1_connection_1 u_vssa1_connection_1 ();
+	(* keep *) vdda1_connection_0 u_vdda1_connection_0 ();
+	(* keep *) vdda1_connection_1 u_vdda1_connection_1 ();
 
 
 //-----------------------------------------------

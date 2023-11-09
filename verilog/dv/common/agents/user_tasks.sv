@@ -91,6 +91,7 @@ reg [31:0]        write_data ;
 reg [31:0]        read_data  ;
 integer           d_risc_id  ;
 wire              rst_n;
+reg drv_strap;
 
 wire USER_VDD1V8 = 1'b1;
 wire USER_VDD3V3 = 1'b1;
@@ -133,6 +134,7 @@ begin
     clock2 = 0;
     xtal_clk = 0;
     test_fail = 0;
+    drv_strap = 0;
 end
 
 
@@ -157,15 +159,26 @@ end
 
     assign wb_rst_i = !rst_n;
 
+
+
+//--------------------------
+// Drive Strap base on Reset
+//--------------------------
+always @reinit_event
+begin
+   drv_strap = 1;
+   repeat (10) @(posedge clock);
+   wait(`DUT_TOP.p_reset_n == 1);          
+   drv_strap = 0;
+end
+
 //--------------------------------------------------------
 // Apply Reset Sequence and wait for reset completion
 //-------------------------------------------------------
-reg drv_strap;
 task init;
 begin
    //#1 - Apply Reset
    rst_init = 1; 
-   drv_strap = 1;
    repeat (10) @(posedge clock);
    #100 rst_init = 0; 
 
@@ -174,7 +187,6 @@ begin
 
    repeat (10) @(posedge clock);
 
-   drv_strap = 0;
    //#4 - Wait for Power on reset removal
    wait(`DUT_TOP.p_reset_n == 1);          
 
@@ -441,7 +453,7 @@ begin
    // bit[15:8]  - core-1
    // bit[23:16] - core-2
    // bit[31:24] - core-3
-   $display("Status:  Waiting for RISCV Core Boot ... ");
+   $display("Status:  Waiting for RISCV Core Execution Completion ... ");
    read_data = 0;
    //while((read_data >> (d_risc_id*8)) != 8'hFF) begin
    while(read_data != 8'hFF) begin
@@ -449,7 +461,7 @@ begin
 	    repeat (1000) @(posedge clock);
    end
 
-   $display("Status:  RISCV Core is Booted ");
+   $display("Status:  RISCV Core Execution Completed");
 
 end
 endtask
