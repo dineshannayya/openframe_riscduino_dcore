@@ -244,5 +244,7 @@ $(USER_PROJECT_VERILOG)/rtl/usb1b_device/src/top/usb1bd_top.sv
 
 $(USER_PROJECT_VERILOG)/gl/vccd1_connection.v
 $(USER_PROJECT_VERILOG)/gl/vssd1_connection.v
-$(USER_PROJECT_VERILOG)/gl/vssa1_connection.v
-$(USER_PROJECT_VERILOG)/gl/vdda1_connection.v
+$(USER_PROJECT_VERILOG)/gl/vssa1_connection_0.v
+$(USER_PROJECT_VERILOG)/gl/vssa1_connection_1.v
+$(USER_PROJECT_VERILOG)/gl/vdda1_connection_0.v
+$(USER_PROJECT_VERILOG)/gl/vdda1_connection_1.v
