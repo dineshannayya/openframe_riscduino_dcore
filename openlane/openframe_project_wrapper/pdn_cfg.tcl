@@ -173,7 +173,7 @@ add_pdn_connect \
 define_pdn_grid \
     -macro \
     -name macro_2 \
-    -instances "u_gpio_top u_gpio_bottom u_4x8bit_dac" \
+    -instances "u_gpio_top u_gpio_bottom u_4x8bit_adc_dac" \
     -starts_with POWER \
     -halo "$::env(FP_PDN_HORIZONTAL_HALO) $::env(FP_PDN_VERTICAL_HALO)"
 

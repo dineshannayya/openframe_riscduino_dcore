@@ -72,7 +72,7 @@ set ::env(VERILOG_FILES_BLACKBOX) "\
 	    $::env(DESIGN_DIR)/../../verilog/gl/ycr2_iconnect.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/dg_pll.v \
 	    $::env(DESIGN_DIR)/../../verilog/rtl/sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v \
-	    $::env(DESIGN_DIR)/../../verilog/gl/dac_top.v \
+	    $::env(DESIGN_DIR)/../../verilog/gl/adc_dac_top.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/aes_top.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/fpu_wrapper.v \
 	    $::env(DESIGN_DIR)/../../verilog/gl/gpio_pads_left.v \
@@ -99,7 +99,7 @@ set ::env(EXTRA_LEFS) "\
 	$lef_root/ycr2_iconnect.lef \
 	$lef_root/dg_pll.lef \
 	$::env(PDK_ROOT)/$::env(PDK)/libs.ref/sky130_sram_macros/lef/sky130_sram_2kbyte_1rw1r_32x512_8.lef \
-	$lef_root/dac_top.lef \
+	$lef_root/adc_dac_top.lef \
 	$lef_root/aes_top.lef \
 	$lef_root/fpu_wrapper.lef \
 	$lef_root/gpio_pads_left.lef \
@@ -125,7 +125,7 @@ set ::env(EXTRA_GDS_FILES) "\
 	$gds_root/ycr_core_top.gds \
 	$gds_root/ycr2_iconnect.gds \
 	$gds_root/dg_pll.gds \
-	$gds_root/dac_top.gds \
+	$gds_root/adc_dac_top.gds \
 	$::env(PDK_ROOT)/$::env(PDK)/libs.ref/sky130_sram_macros/gds/sky130_sram_2kbyte_1rw1r_32x512_8.gds \
 	$gds_root/aes_top.gds \
 	$gds_root/fpu_wrapper.gds \
@@ -216,8 +216,8 @@ set ::env(FP_PDN_MACRO_HOOKS) " \
 	u_riscv_top.i_core_top_1    vccd1 vssd1 vccd1 vssd1,\
 	u_riscv_top.u_connect       vccd1 vssd1 VPWR  VGND, \
 	u_riscv_top.u_intf          vccd1 vssd1 vccd1 vssd1,\
-	u_4x8bit_dac                vdda1 vssa1 VDDA  VSSA,\
-	u_4x8bit_dac                vccd1 vssd1 VCCD  VSSD,\
+	u_4x8bit_adc_dac            vdda1 vssa1 VDDA  VSSA,\
+	u_4x8bit_adc_dac            vccd1 vssd1 VCCD  VSSD,\
 	u_aes                       vccd1 vssd1 vccd1 vssd1,\
 	u_fpu                       vccd1 vssd1 vccd1 vssd1,\
 	u_gpio_right                vccd1 vssd1 vccd  vssd,\
