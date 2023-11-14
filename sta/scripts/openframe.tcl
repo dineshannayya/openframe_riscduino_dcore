@@ -55,24 +55,24 @@ read_verilog $::env(USER_ROOT)/verilog/gl/openframe_project_wrapper.v
 
 link_design  $::env(DESIGN_NAME)
 
-read_spef -path u_riscv_top.u_connect      $::env(USER_ROOT)/signoff/ycr2_iconnect/openlane-signoff/spef/ycr2_iconnect.nom.spef
-read_spef -path u_riscv_top.u_intf         $::env(USER_ROOT)/signoff/ycr_intf/openlane-signoff/spef/ycr_intf.nom.spef
-read_spef -path u_riscv_top.i_core_top_0   $::env(USER_ROOT)/signoff/ycr_core_top/openlane-signoff/spef/ycr_core_top.nom.spef
-read_spef -path u_riscv_top.i_core_top_1   $::env(USER_ROOT)/signoff/ycr_core_top/openlane-signoff/spef/ycr_core_top.nom.spef
-read_spef -path u_pinmux                   $::env(USER_ROOT)/signoff/pinmux_top/openlane-signoff/spef/pinmux_top.nom.spef
-read_spef -path u_qspi_master              $::env(USER_ROOT)/signoff/qspim_top/openlane-signoff/spef/qspim_top.nom.spef
-read_spef -path u_uart_i2c_usb_spi         $::env(USER_ROOT)/signoff/uart_i2c_usb_spi_top/openlane-signoff/spef/uart_i2c_usb_spi_top.nom.spef
-read_spef -path u_wb_host                  $::env(USER_ROOT)/signoff/wb_host/openlane-signoff/spef/wb_host.nom.spef
-read_spef -path u_intercon                 $::env(USER_ROOT)/signoff/wb_interconnect/openlane-signoff/spef/wb_interconnect.nom.spef
-#read_spef -path u_pll                      $::env(USER_ROOT)/signoff/dg_pll/openlane-signoff/spef/dg_pll.nom.spef	
-read_spef -path u_aes                      $::env(USER_ROOT)/signoff/aes_top/openlane-signoff/spef/aes_top.nom.spef	
-read_spef -path u_fpu                      $::env(USER_ROOT)/signoff/fpu_wrapper/openlane-signoff/spef/fpu_wrapper.nom.spef	
-read_spef -path u_peri                     $::env(USER_ROOT)/signoff/peri_top/openlane-signoff/spef/peri_top.nom.spef	
-read_spef -path u_gpio_left                $::env(USER_ROOT)/signoff/gpio_pads_left/openlane-signoff/spef/gpio_pads_left.nom.spef
-read_spef -path u_gpio_right               $::env(USER_ROOT)/signoff/gpio_pads_right/openlane-signoff/spef/gpio_pads_right.nom.spef
-read_spef -path u_gpio_top                 $::env(USER_ROOT)/signoff/gpio_pads_top/openlane-signoff/spef/gpio_pads_top.nom.spef
-read_spef -path u_gpio_bottom              $::env(USER_ROOT)/signoff/gpio_pads_bottom/openlane-signoff/spef/gpio_pads_bottom.nom.spef
-read_spef                                  $::env(USER_ROOT)/signoff/openframe_project_wrapper/openlane-signoff/spef/openframe_project_wrapper.nom.spef  
+read_spef -path u_riscv_top.u_connect      $::env(USER_ROOT)/spef/ycr2_iconnect.spef
+read_spef -path u_riscv_top.u_intf         $::env(USER_ROOT)/spef/ycr_intf.spef
+read_spef -path u_riscv_top.i_core_top_0   $::env(USER_ROOT)/spef/ycr_core_top.spef
+read_spef -path u_riscv_top.i_core_top_1   $::env(USER_ROOT)/spef/ycr_core_top.spef
+read_spef -path u_pinmux                   $::env(USER_ROOT)/spef/pinmux_top.spef
+read_spef -path u_qspi_master              $::env(USER_ROOT)/spef/qspim_top.spef
+read_spef -path u_uart_i2c_usb_spi         $::env(USER_ROOT)/spef/uart_i2c_usb_spi_top.spef
+read_spef -path u_wb_host                  $::env(USER_ROOT)/spef/wb_host.spef
+read_spef -path u_intercon                 $::env(USER_ROOT)/spef/wb_interconnect.spef
+#read_spef -path u_pll                      $::env(USER_ROOT)/spef/dg_pll.nom.spef	
+read_spef -path u_aes                      $::env(USER_ROOT)/spef/aes_top.spef	
+read_spef -path u_fpu                      $::env(USER_ROOT)/spef/fpu_wrapper.spef	
+read_spef -path u_peri                     $::env(USER_ROOT)/spef/peri_top.spef	
+read_spef -path u_gpio_left                $::env(USER_ROOT)/spef/gpio_pads_left.spef
+read_spef -path u_gpio_right               $::env(USER_ROOT)/spef/gpio_pads_right.spef
+read_spef -path u_gpio_top                 $::env(USER_ROOT)/spef/gpio_pads_top.spef
+read_spef -path u_gpio_bottom              $::env(USER_ROOT)/spef/gpio_pads_bottom.spef
+read_spef                                  $::env(USER_ROOT)/spef/openframe_project_wrapper.spef  
 
 
 read_sdc -echo sdc/openframe.sdc

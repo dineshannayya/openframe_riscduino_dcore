@@ -1,4 +1,4 @@
-set ::env(SYNTH_TIMING_DERATE) 0.01
+set ::env(SYNTH_TIMING_DERATE) 0.05
 set ::env(SYNTH_CLOCK_SETUP_UNCERTAINITY) 0.25
 set ::env(SYNTH_CLOCK_HOLD_UNCERTAINITY) 0.25
 set ::env(SYNTH_CLOCK_TRANSITION) 0.15
@@ -16,7 +16,7 @@ create_clock -name wbs_ref_clk -period 5.0000   [get_pins {u_wb_host/u_reg.u_wbs
 create_clock -name wbs_clk_i   -period 15.0000  [get_pins {u_wb_host/wbs_clk_out}]
 
 create_clock -name cpu_ref_clk -period 5.0000   [get_pins {u_wb_host/u_reg.u_cpu_ref_clkbuf.u_buf/X}]
-create_clock -name cpu_clk     -period 15.0000  [get_pins {u_wb_host/cpu_clk}]
+create_clock -name cpu_clk     -period 25.0000  [get_pins {u_wb_host/cpu_clk}]
 
 create_clock -name rtc_ref_clk -period 50.0000  [get_pins {u_pinmux/u_glbl_reg.u_rtc_ref_clkbuf.u_buf/X}]
 create_clock -name rtc_clk     -period 50.0000  [get_pins {u_pinmux/u_glbl_reg.u_clkbuf_rtc.u_buf/X}]
@@ -32,7 +32,8 @@ create_clock -name uartm_clk   -period 100.0000 [get_pins {u_wb_host/u_uart2wb.u
 create_clock -name dbg_ref_clk -period 10.0000 [get_pins {u_pinmux/u_glbl_reg.u_clkbuf_dbg_ref.u_buf/X}]
 
 create_clock -name riscv_tck -period 100.0000  [get_pins {u_pinmux/riscv_tck}]
-create_clock -name gpio_serial_clock -period 100.0000  [get_pins {u_pinmux/gpio_serial_clock}]
+create_clock -name gpio_serial_clock -period 100.0000  [get_pins {u_peri/gpio_serial_clock}]
+create_clock -name gpio_serial_load -period 100.0000  [get_pins {u_peri/gpio_serial_load}]
 
 set_clock_groups \
    -name clock_group \
@@ -56,6 +57,7 @@ set_clock_groups \
    -group [get_clocks {rtc_ref_clk}]\
    -group [get_clocks {riscv_tck}]\
    -group [get_clocks {gpio_serial_clock}]\
+   -group [get_clocks {gpio_serial_load}]\
    -comment {Async Clock group}
 
 set_propagated_clock [all_clocks]
@@ -75,76 +77,109 @@ set_max_fanout 12 [current_design]
 ## User Case analysis
 #################################################################
 
-set_case_analysis 0 [get_pins {u_qspi_master/cfg_cska_sp_co[3]}]
-set_case_analysis 0 [get_pins {u_qspi_master/cfg_cska_sp_co[2]}]
-set_case_analysis 0 [get_pins {u_qspi_master/cfg_cska_sp_co[1]}]
-set_case_analysis 0 [get_pins {u_qspi_master/cfg_cska_sp_co[0]}]
+# clock skew cntrl-1
+#cfg_clk_skew_ctrl1[31:28]
+set_case_analysis 0 [get_pins {u_peri/cfg_cska_peri[3]}]             
+set_case_analysis 1 [get_pins {u_peri/cfg_cska_peri[2]}]             
+set_case_analysis 1 [get_pins {u_peri/cfg_cska_peri[0]}]             
+set_case_analysis 1 [get_pins {u_peri/cfg_cska_peri[1]}]             
 
-set_case_analysis 0 [get_pins {u_pinmux/cfg_cska_pinmux[3]}]
-set_case_analysis 1 [get_pins {u_pinmux/cfg_cska_pinmux[2]}]
-set_case_analysis 0 [get_pins {u_pinmux/cfg_cska_pinmux[1]}]
-set_case_analysis 0 [get_pins {u_pinmux/cfg_cska_pinmux[0]}]
+#cfg_clk_skew_ctrl1[27:24]
+set_case_analysis 0 [get_pins {u_qspi_master/cfg_cska_sp_co[3]}]  
+set_case_analysis 0 [get_pins {u_qspi_master/cfg_cska_sp_co[2]}] 
+set_case_analysis 0 [get_pins {u_qspi_master/cfg_cska_sp_co[1]}] 
+set_case_analysis 0 [get_pins {u_qspi_master/cfg_cska_sp_co[0]}] 
 
+#cfg_clk_skew_ctrl1[23:20]
+set_case_analysis 0 [get_pins {u_pinmux/cfg_cska_pinmux[3]}]         
+set_case_analysis 1 [get_pins {u_pinmux/cfg_cska_pinmux[2]}]         
+set_case_analysis 0 [get_pins {u_pinmux/cfg_cska_pinmux[1]}]         
+set_case_analysis 0 [get_pins {u_pinmux/cfg_cska_pinmux[0]}]         
+
+#cfg_clk_skew_ctrl1[19:16]
 set_case_analysis 0 [get_pins {u_uart_i2c_usb_spi/cfg_cska_uart[3]}]
 set_case_analysis 1 [get_pins {u_uart_i2c_usb_spi/cfg_cska_uart[2]}]
 set_case_analysis 1 [get_pins {u_uart_i2c_usb_spi/cfg_cska_uart[1]}]
 set_case_analysis 1 [get_pins {u_uart_i2c_usb_spi/cfg_cska_uart[0]}]
 
+#cfg_clk_skew_ctrl1[15:12]
 set_case_analysis 0 [get_pins {u_qspi_master/cfg_cska_spi[3]}]
 set_case_analysis 1 [get_pins {u_qspi_master/cfg_cska_spi[2]}]
 set_case_analysis 1 [get_pins {u_qspi_master/cfg_cska_spi[1]}]
 set_case_analysis 1 [get_pins {u_qspi_master/cfg_cska_spi[0]}]
 
+#cfg_clk_skew_ctrl1[11:8]
 set_case_analysis 1 [get_pins {u_riscv_top.u_intf/cfg_wcska[3]}]
 set_case_analysis 0 [get_pins {u_riscv_top.u_intf/cfg_wcska[2]}]
 set_case_analysis 0 [get_pins {u_riscv_top.u_intf/cfg_wcska[1]}]
 set_case_analysis 0 [get_pins {u_riscv_top.u_intf/cfg_wcska[0]}]
 
+#cfg_clk_skew_ctrl1[7:4]
 set_case_analysis 1 [get_pins {u_wb_host/cfg_cska_wh[3]}]
 set_case_analysis 0 [get_pins {u_wb_host/cfg_cska_wh[2]}]
 set_case_analysis 1 [get_pins {u_wb_host/cfg_cska_wh[1]}]
-set_case_analysis 0 [get_pins {u_wb_host/cfg_cska_wh[0]}]
+set_case_analysis 1 [get_pins {u_wb_host/cfg_cska_wh[0]}]
 
+#cfg_clk_skew_ctrl1[3:0]
 set_case_analysis 1 [get_pins {u_intercon/cfg_cska_wi[3]}]
-set_case_analysis 0 [get_pins {u_intercon/cfg_cska_wi[2]}]
-set_case_analysis 0 [get_pins {u_intercon/cfg_cska_wi[0]}]
+set_case_analysis 0 [get_pins {u_intercon/cfg_cska_wi[2]}] 
+set_case_analysis 0 [get_pins {u_intercon/cfg_cska_wi[0]}] 
 set_case_analysis 1 [get_pins {u_intercon/cfg_cska_wi[1]}]
 
-set_case_analysis 1 [get_pins {u_peri/cfg_cska_peri[3]}]
-set_case_analysis 0 [get_pins {u_peri/cfg_cska_peri[2]}]
-set_case_analysis 0 [get_pins {u_peri/cfg_cska_peri[0]}]
-set_case_analysis 0 [get_pins {u_peri/cfg_cska_peri[1]}]
 
 # clock skew cntrl-2
-set_case_analysis 1 [get_pins {u_riscv_top.u_intf/cfg_ccska[3]}]
-set_case_analysis 0 [get_pins {u_riscv_top.u_intf/cfg_ccska[2]}]
-set_case_analysis 1 [get_pins {u_riscv_top.u_intf/cfg_ccska[1]}]
-set_case_analysis 0 [get_pins {u_riscv_top.u_intf/cfg_ccska[0]}]
+# cfg_clk_skew_ctrl2[31:28]
+set_case_analysis 0 [get_pins {u_fpu/cfg_cska[3]}]                      
+set_case_analysis 0 [get_pins {u_fpu/cfg_cska[2]}]                      
+set_case_analysis 0 [get_pins {u_fpu/cfg_cska[1]}]                      
+set_case_analysis 1 [get_pins {u_fpu/cfg_cska[0]}]                      
 
-set_case_analysis 1 [get_pins {u_riscv_top.u_connect/cfg_ccska[3]}]
-set_case_analysis 0 [get_pins {u_riscv_top.u_connect/cfg_ccska[2]}]
-set_case_analysis 0 [get_pins {u_riscv_top.u_connect/cfg_ccska[1]}]
-set_case_analysis 0 [get_pins {u_riscv_top.u_connect/cfg_ccska[0]}]
+# cfg_clk_skew_ctrl2[27:24]
+set_case_analysis 1 [get_pins {u_aes/cfg_cska[3]}]                      
+set_case_analysis 0 [get_pins {u_aes/cfg_cska[2]}]                      
+set_case_analysis 0 [get_pins {u_aes/cfg_cska[1]}]                      
+set_case_analysis 0 [get_pins {u_aes/cfg_cska[0]}]                      
 
-set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_0/cfg_ccska[3]}]
-set_case_analysis 1 [get_pins {u_riscv_top.i_core_top_0/cfg_ccska[2]}]
-set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_0/cfg_ccska[1]}]
-set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_0/cfg_ccska[0]}]
+# cfg_clk_skew_ctrl2[23:20]
+#set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_3/cfg_ccska[3]}] 
+#set_case_analysis 1 [get_pins {u_riscv_top.i_core_top_3/cfg_ccska[2]}] 
+#set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_3/cfg_ccska[1]}] 
+#set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_3/cfg_ccska[0]}] 
 
+# cfg_clk_skew_ctrl2[19:16]
+#set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_2/cfg_ccska[3]}] 
+#set_case_analysis 1 [get_pins {u_riscv_top.i_core_top_2/cfg_ccska[2]}] 
+#set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_2/cfg_ccska[1]}] 
+#set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_2/cfg_ccska[0]}] 
+
+# cfg_clk_skew_ctrl2[15:12]
 set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_1/cfg_ccska[3]}]
 set_case_analysis 1 [get_pins {u_riscv_top.i_core_top_1/cfg_ccska[2]}]
 set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_1/cfg_ccska[1]}]
 set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_1/cfg_ccska[0]}]
 
-set_case_analysis 1 [get_pins {u_aes/cfg_cska[3]}]
-set_case_analysis 0 [get_pins {u_aes/cfg_cska[2]}]
-set_case_analysis 0 [get_pins {u_aes/cfg_cska[1]}]
-set_case_analysis 0 [get_pins {u_aes/cfg_cska[0]}]
+# cfg_clk_skew_ctrl2[11:8]
+set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_0/cfg_ccska[3]}] 
+set_case_analysis 1 [get_pins {u_riscv_top.i_core_top_0/cfg_ccska[2]}] 
+set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_0/cfg_ccska[1]}] 
+set_case_analysis 0 [get_pins {u_riscv_top.i_core_top_0/cfg_ccska[0]}] 
 
-set_case_analysis 0 [get_pins {u_fpu/cfg_cska[3]}]
-set_case_analysis 0 [get_pins {u_fpu/cfg_cska[2]}]
-set_case_analysis 1 [get_pins {u_fpu/cfg_cska[1]}]
-set_case_analysis 0 [get_pins {u_fpu/cfg_cska[0]}]
+# cfg_clk_skew_ctrl2[7:4]
+set_case_analysis 1 [get_pins {u_riscv_top.u_connect/cfg_ccska[3]}]
+set_case_analysis 0 [get_pins {u_riscv_top.u_connect/cfg_ccska[2]}]
+set_case_analysis 0 [get_pins {u_riscv_top.u_connect/cfg_ccska[1]}] 
+set_case_analysis 0 [get_pins {u_riscv_top.u_connect/cfg_ccska[0]}]
+
+# cfg_clk_skew_ctrl2[3:0]
+set_case_analysis 1 [get_pins {u_riscv_top.u_intf/cfg_ccska[3]}]
+set_case_analysis 1 [get_pins {u_riscv_top.u_intf/cfg_ccska[2]}]
+set_case_analysis 0 [get_pins {u_riscv_top.u_intf/cfg_ccska[1]}]
+set_case_analysis 0 [get_pins {u_riscv_top.u_intf/cfg_ccska[0]}]
+
+
+
+
+
 
 #Keept the SRAM clock driving edge at pos edge
 set_case_analysis 0 [get_pins {u_riscv_top.u_intf/cfg_sram_lphase[0]}]
@@ -152,10 +187,15 @@ set_case_analysis 0 [get_pins {u_riscv_top.u_intf/cfg_sram_lphase[1]}]
 
 set_case_analysis 0 [get_pins {u_riscv_top.u_connect/cfg_sram_lphase[0]}]
 set_case_analysis 0 [get_pins {u_riscv_top.u_connect/cfg_sram_lphase[1]}]
+set_case_analysis 0 [get_pins {u_riscv_top.u_connect/cfg_sram_lphase[2]}]
+set_case_analysis 0 [get_pins {u_riscv_top.u_connect/cfg_sram_lphase[3]}]
 
 ############## Caravel False Path ########################################################
 ## FALSE PATHS (ASYNCHRONOUS INPUTS)
 set_false_path -from [get_ports {resetb_l}]
+
+## All interrupts are double sync
+set_false_path -through [get_pins {u_uart_i2c_usb_spi/i2cm_intr_o}]
 
 # Double Sync FF
 set_false_path -to [get_pins u_riscv_top.u_connect/i_timer.u_wakeup_dsync.bus_.bit_[0].u_dsync0/D ]

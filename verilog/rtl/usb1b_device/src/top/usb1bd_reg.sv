@@ -263,6 +263,7 @@ end
 
 assign       cfg_usb_enb           = reg_0[0];
 assign       usb_srst_n            = !reg_0[1];
+assign       cfg_phy_tx_mode       = reg_0[2];
 
 assign       cfg_tx_token_pid_sel  = reg_0[9:8];
 assign       cfg_tx_send_token     = reg_0[11];
@@ -272,7 +273,7 @@ assign       cfg_tx_send_data      = reg_0[15];
 
 assign       cfg_max_hms           = reg_0[23:16]; // priority mode, 0 -> nop, 1 -> Even, 2 -> Odd
 
-gen_32b_reg  #(32'h00000000) u_reg_0	(
+gen_32b_reg  #(32'h00000004) u_reg_0	(
 	      //List of Inputs
 	      .reset_n    (reset_n       ),
 	      .clk        (mclk          ),

@@ -165,7 +165,7 @@ integer i,j;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(2, `TB_TOP);
+	   	$dumpvars(0, `TB_TOP);
 	   	$dumpvars(0, `TB_TOP.tb_master_uart);
 	   	$dumpvars(1, `TB_TOP.`DUT_TOP);
 	   	//$dumpvars(0, `TB_TOP.`DUT_TOP.u_pll);
@@ -469,17 +469,17 @@ begin
         // Remove Wb/PinMux Reset
         `SPIM_REG_WRITE(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
-        `SPIM_REG_WRITE(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC0,'h11);
-        `SPIM_REG_WRITE(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC1,'h22);
-        `SPIM_REG_WRITE(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC2,'h33);
-        `SPIM_REG_WRITE(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC3,'h44);
-        `SPIM_REG_CHECK(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC0,'h11);
-        `SPIM_REG_CHECK(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC1,'h22);
-        `SPIM_REG_CHECK(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC2,'h33);
-        `SPIM_REG_CHECK(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC3,'h44);
+        `SPIM_REG_WRITE(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC0,{16'h0,8'h11,8'h0});
+        `SPIM_REG_WRITE(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC1,{16'h0,8'h22,8'h0});
+        `SPIM_REG_WRITE(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC2,{16'h0,8'h33,8'h0});
+        `SPIM_REG_WRITE(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC3,{16'h0,8'h44,8'h0});
+        `SPIM_REG_CHECK(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC0,{16'h0,8'h11,8'h0});
+        `SPIM_REG_CHECK(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC1,{16'h0,8'h22,8'h0});
+        `SPIM_REG_CHECK(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC2,{16'h0,8'h33,8'h0});
+        `SPIM_REG_CHECK(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC3,{16'h0,8'h44,8'h0});
         repeat (10) @(posedge clock);
-        if((`DUT_TOP.u_4x8bit_dac.Din0 != 'h11) || (`DUT_TOP.u_4x8bit_dac.Din1 != 'h22) ||
-           (`DUT_TOP.u_4x8bit_dac.Din2 != 'h33) || (`DUT_TOP.u_4x8bit_dac.Din3 != 'h44)) begin
+        if((`DUT_TOP.u_4x8bit_adc_dac.Din0 != 'h11) || (`DUT_TOP.u_4x8bit_adc_dac.Din1 != 'h22) ||
+           (`DUT_TOP.u_4x8bit_adc_dac.Din2 != 'h33) || (`DUT_TOP.u_4x8bit_adc_dac.Din3 != 'h44)) begin
            test_fail = 1;
         end
 

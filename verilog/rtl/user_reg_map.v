@@ -19,6 +19,7 @@
 `define ADDR_SPACE_RTC     32'h3002_0480
 `define ADDR_SPACE_IR      32'h3002_0500
 `define ADDR_SPACE_SM      32'h3002_0580
+`define ADDR_SPACE_PADS    32'h3002_0600
 `define ADDR_SPACE_WBI     32'h3003_0000
 `define ADDR_SPACE_WBHOST  32'h3008_0000
 
@@ -201,6 +202,13 @@
 `define SM_CFG_DIV          8'h08
 `define SM_CFG_PER          8'h0C
 `define SM_CFG_CTRL         8'h10
+
+
+//--------------------------------------------------------
+// PAD Control 
+//-------------------------------------------------------
+`define PADS_CFG_CTRL        8'h00
+`define PADS_CAPTURE_DATA    8'h04
 
 //--------------------------------------------------------
 // WB INTER-CONNECT Register Map

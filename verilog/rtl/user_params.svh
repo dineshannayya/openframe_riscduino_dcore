@@ -1,15 +1,15 @@
 `ifndef USER_PARMS
 `define USER_PARMS
 
-// ASCI Representation of RDD0 - RiscDuino D0 = 32'h52444430
-parameter CHIP_SIGNATURE = 32'h5244_4430;
+// ASCI Representation of RDD0 - RiscDuino D6 = 32'h52444430
+parameter CHIP_SIGNATURE = 32'h5244_4436;
 // Software Reg-1, Release date: <DAY><MONTH><YEAR>
-parameter CHIP_RELEASE_DATE = 32'h0210_2023;
+parameter CHIP_RELEASE_DATE = 32'h1011_2023;
 // Software Reg-2: Poject Revison 5.1 = 0005200
-parameter CHIP_REVISION   = 32'h0006_1500;
+parameter CHIP_REVISION   = 32'h0007_1000;
 
-parameter CLK_SKEW1_RESET_VAL = 32'b0110_0000_0011_0110_0101_1000_1101_1100;
-parameter CLK_SKEW2_RESET_VAL = 32'b0010_1000_1000_1000_0111_0110_1011_1101;
+parameter CLK_SKEW1_RESET_VAL = 32'b0111_0000_0100_0111_0111_1000_1011_1001;
+parameter CLK_SKEW2_RESET_VAL = 32'b0010_1000_1000_1000_0100_0100_1000_1011;
 
 parameter PSTRAP_DEFAULT_VALUE = 8'b0111_0000;
 
@@ -124,5 +124,6 @@ system strap decoding
 `define SEL_RTC     4'b1001   // RTC REGISTER
 `define SEL_IR      4'b1010   // IR REGISTER
 `define SEL_SM      4'b1011   // STEPER MOTOR
+`define SEL_PADS    4'b1100   // PAD CONTROL
 `endif // USER_PARMS
 

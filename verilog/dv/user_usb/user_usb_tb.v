@@ -64,8 +64,8 @@
 
 module `TB_TOP;
 
-parameter  CLK1_PERIOD   = 10.4167; // 48Mhz Half cycle
-parameter  CLK2_PERIOD = 2.7777; // 180Mhz Half cycle
+parameter  CLK1_PERIOD   =  20; // 50Mhz
+parameter  CLK2_PERIOD = 20.8333; // 48Mhz
 parameter real IPLL_PERIOD = 5.008;
 parameter real XTAL_PERIOD = 6;
 
@@ -86,7 +86,7 @@ parameter real XTAL_PERIOD = 6;
 	reg  [31:0]   RegBank [0:15];
 
 
-    assign usb_48mhz_clk = clock;
+    assign usb_48mhz_clk = clock2;
 
 	`ifdef WFDUMP
 	   initial begin
@@ -100,7 +100,7 @@ parameter real XTAL_PERIOD = 6;
 	   end
        `endif
 
-        always@(posedge wb_rst_i  or posedge clock)
+        always@(posedge wb_rst_i  or posedge usb_48mhz_clk)
 	begin
 	   if(wb_rst_i == 1'b1) begin
               usbd_reg_rdata = 'h0;
@@ -135,8 +135,8 @@ parameter real XTAL_PERIOD = 6;
 	        repeat (2) @(posedge clock);
 		#1;
          
-	     // Set USB clock : 180/3 = 60Mhz	
-         `SPIM_REG_WRITE(`ADDR_SPACE_GLBL+`GLBL_CFG_CLK_CTRL,{16'h0,8'h61,8'h0});
+	     // Set USB1 clock : 48Mhz, Clock-2
+         `SPIM_REG_WRITE(`ADDR_SPACE_GLBL+`GLBL_CFG_CLK_CTRL,{16'h0,8'h40,8'h0});
 
          // Remove the reset
 		// Remove WB and SPI/UART Reset, Keep CORE under Reset
@@ -194,7 +194,7 @@ pulldown(usb_txdn);
 
 usb1d_top u_bfm_usbd(
 
-	.clk_i           (clock), 
+	.clk_i           (usb_48mhz_clk), 
 	.rstn_i          (!wb_rst_i),
  
 		// USB PHY Interface

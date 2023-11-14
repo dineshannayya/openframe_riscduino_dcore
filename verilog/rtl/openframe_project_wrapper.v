@@ -359,6 +359,15 @@
 ////          B. Byte Write is supported in uart message handler                                 ////
 ////    7.0  - Oct 18, 2023, Dinesh A                                                            ////
 ////          Riscduion dcore integration into openframe format                                  ////
+////    7.1  - Nov 10, 2023, Dinesh A                                                            ////
+////           1. TCM Memory increase to 8KB SRAM from 2KB                                       ////
+////           2. pwm increased from 3 to 6                                                      ////
+////           3. usb1 host core clock changed from 60Mhz to 48Mhz                               ////
+////           4. usb1 device integration                                                        ////
+////           5. 4x adc_dac integration                                                         ////
+////           6. sar logic implementation                                                       ////
+////           7. gpio pad control logic                                                         ////
+////           8. Bug fix on sm_a* missing connectivity between peri_top to pinmux               ////
 ////                                                                                             ////
 ////                                                                                             ////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -465,6 +474,14 @@
 
 
 ************************************************************************/
+/********************************************
+  GPIO Pad Distribution
+  gpio[14:0]  => gpio_pads_right
+  gpio[23:15[ => gpio_pads_top
+  gpio[38:24] => gpio_pads_left
+  gpio[43:38] => gpio_pads_bottom
+*******************************************/
+
 `define OPENFRAME_IO_PADS 44
 
 `include "user_params.svh"
@@ -969,6 +986,10 @@ wire [7:0]                     cfg_dac0_mux_sel                       ;
 wire [7:0]                     cfg_dac1_mux_sel                       ;
 wire [7:0]                     cfg_dac2_mux_sel                       ;
 wire [7:0]                     cfg_dac3_mux_sel                       ;
+wire [3:0]                     cfg_adc_sample_trg                     ;
+wire [3:0]                     cfg_adc_dac_sel                        ;
+wire [3:0]                     adc_result                             ;
+
 
 //---------------------------------------------------------------------
 // Peripheral Reg I/F
@@ -1084,6 +1105,7 @@ wire       riscv_wbclk;
 // GPIO daisy chain Serial control 
 //-----------------------------------------------
 
+wire   gpio_shift_rstn               ;
 wire   gpio_serial_clock             ;
 wire   gpio_serial_clock_left        ;
 wire   gpio_serial_clock_right       ;
@@ -1096,12 +1118,12 @@ wire   gpio_serial_load_right        ;
 wire   gpio_serial_load_top          ;
 wire   gpio_serial_load_bottom       ;
 
-wire   gpio_serial_data              ;
+wire   gpio_serial_data_out          ;
+wire   gpio_serial_data_in           ;
 wire   gpio_serial_data_left         ;
 wire   gpio_serial_data_right        ;
 wire   gpio_serial_data_top          ;
 wire   gpio_serial_data_bottom       ;
-
 
 //-------------------------
 // 15 Right GPIO Pads
@@ -1117,13 +1139,14 @@ gpio_pads_right  #(
 `endif
     // Soc-facing signals
     .resetn               (e_reset_n                ),// Global reset, locally propagated
+    .serial_shift_rstn    (gpio_shift_rstn          ),
     .serial_clock_in      (gpio_serial_clock        ),// Global clock, locally propatated
     .serial_clock_out     (gpio_serial_clock_right  ),
     .serial_load_in       (gpio_serial_load         ),// Register load strobe
     .serial_load_out      (gpio_serial_load_right   ),
 
     // Serial data chain for pad configuration
-    .serial_data_in       (gpio_serial_data         ),
+    .serial_data_in       (gpio_serial_data_out     ),
     .serial_data_out      (gpio_serial_data_right   ),
 
     // User-facing signals
@@ -1173,6 +1196,7 @@ gpio_pads_top  #(
 `endif
     // Soc-facing signals
     .resetn               (e_reset_n                ),// Global reset, locally propagated
+    .serial_shift_rstn    (gpio_shift_rstn          ),
     .serial_clock_in      (gpio_serial_clock_right  ),// Global clock, locally propatated
     .serial_clock_out     (gpio_serial_clock_top    ),
     .serial_load_in       (gpio_serial_load_right   ),// Register load strobe
@@ -1229,6 +1253,7 @@ gpio_pads_left  #(
 `endif
     // Soc-facing signals
     .resetn               (e_reset_n                 ),// Global reset, locally propagated
+    .serial_shift_rstn    (gpio_shift_rstn          ),
     .serial_clock_in      (gpio_serial_clock_top  ),// Global clock, locally propatated
     .serial_clock_out     (gpio_serial_clock_left ),
     .serial_load_in       (gpio_serial_load_top   ),// Register load strobe
@@ -1286,6 +1311,7 @@ gpio_pads_bottom  #(
 
     // Soc-facing signals
     .resetn               (e_reset_n                   ),// Global reset, locally propagated
+    .serial_shift_rstn    (gpio_shift_rstn          ),
     .serial_clock_in      (gpio_serial_clock_left      ),// Global clock, locally propatated
     .serial_clock_out     (gpio_serial_clock_bottom    ),
     .serial_load_in       (gpio_serial_load_left       ),// Register load strobe
@@ -1293,7 +1319,7 @@ gpio_pads_bottom  #(
 
     // Serial data chain for pad configuration
     .serial_data_in       (gpio_serial_data_left       ),
-    .serial_data_out      (gpio_serial_data_bottom     ),
+    .serial_data_out      (gpio_serial_data_in         ),
 
     // User-facing signals
     .user_gpio_out        (user_gpio_out    [OPENFRAME_IO_BOTTOM_PADS-1:OPENFRAME_IO_LEFT_PADS] ),// User space to pad
@@ -2302,9 +2328,14 @@ pinmux_top u_pinmux(
           .ir_tx              (ir_tx                        ),
           .ir_intr            (ir_intr                      ),
 
-          .gpio_serial_clock  (gpio_serial_clock            ),
-          .gpio_serial_load   (gpio_serial_load             ),
-          .gpio_serial_data   (gpio_serial_data             )
+         //-------------------------------------
+         // Stpper Motor outputs
+         //-------------------------------------
+          .sm_a1              (sm_a1                        ),  
+          .sm_a2              (sm_a2                        ),  
+          .sm_b1              (sm_b1                        ),  
+          .sm_b2              (sm_b2                        )   
+
 
    ); 
 
@@ -2349,11 +2380,27 @@ peri_top u_peri(
           .ir_tx                   (ir_tx                   ),
           .ir_intr                 (ir_intr                 ),
 
+          //-------------------------------------
+          // Stpper Motor outputs
+          //-------------------------------------
+          .sm_a1                   (sm_a1                   ),  
+          .sm_a2                   (sm_a2                   ),  
+          .sm_b1                   (sm_b1                   ),  
+          .sm_b2                   (sm_b2                   ),  
+
           .cfg_dac0_mux_sel        (cfg_dac0_mux_sel        ),
           .cfg_dac1_mux_sel        (cfg_dac1_mux_sel        ),
           .cfg_dac2_mux_sel        (cfg_dac2_mux_sel        ),
-          .cfg_dac3_mux_sel        (cfg_dac3_mux_sel        )
-
+          .cfg_dac3_mux_sel        (cfg_dac3_mux_sel        ),
+          .cfg_adc_sample_trg      (cfg_adc_sample_trg      ),
+          .cfg_adc_dac_sel         (cfg_adc_dac_sel         ),
+          .adc_result              (adc_result              ),
+    
+          .gpio_shift_rstn         (gpio_shift_rstn         ),
+          .gpio_serial_clock       (gpio_serial_clock       ),
+          .gpio_serial_load        (gpio_serial_load        ),
+          .gpio_serial_data_out    (gpio_serial_data_out    ),
+          .gpio_serial_data_in     (gpio_serial_data_in     )
    ); 
 
 
@@ -2363,22 +2410,41 @@ peri_top u_peri(
 //------------------------------------------
 
 
-dac_top  u_4x8bit_dac(
+adc_dac_top  u_4x8bit_adc_dac(
 `ifdef USE_POWER_PINS
           .VDDA               (vdda1                        ),
           .VSSA               (vssa1                        ),
           .VCCD               (vccd1                        ),
           .VSSD               (vssd1                        ),
 `endif
-          .VREFH              (                             ),
+          .VREFH              (analog_io[15]                ), // need to contact to Analog PAD
           .Din0               (cfg_dac0_mux_sel             ),
           .Din1               (cfg_dac1_mux_sel             ),
           .Din2               (cfg_dac2_mux_sel             ),
           .Din3               (cfg_dac3_mux_sel             ),
-          .VOUT0              (                             ),
-          .VOUT1              (                             ),
-          .VOUT2              (                             ),
-          .VOUT3              (                             )
+          .VOUT0              (analog_io[11]                ), // need to contact to Analog PAD
+          .VOUT1              (analog_io[12]                ), // need to contact to Analog PAD
+          .VOUT2              (analog_io[13]                ), // need to contact to Analog PAD
+          .VOUT3              (analog_io[14]                ), // need to contact to Analog PAD
+
+          .SAMPLE0            (cfg_adc_sample_trg[0]        ),
+          .SAMPLE1            (cfg_adc_sample_trg[1]        ),
+          .SAMPLE2            (cfg_adc_sample_trg[2]        ),
+          .SAMPLE3            (cfg_adc_sample_trg[3]        ),
+          .RESULT0            (adc_result[0]                ),
+          .RESULT1            (adc_result[1]                ),
+          .RESULT2            (adc_result[2]                ),
+          .RESULT3            (adc_result[3]                ),
+
+          .PIN0               (analog_io[16]                ), // ADC-DAC-0
+          .PIN1               (analog_io[17]                ), // ADC-DAC-1
+          .PIN2               (analog_io[18]                ), // ADC-DAC-2
+          .PIN3               (analog_io[19]                ), // ADC-DAC-3
+
+          .SEL0               (cfg_adc_dac_sel[0]           ),
+          .SEL1               (cfg_adc_dac_sel[1]           ),
+          .SEL2               (cfg_adc_dac_sel[2]           ),
+          .SEL3               (cfg_adc_dac_sel[3]           )
    );
 
 endmodule	// openframe_project_wrapper

@@ -1,5 +1,4 @@
 
-`define TOP user_usb_tb
 
 module usb_agent;
 
@@ -333,7 +332,7 @@ begin
   $display("");
   $display("    #######################################################");
   if(RecvdStatus !== ExpStatus ) begin
-     -> `TOP.test_control.error_detected;
+     -> `TB_TOP.test_control.error_detected;
      $display("    ERROR: Expected Status and Observed Status didn't match at %0d", $time);
      if(ExpStatus==4'b0000)
         $display("    Expected Status is ACK at %0d", $time);
@@ -440,11 +439,11 @@ reg [7:0] tskResetTimeCounter;
 begin
    tskResetTimeCounter = 0;
    tskResetTime = ResetTime;
-   forever @(posedge `TOP.usb_48mhz_clk) begin
+   forever @(posedge `TB_TOP.usb_48mhz_clk) begin
       tskResetTimeCounter = tskResetTimeCounter + 1'b1;
       if (tskResetTimeCounter > tskResetTime) begin
-            @(posedge `TOP.usb_48mhz_clk);
-            @(posedge `TOP.usb_48mhz_clk);
+            @(posedge `TB_TOP.usb_48mhz_clk);
+            @(posedge `TB_TOP.usb_48mhz_clk);
             disable usbhw_timer_sleep;
       end
    end
@@ -665,7 +664,7 @@ begin
    if ((RecvBuffer[3] !== dataword[7:0]) || (RecvBuffer[2] !== dataword[15:8]) 
          || (RecvBuffer[1] !== dataword[23:16]) || (RecvBuffer[0] !== dataword[31:24]))
     begin
-      -> `TOP.test_control.error_detected;
+      -> `TB_TOP.test_control.error_detected;
        $display( "usb_agent check: ERROR: Register Read Byte Mismatch !!! Address: %x Exp: %x ; Rxd: %x",reg_address,dataword[31:0], {RecvBuffer[0],RecvBuffer[1], RecvBuffer[2],RecvBuffer[3]} );
        dump_recv_buffer(ByteCount);
     end else begin
@@ -700,7 +699,7 @@ begin
          control_IN(address, 4'h0, ByteCount, Status);
    if ((RecvBuffer[0] !== dataword[7:0]) || (RecvBuffer[1] !== dataword[15:8])) 
     begin
-       -> `TOP.test_control.error_detected;
+       -> `TB_TOP.test_control.error_detected;
        $display( "usb_agent check: Register Read Byte Mismatch !!!");
        dump_recv_buffer(ByteCount);
     end
@@ -732,7 +731,7 @@ begin
          control_IN(address, 4'h0, ByteCount, Status);
    if ((RecvBuffer[0] !== dataword[7:0]))
     begin
-       -> `TOP.test_control.error_detected;
+       -> `TB_TOP.test_control.error_detected;
        $display( "usb_agent check: Register Read Byte Mismatch !!!");
        dump_recv_buffer(ByteCount);
     end
@@ -943,6 +942,7 @@ begin
     //$display("USB TOKEN CONFIG : %x",token);
     usbhw_reg_write(`USB_XFER_TOKEN, token);
 
+    usbhw_reg_read(`USB_RX_STAT,status);
     status_chk = status & (1 << `USB_RX_STAT_START_PEND);
     while (status_chk) begin
        usbhw_reg_read(`USB_RX_STAT,status);

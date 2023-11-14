@@ -163,11 +163,7 @@ always @(posedge clk)	rxd_r <= rxd_s;
 assign change = rxd_r != rxd_s;
 
 // DPLL FSM
-`ifdef USB_ASYNC_REST
 always @(posedge clk or negedge rstn)
-`else
-always @(posedge clk)
-`endif
 	if(!rstn)	dpll_state <= 2'h1;
 	else		dpll_state <= dpll_next_state;
 
@@ -215,11 +211,7 @@ parameter	FS_IDLE	= 3'h0,
 		J3	= 3'h6,
 		K4	= 3'h7;
 
-`ifdef USB_ASYNC_REST
 always @(posedge clk or negedge rstn)
-`else
-always @(posedge clk)
-`endif
 	if(!rstn)	fs_state <= FS_IDLE;
 	else		fs_state <= fs_next_state;
 
@@ -314,11 +306,7 @@ always @(fs_state or fs_ce or k or j or rx_en or rx_active or se0 or se0_s)
 // Generate RxActive
 //
 
-`ifdef USB_ASYNC_REST
 always @(posedge clk or negedge rstn)
-`else
-always @(posedge clk)
-`endif
 	if(!rstn)		rx_active <= 1'b0;
 	else
 	if(synced_d && rx_en)	rx_active <= 1'b1;
@@ -338,11 +326,7 @@ always @(posedge clk)
 always @(posedge clk)
 	if(fs_ce)	sd_r <= rxd_s;
 
-`ifdef USB_ASYNC_REST
 always @(posedge clk or negedge rstn)
-`else
-always @(posedge clk)
-`endif
 	if(!rstn)		sd_nrzi <= 1'b0;
 	else
 	if(!rx_active)		sd_nrzi <= 1'b1;
@@ -354,11 +338,7 @@ always @(posedge clk)
 // Bit Stuff Detect
 //
 
-`ifdef USB_ASYNC_REST
 always @(posedge clk or negedge rstn)
-`else
-always @(posedge clk)
-`endif
 	if(!rstn)	one_cnt <= 3'h0;
 	else
 	if(!shift_en)	one_cnt <= 3'h0;
@@ -390,22 +370,14 @@ always @(posedge clk)
 // Generate RxValid
 //
 
-`ifdef USB_ASYNC_REST
 always @(posedge clk or negedge rstn)
-`else
-always @(posedge clk)
-`endif
 	if(!rstn)		bit_cnt <= 3'b0;
 	else
 	if(!shift_en)		bit_cnt <= 3'h0;
 	else
 	if(fs_ce && !drop_bit)	bit_cnt <= bit_cnt + 3'h1;
 
-`ifdef USB_ASYNC_REST
 always @(posedge clk or negedge rstn)
-`else
-always @(posedge clk)
-`endif
 	if(!rstn)					rx_valid1 <= 1'b0;
 	else
 	if(fs_ce && !drop_bit && (bit_cnt==3'h7))	rx_valid1 <= 1'b1;

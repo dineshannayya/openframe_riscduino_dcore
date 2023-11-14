@@ -141,11 +141,7 @@ usb1bd_rx_phy i_rx_phy(
 // Generate an USB Reset is we see SE0 for at least 2.5uS
 //
 
-`ifdef USB_ASYNC_REST
 always @(posedge clk or negedge rstn)
-`else
-always @(posedge clk)
-`endif
 	if(!rstn)			rst_cnt <= 5'h0;
 	else
 	if(LineState_o != 2'h0)		rst_cnt <= 5'h0;

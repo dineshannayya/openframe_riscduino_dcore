@@ -80,7 +80,7 @@ set ::env(DIE_AREA) "0 0 450 500"
 #	                met4  0 0 450 550"
 
 set ::env(PL_TIME_DRIVEN) 1
-set ::env(PL_TARGET_DENSITY) "0.43"
+set ::env(PL_TARGET_DENSITY) "0.42"
 
 # If you're going to use multiple power domains, then keep this disabled.
 set ::env(RUN_CVC) 0

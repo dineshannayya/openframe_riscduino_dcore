@@ -9,47 +9,47 @@ module gpio_pads_top #(
 `endif
 
     // Soc-facing signals
-    input  	                            resetn              ,// Global reset, locally propagated
-    input  	                            serial_clock_in     ,// Global clock, locally propatated
-    output  	                        serial_clock_out    ,
-    input	                            serial_load_in      ,// Register load strobe
-    output	                            serial_load_out     ,
+        input  logic                     resetn              ,// Global reset, locally propagated
+        input  logic                     serial_shift_rstn   , // Reset Only Shift Register
+        input  logic                     serial_clock_in     ,// Global clock, locally propatated
+        output logic                     serial_clock_out    ,
+        input  logic                     serial_load_in      ,// Register load strobe
+        output logic                     serial_load_out     ,
 
     // Serial data chain for pad configuration
-    input  	                            serial_data_in      ,
-    output reg	                        serial_data_out     ,
+    input  	 logic                       serial_data_in      ,
+    output 	 logic                       serial_data_out     ,
 
     // User-facing signals
-    input   [OPENFRAME_IO_PADS-1:0]     user_gpio_out       ,// User space to pad
-    input   [OPENFRAME_IO_PADS-1:0]     user_gpio_oeb       ,// Output enable (user)
-    output	[OPENFRAME_IO_PADS-1:0]     user_gpio_in        ,// Pad to user space
+    input   logic [OPENFRAME_IO_PADS-1:0] user_gpio_out       ,// User space to pad
+    input   logic [OPENFRAME_IO_PADS-1:0] user_gpio_oeb       ,// Output enable (user)
+    output	logic [OPENFRAME_IO_PADS-1:0] user_gpio_in        ,// Pad to user space
 
 
 
     /* Basic bidirectional I/O.  Input gpio_in_h is in the 3.3V domain;  all
      * others are in the 1.8v domain.  OEB is output enable, sense inverted.
      */
-    input  [OPENFRAME_IO_PADS-1:0]      gpio_in            ,
-    input  [OPENFRAME_IO_PADS-1:0]      gpio_in_h          ,
-    output [OPENFRAME_IO_PADS-1:0]      gpio_out           ,
-    output [OPENFRAME_IO_PADS-1:0]      gpio_oeb           ,
-    output [OPENFRAME_IO_PADS-1:0]      gpio_inp_dis       ,	// a.k.a. ieb
+    input  logic [OPENFRAME_IO_PADS-1:0]  gpio_in            ,
+    input  logic [OPENFRAME_IO_PADS-1:0]  gpio_in_h          ,
+    output logic [OPENFRAME_IO_PADS-1:0]  gpio_out           ,
+    output logic [OPENFRAME_IO_PADS-1:0]  gpio_oeb           ,
+    output logic [OPENFRAME_IO_PADS-1:0]  gpio_inp_dis       ,	// a.k.a. ieb
 
     /* Pad configuration.  These signals are usually static values.
      * See the documentation for the sky130_fd_io__gpiov2 cell signals
      * and their use.
      */
-    output [OPENFRAME_IO_PADS-1:0]      gpio_ib_mode_sel  ,
-    output [OPENFRAME_IO_PADS-1:0]      gpio_vtrip_sel    ,
-    output [OPENFRAME_IO_PADS-1:0]      gpio_slow_sel     ,
-    output [OPENFRAME_IO_PADS-1:0]      gpio_holdover     ,
-    output [OPENFRAME_IO_PADS-1:0]      gpio_analog_en    ,
-    output [OPENFRAME_IO_PADS-1:0]      gpio_analog_sel   ,
-    output [OPENFRAME_IO_PADS-1:0]      gpio_analog_pol   ,
-    output [OPENFRAME_IO_PADS-1:0]      gpio_dm2          ,
-    output [OPENFRAME_IO_PADS-1:0]      gpio_dm1          ,
-    output [OPENFRAME_IO_PADS-1:0]      gpio_dm0          
-
+    output logic [OPENFRAME_IO_PADS-1:0]   gpio_ib_mode_sel  ,
+    output logic [OPENFRAME_IO_PADS-1:0]   gpio_vtrip_sel    ,
+    output logic [OPENFRAME_IO_PADS-1:0]   gpio_slow_sel     ,
+    output logic [OPENFRAME_IO_PADS-1:0]   gpio_holdover     ,
+    output logic [OPENFRAME_IO_PADS-1:0]   gpio_analog_en    ,
+    output logic [OPENFRAME_IO_PADS-1:0]   gpio_analog_sel   ,
+    output logic [OPENFRAME_IO_PADS-1:0]   gpio_analog_pol   ,
+    output logic [OPENFRAME_IO_PADS-1:0]   gpio_dm2          ,
+    output logic [OPENFRAME_IO_PADS-1:0]   gpio_dm1          ,
+    output logic [OPENFRAME_IO_PADS-1:0]   gpio_dm0          
 
 
 
@@ -62,9 +62,9 @@ logic [OPENFRAME_IO_PADS-1:0] serial_clock_chain;
 logic [OPENFRAME_IO_PADS-1:0] serial_load_chain;
 logic [OPENFRAME_IO_PADS-1:0] serial_data_chain;
 
-assign serial_clock_out = serial_clock_chain[OPENFRAME_IO_PADS-1:0];
-assign serial_data_out = serial_data_chain[OPENFRAME_IO_PADS-1:0];
-assign serial_load_out = serial_load_chain[OPENFRAME_IO_PADS-1:0];
+assign serial_clock_out = serial_clock_chain[OPENFRAME_IO_PADS-1];
+assign serial_data_out  = serial_data_chain[OPENFRAME_IO_PADS-1];
+assign serial_load_out  = serial_load_chain[OPENFRAME_IO_PADS-1];
 
 generate
 genvar tcnt;
@@ -80,8 +80,8 @@ genvar tcnt;
      end
 
      gpio_control_block #(
-         .PAD_CTRL_BITS(12),
-         .GPIO_DEFAULTS(12'hC00)
+         .PAD_CTRL_BITS(16),
+         .GPIO_DEFAULTS(16'h3000)
      ) gpio_ctrl_(
          `ifdef USE_POWER_PINS
          .vccd                (vccd                          ),
@@ -91,6 +91,7 @@ genvar tcnt;
      
          // Management Soc-facing signals
          .resetn              (resetn                        ),		// Global reset, locally propagated
+         .serial_shift_rstn   (serial_shift_rstn             ),
          .serial_clock        (serial_clock[tcnt]            ),		// Global clock, locally propatated
          .serial_clock_out    (serial_clock_chain[tcnt]      ),
          .serial_load         (serial_load[tcnt]             ),		// Register load strobe

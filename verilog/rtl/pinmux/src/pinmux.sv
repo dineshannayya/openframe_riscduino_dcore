@@ -54,26 +54,26 @@
 *   Pin-6         4             PD4/WS[1]TXD[1]                             digital_io[28] -
 *   Pin-7                       VCC                  -
 *   Pin-8                       GND                  -
-*   Pin-9         20            PB6/WS[1]/XTAL1/TOSC1                       digital_io[14] -
-*   Pin-10        21            PB7/WS[1]/XTAL2/TOSC2/IR-RX                 digital_io[15] -
+*   Pin-9         20            PB6/WS[1]/XTAL1/TOSC1                       digital_io[14]/analog_io[14] -DAC-3
+*   Pin-10        21            PB7/WS[1]/XTAL2/TOSC2/IR-RX                 digital_io[15]/analog_io[15] -AREF
 *   Pin-11        5             PD5/WS[2]/SS[3]/OC0B(PWM1)/T1               digital_io[29] -
 *   Pin-12        6             PD6/WS[2]/SS[2]/OC0A(PWM2)/AIN0             digital_io[30]/analog_io[2] -
 *   Pin-13        7             PD7/WS[2]/A1N1/IR-TX                        digital_io[31]/analog_io[3] -
 *   Pin-14        8             PB0/WS[2]/CLKO/ICP1                         digital_io[8] -
 *   Pin-15        9             PB1/WS[3]/SS[1]/OC1A(PWM3)                  digital_io[9] -
 *   Pin-16        10            PB2/WS[3]/SS[0]/OC1B(PWM4)                  digital_io[10] -
-*   Pin-17        11            PB3/WS[3]/MOSI/OC2A(PWM5)                   digital_io[11] -
-*   Pin-18        12            PB4/WS[3]/MISO                              digital_io[12] -
-*   Pin-19        13            PB5/SCK                                     digital_io[13] -
+*   Pin-17        11            PB3/WS[3]/MOSI/OC2A(PWM5)                   digital_io[11]/analog_io[11] - DAC-0
+*   Pin-18        12            PB4/WS[3]/MISO                              digital_io[12]/analog_io[12] - DAC-1
+*   Pin-19        13            PB5/SCK                                     digital_io[13]/analog_io[13] -DAC-2
 *   Pin-20                      AVCC                -
-*   Pin-21                      AREF                                        analog_io[10]
+*   Pin-21                      AREF                                        analog_io[15]
 *   Pin-22                      GND                 -
-*   Pin-23        14            PC0/usbd_dp/ADC0                            digital_io[16]/analog_io[11] -
-*   Pin-24        15            PC1/usbd_dp/ADC1                            digital_io[17]/analog_io[12] -
-*   Pin-25        16            PC2/usbh_dp/ADC2                            digital_io[18]/analog_io[13] -
-*   Pin-26        17            PC3/usbh_dn/ADC3                            digital_io[19]/analog_io[14] -
-*   Pin-27        18            PC4/ADC4/SDA                                digital_io[20]/analog_io[15] -
-*   Pin-28        19            PC5/ADC5/SCL                                digital_io[21]/analog_io[16] -
+*   Pin-23        14            PC0/usbd_dp/ADC0                            digital_io[16]/analog_io[16] -ADC/DAC-0-
+*   Pin-24        15            PC1/usbd_dp/ADC1                            digital_io[17]/analog_io[17] -ADC/DAC-1-
+*   Pin-25        16            PC2/usbh_dp/ADC2                            digital_io[18]/analog_io[18] -ADC/DAC-2-
+*   Pin-26        17            PC3/usbh_dn/ADC3                            digital_io[19]/analog_io[19] -ADC/DAC-3-
+*   Pin-27        18            PC4/ADC4/SDA                                digital_io[20]/analog_io[20] -
+*   Pin-28        19            PC5/ADC5/SCL                                digital_io[21]/analog_io[21] -
 
 *   pin-29      24                PA0/trst_n/sm_a1                            digital_io[0] -
 *   pin-30      25                PA1/tck/sm_a2                               digital_io[1] -
@@ -268,7 +268,7 @@ wire        cfg_usbh_enb         = cfg_multi_func_sel[16];
 wire        cfg_ir_tx_enb        = cfg_multi_func_sel[17]; // NEC IR TX Enable
 wire        cfg_sm_enb           = cfg_multi_func_sel[18]; // Stepper Motor Enable
 wire        cfg_spis_dis         = cfg_multi_func_sel[19]; // Disable spis_boot
-wire        cfg_usbd_enb         = cfg_multi_func_sel[20]; // Disable spis_boot
+wire        cfg_usbd_enb         = cfg_multi_func_sel[20]; // Enabled USB Device
 wire        cfg_tap_enb          = cfg_multi_func_sel[30]; // 1 - Riscv Tap Enable
 wire        cfg_muart_enb        = cfg_multi_func_sel[31]; // 1 - uart master enable, 
 

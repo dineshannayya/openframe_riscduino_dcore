@@ -244,15 +244,7 @@ module pinmux_top (
                input logic              sm_a1,  
                input logic              sm_a2,  
                input logic              sm_b1,  
-               input logic              sm_b2 ,
-
-               //------------------------------
-               // gpio pad control
-               //------------------------------
-               output logic             gpio_serial_clock,
-               output logic             gpio_serial_load ,
-               output logic             gpio_serial_data 
- 
+               input logic              sm_b2
 
 
                

@@ -46,9 +46,10 @@ $(USER_PROJECT_VERILOG)/rtl/user_reg_map.v
 -v $(USER_PROJECT_VERILOG)/rtl/lib/pulse_gen_type2.sv
 -v $(USER_PROJECT_VERILOG)/rtl/lib/clk_div8.v
 
--v $(USER_PROJECT_VERILOG)/rtl/dac/src/dac_top.v
+-v $(USER_PROJECT_VERILOG)/rtl/adc_dac/src/adc_dac_top.sv
 
 -v $(USER_PROJECT_VERILOG)/rtl/dig2ana/src/dig2ana_reg.sv
+-v $(USER_PROJECT_VERILOG)/rtl/dig2ana/src/sar_logic.sv
 
 -v $(USER_PROJECT_VERILOG)/rtl/qspim/src/qspim_top.sv
 -v $(USER_PROJECT_VERILOG)/rtl/qspim/src/qspim_if.sv
@@ -189,6 +190,8 @@ $(USER_PROJECT_VERILOG)/rtl/security_core/verilog/rtl/aes128/top/aes_reg.sv
 -v $(USER_PROJECT_VERILOG)/rtl/dg_pll/src/dg_pll.v
 
 -v $(USER_PROJECT_VERILOG)/rtl/peripheral/src/peri_top.sv
+-v $(USER_PROJECT_VERILOG)/rtl/peripheral/src/gpio_pads_ctrl.sv
+-v $(USER_PROJECT_VERILOG)/rtl/peripheral/src/gpio_pads_reg.sv
 
 $(USER_PROJECT_VERILOG)/rtl/rtc/verilog/rtl/core/rtc_top.sv
 $(USER_PROJECT_VERILOG)/rtl/rtc/verilog/rtl/core/rtc_core.sv

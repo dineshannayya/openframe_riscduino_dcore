@@ -51,8 +51,8 @@
  */
 
 module gpio_control_block #(
-    parameter PAD_CTRL_BITS = 12,
-    parameter GPIO_DEFAULTS = 12'hC00
+    parameter PAD_CTRL_BITS = 16,
+    parameter GPIO_DEFAULTS = 16'h3000
 ) (
     `ifdef USE_POWER_PINS
          inout vccd,
@@ -62,6 +62,7 @@ module gpio_control_block #(
 
     // Soc-facing signals
     input  	     resetn,		     // Global reset, locally propagated
+    input        serial_shift_rstn,
     input  	     serial_clock,		// Global clock, locally propatated
     output  	 serial_clock_out,
     input	     serial_load,		// Register load strobe
@@ -96,28 +97,34 @@ module gpio_control_block #(
 );
 
     /* Parameters defining the bit offset of each function in the chain */
-    localparam OEB = 0;
-    localparam HLDH = 1;
-    localparam INP_DIS = 2;
-    localparam MOD_SEL = 3;
-    localparam AN_EN = 4;
-    localparam AN_SEL = 5;
-    localparam AN_POL = 6;
-    localparam SLOW = 7;
-    localparam TRIP = 8;
-    localparam DM = 9;
+    localparam MGMT_EN     = 0;
+    localparam MGMT_OEB    = 1;
+    localparam MGPIO_OUT   = 2; // GPIO Output data
+    localparam HLDH        = 3;
+    localparam INP_DIS     = 4;
+    localparam MOD_SEL     = 5;
+    localparam AN_EN       = 6;
+    localparam AN_SEL      = 7;
+    localparam AN_POL      = 8;
+    localparam SLOW        = 9;
+    localparam TRIP        = 10;
+    localparam DM          = 12;         // [14:12] - DM Bits
+    localparam LD_ENB      = 15; // Load the Data
 
     /* Internally registered signals */
+    reg	      	mgmt_enb;		// Enable management SoC to access pad
+    reg  	    mgmt_gpio_enb   ;
+    reg         mgmt_gpio_out   ;
     reg	 	    gpio_holdover   ;
     reg	 	    gpio_slow_sel   ;
     reg	  	    gpio_vtrip_sel  ;
     reg  	    gpio_inenb      ;
     reg	 	    gpio_ib_mode_sel;
-    reg  	    gpio_outenb     ;
     reg [2:0] 	gpio_dm         ;
     reg	 	    gpio_ana_en     ;
     reg	 	    gpio_ana_sel    ;
     reg	 	    gpio_ana_pol    ;
+    wire        load_enb        ;
 
     /* Derived output values */
     wire	    one_unbuf       ;
@@ -129,9 +136,12 @@ module gpio_control_block #(
     /* Serial shift for the above (latched) values */
     reg [PAD_CTRL_BITS-1:0] shift_register;
 
+
+    assign load_enb = shift_register[LD_ENB];
+
     /* Latch the output on the clock negative edge */
-    always @(negedge serial_clock or negedge resetn) begin
-	if (resetn == 1'b0) begin
+    always @(negedge serial_clock or negedge serial_shift_rstn) begin
+	if (serial_shift_rstn == 1'b0) begin
 	    /* Clear the shift register output */
 	    serial_data_out <= 1'b0;
         end else begin
@@ -144,8 +154,8 @@ module gpio_control_block #(
     assign serial_clock_out = serial_clock;
     assign serial_load_out = serial_load;
 
-    always @(posedge serial_clock or negedge resetn) begin
-	if (resetn == 1'b0) begin
+    always @(posedge serial_clock or negedge serial_shift_rstn) begin
+	if (serial_shift_rstn == 1'b0) begin
 	    /* Clear shift register */
 	    shift_register <= 'd0;
 	end else begin
@@ -158,29 +168,34 @@ module gpio_control_block #(
     always @(posedge serial_load or negedge resetn) begin
 	if (resetn == 1'b0) begin
 	    /* Initial state on reset depends on applied defaults */
+        mgmt_enb         <= GPIO_DEFAULTS[MGMT_EN];
+	    mgmt_gpio_enb    <= GPIO_DEFAULTS[MGMT_OEB];
+        mgmt_gpio_out    <= GPIO_DEFAULTS[MGPIO_OUT];
 	    gpio_holdover    <= GPIO_DEFAULTS[HLDH];
 	    gpio_slow_sel    <= GPIO_DEFAULTS[SLOW];
 	    gpio_vtrip_sel   <= GPIO_DEFAULTS[TRIP];
         gpio_ib_mode_sel <= GPIO_DEFAULTS[MOD_SEL];
 	    gpio_inenb       <= GPIO_DEFAULTS[INP_DIS];
-	    gpio_outenb      <= GPIO_DEFAULTS[OEB];
 	    gpio_dm          <= GPIO_DEFAULTS[DM+2:DM];
 	    gpio_ana_en      <= GPIO_DEFAULTS[AN_EN];
 	    gpio_ana_sel     <= GPIO_DEFAULTS[AN_SEL];
 	    gpio_ana_pol     <= GPIO_DEFAULTS[AN_POL];
 	end else begin
 	    /* Load data */
-	    gpio_outenb      <= shift_register[OEB];
-	    gpio_holdover    <= shift_register[HLDH]; 
-	    gpio_inenb 	     <= shift_register[INP_DIS];
-	    gpio_ib_mode_sel <= shift_register[MOD_SEL];
-	    gpio_ana_en      <= shift_register[AN_EN];
-	    gpio_ana_sel     <= shift_register[AN_SEL];
-	    gpio_ana_pol     <= shift_register[AN_POL];
-	    gpio_slow_sel    <= shift_register[SLOW];
-	    gpio_vtrip_sel   <= shift_register[TRIP];
-	    gpio_dm 	     <= shift_register[DM+2:DM];
-
+        if(load_enb) begin
+           mgmt_enb 	    <= shift_register[MGMT_EN];
+	       mgmt_gpio_enb    <= shift_register[MGMT_OEB];
+           mgmt_gpio_out    <= shift_register[MGPIO_OUT];
+	       gpio_holdover    <= shift_register[HLDH]; 
+	       gpio_inenb 	    <= shift_register[INP_DIS];
+	       gpio_ib_mode_sel <= shift_register[MOD_SEL];
+	       gpio_ana_en      <= shift_register[AN_EN];
+	       gpio_ana_sel     <= shift_register[AN_SEL];
+	       gpio_ana_pol     <= shift_register[AN_POL];
+	       gpio_slow_sel    <= shift_register[SLOW];
+	       gpio_vtrip_sel   <= shift_register[TRIP];
+	       gpio_dm 	        <= shift_register[DM+2:DM];
+        end
 	end
     end
 
@@ -199,13 +214,13 @@ module gpio_control_block #(
     assign pad_gpio_dm0		    = gpio_dm[0];
     assign pad_gpio_inenb 	    = gpio_inenb;
 
-    assign pad_gpio_outenb = user_gpio_oeb;
+    assign pad_gpio_outenb = (mgmt_enb) ? mgmt_gpio_enb : user_gpio_oeb;
 
-    assign pad_gpio_out = user_gpio_out;
+    assign pad_gpio_out = (mgmt_enb) ? mgmt_gpio_out : user_gpio_out;
 
     assign user_gpio_in = pad_gpio_in ;
 
 
 
 endmodule
-`default_nettype wire
+//`default_nettype wire

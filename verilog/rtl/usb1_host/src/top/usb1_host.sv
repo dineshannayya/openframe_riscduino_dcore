@@ -54,7 +54,7 @@ module usb1_host
 // Params
 //-----------------------------------------------------------------
 #(
-     parameter USB_CLK_FREQ     = 60000000
+     parameter USB_CLK_FREQ     = 48000000
 )
 
 (

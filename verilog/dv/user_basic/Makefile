@@ -50,13 +50,13 @@ vvp:  ${PATTERN:=.vvp}
 %.vvp: %_tb.v
 ifeq ($(SIM),RTL)
    ifeq ($(DUMP),OFF)
-	iverilog -g2012 -DFUNCTIONAL -D$(DUT_TOP) -DSIM -I $(PDK_PATH) \
+	iverilog -g2012 -DFUNCTIONAL -D$(DUT_TOP) -DSKY130_FD_IO_TOP_GPIO_OVTV2_DIS_ERR_MSGS -DSIM -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.lib  \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.caravel  \
 	$< -o $@ 
     else  
-	iverilog -g2012 -DWFDUMP -D$(DUT_TOP) -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
+	iverilog -g2012 -DWFDUMP -D$(DUT_TOP) -DSKY130_FD_IO_TOP_GPIO_OVTV2_DIS_ERR_MSGS -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.lib  \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.caravel  \

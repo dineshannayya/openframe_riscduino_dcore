@@ -48,7 +48,10 @@ set ::env(VERILOG_FILES) "\
      $::env(DESIGN_DIR)/../../verilog/rtl/rtc/verilog/rtl/core/rtc_core.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/rtc/verilog/rtl/core/rtc_reg.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/peripheral/src/peri_top.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/peripheral/src/gpio_pads_ctrl.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/peripheral/src/gpio_pads_reg.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/dig2ana/src/dig2ana_reg.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/dig2ana/src/sar_logic.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/ctech_cells.sv     \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/reset_sync.sv     \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/async_reg_bus.sv \
@@ -88,7 +91,7 @@ set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 #set ::env(MACRO_PLACEMENT_CFG) $::env(DESIGN_DIR)/macro.cfg
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 450 450"
+set ::env(DIE_AREA) "0 0 450 550"
 
 
 # If you're going to use multiple power domains, then keep this disabled.
@@ -98,7 +101,7 @@ set ::env(RUN_CVC) 0
 
 
 set ::env(PL_TIME_DRIVEN) 1
-set ::env(PL_TARGET_DENSITY) "0.42"
+set ::env(PL_TARGET_DENSITY) "0.40"
 set ::env(CELL_PAD) "4"
 set ::env(GRT_ADJUSTMENT) {0.2}
 

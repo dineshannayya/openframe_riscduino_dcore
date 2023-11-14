@@ -79,11 +79,14 @@ module peri_top (
                        output logic            ir_tx,
                        output logic            ir_intr,
                
-                      // DAC Config
+                      // ADC-DAC Config
+                       output logic [3:0]      cfg_adc_dac_sel,     
+                       output logic [3:0]      cfg_adc_sample_trg,     
                        output logic [7:0]      cfg_dac0_mux_sel,
                        output logic [7:0]      cfg_dac1_mux_sel,
                        output logic [7:0]      cfg_dac2_mux_sel,
                        output logic [7:0]      cfg_dac3_mux_sel,     
+                       input  logic [3:0]      adc_result,
 
                       //------------------------------
                       // Stepper Motor Variable
@@ -91,8 +94,16 @@ module peri_top (
                       output logic              sm_a1,  
                       output logic              sm_a2,  
                       output logic              sm_b1,  
-                      output logic              sm_b2  
+                      output logic              sm_b2,  
 
+               //------------------------------
+               // gpio pad control
+               //------------------------------
+                     output logic             gpio_shift_rstn,
+                     output logic             gpio_serial_clock,
+                     output logic             gpio_serial_load ,
+                     output logic             gpio_serial_data_out, 
+                     input  logic             gpio_serial_data_in 
    ); 
 
 
@@ -120,20 +131,28 @@ logic [31:0]  reg_sm_rdata;
 logic         reg_sm_ack;
 logic         reg_sm_cs;
 
+logic [31:0]  reg_pads_rdata;
+logic         reg_pads_ack;
+logic         reg_pads_cs;
+
+
 assign reg_rdata  = (reg_addr[10:7] == `SEL_D2A) ? reg_d2a_rdata :
                     (reg_addr[10:7] == `SEL_RTC) ? reg_rtc_rdata :
                     (reg_addr[10:7] == `SEL_IR)  ? reg_ir_rdata :
                     (reg_addr[10:7] == `SEL_SM)  ? reg_sm_rdata :
+                    (reg_addr[10:7] == `SEL_PADS)? reg_pads_rdata :
                      'h0;
 assign reg_ack    = (reg_addr[10:7] == `SEL_D2A) ? reg_d2a_ack   :
                     (reg_addr[10:7] == `SEL_RTC) ? reg_rtc_ack   :
                     (reg_addr[10:7] == `SEL_IR)  ? reg_ir_ack   :
                     (reg_addr[10:7] == `SEL_SM)  ? reg_sm_ack   :
+                    (reg_addr[10:7] == `SEL_PADS)? reg_pads_ack   :
                     1'b0;
 assign reg_d2a_cs = (reg_addr[10:7] == `SEL_D2A)  ? reg_cs : 1'b0;
 assign reg_rtc_cs = (reg_addr[10:7] == `SEL_RTC)  ? reg_cs : 1'b0;
 assign reg_ir_cs  = (reg_addr[10:7] == `SEL_IR)  ? reg_cs : 1'b0;
 assign reg_sm_cs  = (reg_addr[10:7] == `SEL_SM)  ? reg_cs : 1'b0;
+assign reg_pads_cs= (reg_addr[10:7] == `SEL_PADS)  ? reg_cs : 1'b0;
 
 
 // peri clock skew control
@@ -179,7 +198,11 @@ dig2ana_reg  u_d2a(
               .cfg_dac0_mux_sel         (cfg_dac0_mux_sel           ),
               .cfg_dac1_mux_sel         (cfg_dac1_mux_sel           ),
               .cfg_dac2_mux_sel         (cfg_dac2_mux_sel           ),
-              .cfg_dac3_mux_sel         (cfg_dac3_mux_sel           )
+              .cfg_dac3_mux_sel         (cfg_dac3_mux_sel           ),
+              .cfg_adc_sample_trg       (cfg_adc_sample_trg         ),
+              .cfg_adc_dac_sel          (cfg_adc_dac_sel            ),
+              .adc_result               (adc_result                 )
+
          );
 
 //-----------------------------------------------------------------------
@@ -264,6 +287,31 @@ sm_ctrl u_sm (
 
 );
 
+gpio_pads_reg  u_pads_reg (
+                       // System Signals
+                       // Inputs
+		               .mclk                 ( mclk               ),
+                       .h_reset_n            ( s_reset_ssn        ),
+
+		               // Reg Bus Interface Signal
+                       .reg_cs               ( reg_pads_cs        ),
+                       .reg_wr               ( reg_wr             ) ,
+                       .reg_addr             ( reg_addr[5:2]      ),
+                       .reg_wdata            ( reg_wdata          ),
+                       .reg_be               ( reg_be             ),
+
+                       // Outputs
+                       .reg_rdata            ( reg_pads_rdata     ),
+                       .reg_ack              ( reg_pads_ack       ),
+
+   // GPIO Pad I/F - Daisy chain Serial I/F
+                       .shift_rstn           (gpio_shift_rstn     ),  // Pad Shift Register Reset
+                       .shift_clock          (gpio_serial_clock   ),  // Shift clock
+                       .shift_load           (gpio_serial_load    ),  // Shift Load
+                       .shift_data_out       (gpio_serial_data_out),  // Shift Data Out
+                       .shift_data_in        (gpio_serial_data_in )   // Shift Data In
+
+                ); 
 
 
 

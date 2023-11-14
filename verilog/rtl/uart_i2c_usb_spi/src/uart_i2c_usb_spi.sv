@@ -191,8 +191,9 @@ assign reg_ack   = (reg_addr[8:6] == `SEL_UART0) ? reg_uart0_ack   :
 wire reg_uart0_cs  = (reg_addr[8:6] == `SEL_UART0) ? reg_cs : 1'b0;
 wire reg_uart1_cs  = (reg_addr[8:6] == `SEL_UART1) ? reg_cs : 1'b0;
 wire reg_i2cm_cs   = (reg_addr[8:6] == `SEL_I2C)   ? reg_cs : 1'b0;
-wire reg_usbh_cs    = (reg_addr[8:6] == `SEL_USBH)   ? reg_cs : 1'b0;
+wire reg_usbh_cs   = (reg_addr[8:6] == `SEL_USBH)  ? reg_cs : 1'b0;
 wire reg_spim_cs   = (reg_addr[8:6] == `SEL_SPI)   ? reg_cs : 1'b0;
+wire reg_usbd_cs   = (reg_addr[8:6] == `SEL_USBD)  ? reg_cs : 1'b0;
 
 uart_core  u_uart0_core (  
 
@@ -311,7 +312,7 @@ usb1bd_top  u_usb_device(
      .usb_txdn     (usbd_out_dn),
 
      .usb_rxdp     (usbd_in_dp),
-     .usb_rxdn     (usbd_in_dp),
+     .usb_rxdn     (usbd_in_dn),
 
 	// Register Interface
 

@@ -79,7 +79,6 @@ reg            power3, power4;
 // User I/O
 `ifdef CARAVEL_TOP
    tri  [43:0]    gpio       ;
-   tri  [43:0]    gpio1      ;
 `else
    wire [43:0]    io_oeb     ;
    wire [43:0]    io_out     ;
